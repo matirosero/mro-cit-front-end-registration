@@ -8,6 +8,19 @@ Author: Mat Rosero
 Author URI: https://matilderosero.com
 */
 
+
+/**
+ * Load plugin textdomain.
+ *
+ * @since 0.1.0
+ */
+function mro_cit_frontend_registration_load_textdomain() {
+	load_plugin_textdomain( 'mro-cit-frontend', false, basename( dirname( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'mro_cit_frontend_registration_load_textdomain' );
+
+
+
 // user registration login form
 function pippin_registration_form() {
 
@@ -26,7 +39,7 @@ function pippin_registration_form() {
 		if($registration_enabled) {
 			$output = pippin_registration_form_fields();
 		} else {
-			$output = __('User registration is not enabled');
+			$output = __('User registration is not enabled', 'mro-cit-frontend');
 		}
 		return $output;
 	}
@@ -38,7 +51,7 @@ add_shortcode('register_form', 'pippin_registration_form');
 function pippin_registration_form_fields() {
 
 	ob_start(); ?>
-		<h3 class="pippin_header"><?php _e('Register New Account'); ?></h3>
+		<h3><?php _e('Register as a Member', 'mro-cit-frontend'); ?></h3>
 
 		<?php
 		// show any error messages after form submission
@@ -47,27 +60,27 @@ function pippin_registration_form_fields() {
 		<form id="pippin_registration_form" class="pippin_form" action="" method="POST">
 			<fieldset class="register-main-info">
 				<p>
-					<label for="pippin_user_Login"><?php _e('Username'); ?></label>
+					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
 				</p>
 				<p>
-					<label for="pippin_user_email"><?php _e('Email'); ?></label>
+					<label for="pippin_user_email"><?php _e('Email', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
 				</p>
 				<p>
-					<label for="pippin_user_first"><?php _e('First Name'); ?></label>
+					<label for="pippin_user_first"><?php _e('First Name', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_first" id="pippin_user_first" type="text"/>
 				</p>
 				<p>
-					<label for="pippin_user_last"><?php _e('Last Name'); ?></label>
+					<label for="pippin_user_last"><?php _e('Last Name', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_last" id="pippin_user_last" type="text"/>
 				</p>
 				<p>
-		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mydomain' ) ?></label>
+		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
 		        </p>
 		        <p>
-		            <label for="mro_cit_user_country"><?php _e( 'Country', 'mydomain' ) ?><br />
+		            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?><br />
 
 	                <select class="cmb2_select" name="mro_cit_user_country" id="mro_cit_user_country">
 
@@ -83,7 +96,7 @@ function pippin_registration_form_fields() {
 		             </label>
 		        </p>
 				<p>
-		            <label for="mro_cit_user_membership"><?php _e( 'Membership type', 'mydomain' ) ?></label>
+		            <label for="mro_cit_user_membership"><?php _e( 'Membership type', 'mro-cit-frontend' ) ?></label>
 
 	                <select class="cmb2_select" name="mro_cit_user_membership" id="mro_cit_user_membership">
 
@@ -99,27 +112,35 @@ function pippin_registration_form_fields() {
 		    <fieldset class="register-extra-info">
 
 				<p>
-		            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mydomain' ) ?></label>
+		            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
 	                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
 		        </p>
 		    	<p>
-		            <label for="mro_cit_user_company"><?php _e( 'Company', 'mydomain' ) ?></label>
+		            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
 		        </p>
 
 		    </fieldset>
 		    <fieldset class="register-password">
 				<p>
-					<label for="password"><?php _e('Password'); ?></label>
+					<label for="password"><?php _e('Password', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_pass" id="password" class="required" type="password"/>
 				</p>
 				<p>
-					<label for="password_again"><?php _e('Password Again'); ?></label>
+					<label for="password_again"><?php _e('Password Again', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_pass_confirm" id="password_again" class="required" type="password"/>
 				</p>
+
+				<p>
+					<label>
+						<input type="checkbox" name="mc4wp-subscribe" value="1" checked />
+						<?php _e('Subscribe to our newsletter.', 'mro-cit-frontend'); ?></label>
+				</p>
+
 				<p>
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
-					<input type="submit" value="<?php _e('Register Your Account'); ?>"/>
+					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>"/>
+
 				</p>
 			</fieldset>
 		</form>
@@ -151,45 +172,45 @@ function pippin_add_new_member() {
 
 		if(username_exists($user_login)) {
 			// Username already registered
-			pippin_errors()->add('username_unavailable', __('Username already taken'));
+			pippin_errors()->add('username_unavailable', __('Username already taken', 'mro-cit-frontend'));
 		}
 		if(!validate_username($user_login)) {
 			// invalid username
-			pippin_errors()->add('username_invalid', __('Invalid username'));
+			pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
 		}
 		if($user_login == '') {
 			// empty username
-			pippin_errors()->add('username_empty', __('Please enter a username'));
+			pippin_errors()->add('username_empty', __('Please enter a username', 'mro-cit-frontend'));
 		}
 		if(!is_email($user_email)) {
 			//invalid email
-			pippin_errors()->add('email_invalid', __('Invalid email'));
+			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
 		}
 		if(email_exists($user_email)) {
 			//Email address already registered
-			pippin_errors()->add('email_used', __('Email already registered'));
+			pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
 		}
 		if($user_pass == '') {
 			// passwords do not match
-			pippin_errors()->add('password_empty', __('Please enter a password'));
+			pippin_errors()->add('password_empty', __('Please enter a password', 'mro-cit-frontend'));
 		}
 		if($user_pass != $pass_confirm) {
 			// passwords do not match
-			pippin_errors()->add('password_mismatch', __('Passwords do not match'));
+			pippin_errors()->add('password_mismatch', __('Passwords do not match', 'mro-cit-frontend'));
 		}
 
 		//MRo custom validation
 
 	    // Valid membership type
 	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
-            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mydomain' ) );
+            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mro-cit-frontend' ) );
 	    } else {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
 	    }
 
 	    // Valid country
 	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
-	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mydomain' ) );
+	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mro-cit-frontend' ) );
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
 	    }
@@ -256,7 +277,7 @@ function pippin_show_error_messages() {
 		    // Loop error codes and display errors
 		   foreach($codes as $code){
 		        $message = pippin_errors()->get_error_message($code);
-		        echo '<span class="error"><strong>' . __('Error') . '</strong>: ' . $message . '</span><br/>';
+		        echo '<span class="error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' . $message . '</span><br/>';
 		    }
 		echo '</div>';
 	}

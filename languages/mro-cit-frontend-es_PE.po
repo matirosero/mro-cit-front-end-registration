@@ -1,0 +1,148 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CIT Front End Registration and Login\n"
+"POT-Creation-Date: 2017-12-14 20:58-0600\n"
+"PO-Revision-Date: 2017-12-14 21:01-0600\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_PE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.5\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: mro-cit-front-end-registration.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: mro-cit-front-end-registration.php:42
+msgid "User registration is not enabled"
+msgstr "El registro de usuarios no está habilitado"
+
+#: mro-cit-front-end-registration.php:54
+msgid "Register as a Member"
+msgstr "Registrarse como afiliado"
+
+#: mro-cit-front-end-registration.php:63
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: mro-cit-front-end-registration.php:67
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: mro-cit-front-end-registration.php:71
+msgid "First Name"
+msgstr "Nombre"
+
+#: mro-cit-front-end-registration.php:75
+msgid "Last Name"
+msgstr "Apellidos"
+
+#: mro-cit-front-end-registration.php:79
+msgid "Phone"
+msgstr "Teléfono"
+
+#: mro-cit-front-end-registration.php:83
+msgid "Country"
+msgstr "País"
+
+#: mro-cit-front-end-registration.php:99
+msgid "Membership type"
+msgstr "Tipo de afiliación"
+
+#: mro-cit-front-end-registration.php:115
+msgid "Occupation"
+msgstr "Ocupación"
+
+#: mro-cit-front-end-registration.php:119
+msgid "Company"
+msgstr "Compañía"
+
+#: mro-cit-front-end-registration.php:126
+msgid "Password"
+msgstr "Contraseña"
+
+#: mro-cit-front-end-registration.php:130
+msgid "Password Again"
+msgstr "Repetir contraseña"
+
+#: mro-cit-front-end-registration.php:137
+msgid "Subscribe to our newsletter."
+msgstr "Suscribirse a nuestra lista de correos."
+
+#: mro-cit-front-end-registration.php:142
+msgid "Become a member"
+msgstr "Convertirse en afiliado"
+
+#: mro-cit-front-end-registration.php:175
+msgid "Username already taken"
+msgstr "El nombre de usuario ya está en uso"
+
+#: mro-cit-front-end-registration.php:179
+msgid "Invalid username"
+msgstr "Nombre de usuario inválido"
+
+#: mro-cit-front-end-registration.php:183
+msgid "Please enter a username"
+msgstr "Por favor, introducir un nombre de usuario"
+
+#: mro-cit-front-end-registration.php:187
+msgid "Invalid email"
+msgstr "Correo inválido"
+
+#: mro-cit-front-end-registration.php:191
+msgid "Email already registered"
+msgstr "Correo previamente registrado"
+
+#: mro-cit-front-end-registration.php:195
+msgid "Please enter a password"
+msgstr "Por favor, introducir una contraseña"
+
+#: mro-cit-front-end-registration.php:199
+msgid "Passwords do not match"
+msgstr "Las contraseñas no coinciden"
+
+#: mro-cit-front-end-registration.php:206
+msgid "<strong>ERROR</strong>: Please enter a valid membership type."
+msgstr ""
+"<strong>ERROR</strong>: por favor introduzca un tipo de afiliación válida."
+
+#: mro-cit-front-end-registration.php:213
+msgid "<strong>ERROR</strong>: Please choose a valid country."
+msgstr "<strong>ERROR</strong>: por favor elija un país válido."
+
+#: mro-cit-front-end-registration.php:280
+msgid "Error"
+msgstr "Error"
+
+#. Plugin Name of the plugin/theme
+msgid "CIT Front End Registration and Login"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid ""
+"https://pippinsplugins.com/creating-custom-front-end-registration-and-"
+"login-forms"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Provides simple front end registration and login forms. Based on the "
+"tutorial by Pippin Williamson @ https://pippinsplugins.com/creating-custom-"
+"front-end-registration-and-login-forms"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Mat Rosero"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://matilderosero.com"
+msgstr ""
