@@ -45,7 +45,7 @@ function pippin_registration_form_fields() {
 		pippin_show_error_messages(); ?>
 
 		<form id="pippin_registration_form" class="pippin_form" action="" method="POST">
-			<fieldset>
+			<fieldset class="register-main-info">
 				<p>
 					<label for="pippin_user_Login"><?php _e('Username'); ?></label>
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
@@ -62,6 +62,53 @@ function pippin_registration_form_fields() {
 					<label for="pippin_user_last"><?php _e('Last Name'); ?></label>
 					<input name="pippin_user_last" id="pippin_user_last" type="text"/>
 				</p>
+				<p>
+		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mydomain' ) ?></label>
+	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
+		        </p>
+		        <p>
+		            <label for="mro_cit_user_country"><?php _e( 'Country', 'mydomain' ) ?><br />
+
+	                <select class="cmb2_select" name="mro_cit_user_country" id="mro_cit_user_country">
+
+	                    <?php
+	                    $countries = country_list();
+
+	                    foreach ($countries as $key => $country) {
+	                        echo '<option value="' . $key . '">' . $country . '</option>';
+	                    }
+	                    ?>
+
+	                </select>
+		             </label>
+		        </p>
+				<p>
+		            <label for="mro_cit_user_membership"><?php _e( 'Membership type', 'mydomain' ) ?></label>
+
+	                <select class="cmb2_select" name="mro_cit_user_membership" id="mro_cit_user_membership">
+
+	                    <option value="Afiliado Personal" selected="selected">Afiliado Personal</option>
+	                    <option value="Afiliado Enterprise">Afiliado Enterprise</option>
+
+	                </select>
+
+		            <span>La cuota anual para Afiliados Enterprise es $650. Le daremos seguimiento a su inscripción por correo.</span>
+		        </p>
+
+		    </fieldset>
+		    <fieldset class="register-extra-info">
+
+				<p>
+		            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mydomain' ) ?></label>
+	                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
+		        </p>
+		    	<p>
+		            <label for="mro_cit_user_company"><?php _e( 'Company', 'mydomain' ) ?></label>
+		                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
+		        </p>
+
+		    </fieldset>
+		    <fieldset class="register-password">
 				<p>
 					<label for="password"><?php _e('Password'); ?></label>
 					<input name="pippin_user_pass" id="password" class="required" type="password"/>
@@ -91,6 +138,13 @@ function pippin_add_new_member() {
 		$user_last	 	= $_POST["pippin_user_last"];
 		$user_pass		= $_POST["pippin_user_pass"];
 		$pass_confirm 	= $_POST["pippin_user_pass_confirm"];
+
+		//MRo custom user fields
+		$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+		$mro_cit_user_country = $_POST["mro_cit_user_country"];
+		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
+		$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+		$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 
 		// this is required for username checks
 		// require_once(ABSPATH . WPINC . '/registration.php');
@@ -124,6 +178,22 @@ function pippin_add_new_member() {
 			pippin_errors()->add('password_mismatch', __('Passwords do not match'));
 		}
 
+		//MRo custom validation
+
+	    // Valid membership type
+	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
+            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mydomain' ) );
+	    } else {
+	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
+	    }
+
+	    // Valid country
+	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
+	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mydomain' ) );
+	    } else {
+	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
+	    }
+
 		$errors = pippin_errors()->get_error_messages();
 
 		// only create the user in if there are no errors
@@ -140,6 +210,15 @@ function pippin_add_new_member() {
 				)
 			);
 			if($new_user_id) {
+
+				// MRo: Update user meta
+				update_user_meta( $new_user_id, 'mro_cit_user_company', $mro_cit_user_company );
+				update_user_meta( $new_user_id, 'mro_cit_user_phone', $mro_cit_user_phone );
+				update_user_meta( $new_user_id, 'mro_cit_user_occupation', $mro_cit_user_occupation );
+				update_user_meta( $new_user_id, 'mro_cit_user_country', $mro_cit_user_country );
+				update_user_meta( $new_user_id, 'mro_cit_user_membership', $mro_cit_user_membership );
+
+
 				// send an email to the admin alerting them of the registration
 				wp_new_user_notification($new_user_id);
 
@@ -180,5 +259,5 @@ function pippin_show_error_messages() {
 		        echo '<span class="error"><strong>' . __('Error') . '</strong>: ' . $message . '</span><br/>';
 		    }
 		echo '</div>';
-	}	
+	}
 }
