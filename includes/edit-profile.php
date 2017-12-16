@@ -11,15 +11,8 @@ function mro_cit_edit_profile_form() {
 		// set this to true so the CSS is loaded
 		$pippin_load_css = true;
 
-		// check to make sure user registration is enabled
-		// $registration_enabled = get_option('users_can_register');
+		$output = mro_cit_edit_profile_form_fields();
 
-		// only show the registration form if allowed
-		// if($registration_enabled) {
-			$output = mro_cit_edit_profile_form_fields();
-		// } else {
-		// 	$output = __('User registration is not enabled', 'mro-cit-frontend');
-		// }
 		return $output;
 	}
 }
@@ -31,7 +24,7 @@ function mro_cit_edit_profile_form_fields() {
 
 	global $current_user, $wp_roles;
 	// $user = get_userdata( $current_user->ID );
-	// var_dump($wp_roles);
+	// var_dump($current_user);
 
 	if ( is_user_logged_in() ) {
 
@@ -41,7 +34,7 @@ function mro_cit_edit_profile_form_fields() {
 
 			<?php
 			// show any error messages after form submission
-			pippin_show_error_messages(); 
+			pippin_show_error_messages();
 
 
 			//Show any messages
@@ -139,35 +132,45 @@ function mro_edit_member() {
 
   		write_log('Edit form function works!');
 
+  		$updated_info = array(
+  			'ID' => $current_user->ID,
+  		);
+
+  		$updated_meta = array();
+
+
 		if ( !empty( $_POST["pippin_user_email"] ) ) {
 			$user_email = sanitize_email( $_POST["pippin_user_email"] );
 
 	        if ( !is_email( $user_email ) ) {
 	        	//Invalid email
 	        	pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
-	        	// wp_redirect( home_url() . '?validation=emailnotvalid' );
-				// exit;
 	        } elseif ( email_exists( $user_email ) && ( email_exists( $user_email ) != $current_user->ID ) ) {
 	        	//Email address already registered
 				pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
-				// wp_redirect( home_url() . '?validation=emailexists' );
-				// exit;
 	        }
+
+	        $updated_info['user_email'] = $user_email;
 		}
 
 
 		if ( !empty( $_POST["pippin_user_first"] ) ) {
 			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
+			$updated_info['first_name'] = $user_first;
 		}
 
 		if ( !empty( $_POST["pippin_user_last"] ) ) {
-			$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
+			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
+			$updated_info['last_name'] = $user_last;
 		}
 
 		//MRo custom user fields
 		if ( !empty( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+		} else {
+			$mro_cit_user_phone = '';
 		}
+		$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
 
 
 		if ( !empty( $_POST["mro_cit_user_country"] ) ) {
@@ -178,44 +181,70 @@ function mro_edit_member() {
 		        pippin_errors()->add( 'country_error', __( 'Please choose a valid country.', 'mro-cit-frontend' ) );
 		    } else {
 		    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
+		    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
 		    }
 		}
 
 
 		if ( !empty( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+		} else {
+			$mro_cit_user_occupation = '';
 		}
+		$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
 
 
 		if ( !empty( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+		} else {
+			$mro_cit_user_company = '';
 		}
+		$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
 
 
 		if ( !empty($_POST['pippin_user_pass'] ) || !empty( $_POST['pippin_user_pass_confirm'] ) ) {
 			$new_user_pass		= $_POST["pippin_user_pass"];
-			$new_pass_confirm 	= $_POST["pippin_user_pass_confirm"];			
+			$new_pass_confirm 	= $_POST["pippin_user_pass_confirm"];
 
-			if($user_pass == '') {
-				// passwords do not match
-				pippin_errors()->add('password_empty', __('Please enter a password', 'mro-cit-frontend'));
-			}
-			if($user_pass != $pass_confirm) {
+			if($new_user_pass != $new_pass_confirm) {
 				// passwords do not match
 				pippin_errors()->add('password_mismatch', __('Passwords do not match', 'mro-cit-frontend'));
+			} else {
+				$updated_info['user_pass'] = $new_user_pass;
 			}
 		}
-
-
 
 		$errors = pippin_errors()->get_error_messages();
 
 		if(empty($errors)) {
 
 			write_log('No errors, can edit user!');
-			mro_cit_frontend_messages( '<p class="callout success">Your profile has been succesfully edited!</p>' );
 
-			write_log(mro_cit_frontend_messages());
+			//edit profile
+			write_log('USER ID = '.$current_user->ID);
+
+			// write_log(var_dump($updated_info));
+			// write_log(var_dump($updated_meta));
+
+			$user_data = wp_update_user( $updated_info );
+
+			foreach ($updated_meta as $key => $value) {
+				update_user_meta( $current_user->ID, $key, $value );
+			}
+
+			/* Let plugins hook in, like ACF who is handling the profile picture all by itself. Got to love the Elliot */
+		    do_action('edit_user_profile_update', $current_user->ID);
+
+			if ( is_wp_error( $user_data ) ) {
+				// There was an error, probably that user doesn't exist.
+				write_log('error :(');
+			} else {
+				write_log('YAY! it worked');
+				//Send success message
+				mro_cit_frontend_messages( '<p class="callout success">' . __('Your profile has been succesfully edited!', 'mro-cit-frontend') . '</p>' );
+
+			}
+
 
 		}
 
