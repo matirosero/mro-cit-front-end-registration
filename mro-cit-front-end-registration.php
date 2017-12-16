@@ -27,6 +27,13 @@ add_action( 'plugins_loaded', 'mro_cit_frontend_registration_load_textdomain' );
  */
 require_once( dirname( __FILE__ ) . '/includes/registration.php' );
 
+/**
+ * Login.
+ *
+ * @since 0.1.0
+ */
+require_once( dirname( __FILE__ ) . '/includes/login.php' );
+
 
 /**
  * Edit profile.
