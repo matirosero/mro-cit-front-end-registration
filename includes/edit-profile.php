@@ -23,8 +23,12 @@ add_shortcode('edit_profile_form', 'mro_cit_edit_profile_form');
 function mro_cit_edit_profile_form_fields() {
 
 	global $current_user, $wp_roles;
-	// $user = get_userdata( $current_user->ID );
+	$user = get_userdata( $current_user->ID );//use this for email or it wont update
+	
 	// var_dump($current_user);
+
+	// $current_user = wp_get_current_user();
+	// $user_info = get_userdata(1);
 
 	if ( is_user_logged_in() ) {
 
@@ -50,9 +54,10 @@ function mro_cit_edit_profile_form_fields() {
 						<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?></label>
 						<input name="pippin_user_login" id="pippin_user_login" class="required" type="text" value="<?php echo $current_user->user_login; ?>" disabled="disabled" />
 					</p>
+
 					<p>
 						<label for="pippin_user_email"><?php _e('Email', 'mro-cit-frontend'); ?></label>
-						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $current_user->user_email; ?>" />
+						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $user->user_email; ?>" />
 					</p>
 					<p>
 						<label for="pippin_user_first"><?php _e('First Name', 'mro-cit-frontend'); ?></label>
@@ -241,10 +246,17 @@ function mro_edit_member() {
 			} else {
 				write_log('YAY! it worked');
 				//Send success message
-				mro_cit_frontend_messages( '<p class="callout success">' . __('Your profile has been succesfully edited!', 'mro-cit-frontend') . '</p>' );
+				
 
 			}
 
+			mro_cit_frontend_messages( '<p class="callout success">' . __('Your profile has been succesfully edited!', 'mro-cit-frontend') . '</p>' );
+
+			// if ( count($error) == 0 ) {
+			// 	//action hook for plugins and extra fields saving
+			// 	do_action('edit_user_profile_update', $current_user->ID);
+			// 	wp_redirect( get_permalink().'?updated=true' ); exit;
+			// } 
 
 		}
 
