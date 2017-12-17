@@ -36,6 +36,14 @@ require_once( dirname( __FILE__ ) . '/includes/login.php' );
 
 
 /**
+ * Lost password.
+ *
+ * @since 0.1.0
+ */
+require_once( dirname( __FILE__ ) . '/includes/lost-password.php' );
+
+
+/**
  * Edit profile.
  *
  * @since 0.1.0
