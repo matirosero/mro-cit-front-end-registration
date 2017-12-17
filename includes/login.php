@@ -1,4 +1,7 @@
 <?php
+/*
+ * Additional SRC: https://www.hongkiat.com/blog/wordpress-custom-loginpage/
+ */
 
 // user login form
 function pippin_login_form() {
@@ -9,6 +12,22 @@ function pippin_login_form() {
 
 		// set this to true so the CSS is loaded
 		$pippin_load_css = true;
+
+
+		//From Hongkiat tut
+
+		//Check login variable
+		$login  = (isset($_GET['login']) ) ? $_GET['login'] : 0;
+
+		//Show error message
+		if ( $login === "failed" ) {
+			echo '<p class="callout alert login-msg"><strong>ERROR:</strong> Invalid username and/or password.</p>';
+		} elseif ( $login === "empty" ) {
+		  	echo '<p class="callout alert login-msg"><strong>ERROR:</strong> Username and/or Password is empty.</p>';
+		} elseif ( $login === "false" ) {
+		  	echo '<p class="callout warning login-msg"><strong>ERROR:</strong> You are logged out.</p>';
+		}
+
 
 		$output = pippin_login_form_fields();
 	} else {
@@ -29,6 +48,7 @@ function pippin_login_form_fields() {
 	) );
 
 }
+
 
 /*
  * Replace login url
@@ -51,7 +71,9 @@ function mro_cit_front_end_login_fail( $username ) {
 $referrer = $_SERVER['HTTP_REFERER'];
 // if there's a valid referrer, and it's not the default log-in screen
 if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
-    wp_redirect( home_url( '/perfil/?login=failed' ));
+    // wp_redirect( home_url( '/perfil/?login=failed' ));
+    // wp_redirect( get_permalink( 66 ) . "?login=failed" );
+    wp_redirect( $referrer . "?login=failed" );
     exit;
 }
 
@@ -70,10 +92,17 @@ $referrer = $_SERVER['HTTP_REFERER'];
 // if there's a valid referrer, and it's not the default log-in screen
 if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
     if( $username == "" || $password == "" ){
-        wp_redirect( home_url( '/perfil/?login=empty' ));
+        // wp_redirect( home_url( '/perfil/?login=empty' ));
+        // wp_redirect( get_permalink( 66 ) . "?login=empty" );
+        wp_redirect( $referrer . "?login=empty" );
         exit;
     }
 }
 
 }
 // Replace my constant 'LOGIN_PAGE_ID' with your custom login page id.
+
+
+/*
+ * TODO: Replace redirect plugin with custom code for when logged out
+ */
