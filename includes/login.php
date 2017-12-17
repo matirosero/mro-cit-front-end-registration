@@ -21,11 +21,11 @@ function pippin_login_form() {
 
 		//Show error message
 		if ( $login === "failed" ) {
-			echo '<p class="callout alert login-msg"><strong>ERROR:</strong> Invalid username and/or password.</p>';
+			_e( '<p class="callout alert login-msg"><strong>ERROR:</strong> Invalid username and/or password.</p>', 'mro-cit-frontend');
 		} elseif ( $login === "empty" ) {
-		  	echo '<p class="callout alert login-msg"><strong>ERROR:</strong> Username and/or Password is empty.</p>';
+		  	_e( '<p class="callout alert login-msg"><strong>ERROR:</strong> Username and/or Password is empty.</p>', 'mro-cit-frontend');
 		} elseif ( $login === "false" ) {
-		  	echo '<p class="callout warning login-msg"><strong>ERROR:</strong> You are logged out.</p>';
+		  	_e( '<p class="callout warning login-msg"><strong>ERROR:</strong> You are logged out.</p>', 'mro-cit-frontend');
 		}
 
 
@@ -44,7 +44,9 @@ add_shortcode('login_form', 'pippin_login_form');
 function pippin_login_form_fields() {
 
 	return wp_login_form( array( 
-		'echo' => false 
+		'echo' => false,
+		'label_username' => __( 'Username or Email Address', 'mro-cit-frontend' ),
+		// 'label_password' => __( 'Username' ), 
 	) );
 
 }
@@ -67,15 +69,15 @@ function mro_cit_login_page( $login_url, $redirect, $force_reauth ) {
 add_action( 'wp_login_failed', 'mro_cit_front_end_login_fail' );
 function mro_cit_front_end_login_fail( $username ) {
 
-// Getting URL of the login page
-$referrer = $_SERVER['HTTP_REFERER'];
-// if there's a valid referrer, and it's not the default log-in screen
-if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
-    // wp_redirect( home_url( '/perfil/?login=failed' ));
-    // wp_redirect( get_permalink( 66 ) . "?login=failed" );
-    wp_redirect( $referrer . "?login=failed" );
-    exit;
-}
+	// Getting URL of the login page
+	$referrer = $_SERVER['HTTP_REFERER'];
+	// if there's a valid referrer, and it's not the default log-in screen
+	if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
+	    // wp_redirect( home_url( '/perfil/?login=failed' ));
+	    // wp_redirect( get_permalink( 66 ) . "?login=failed" );
+	    wp_redirect( $referrer . "?login=failed" );
+	    exit;
+	}
 
 }
 
@@ -86,23 +88,23 @@ if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer
 add_action( 'authenticate', 'mro_cit_check_username_password', 1, 3);
 function mro_cit_check_username_password( $login, $username, $password ) {
 
-// Getting URL of the login page
-$referrer = $_SERVER['HTTP_REFERER'];
+	// Getting URL of the login page
+	$referrer = $_SERVER['HTTP_REFERER'];
 
-// if there's a valid referrer, and it's not the default log-in screen
-if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
-    if( $username == "" || $password == "" ){
-        // wp_redirect( home_url( '/perfil/?login=empty' ));
-        // wp_redirect( get_permalink( 66 ) . "?login=empty" );
-        wp_redirect( $referrer . "?login=empty" );
-        exit;
-    }
-}
+	// if there's a valid referrer, and it's not the default log-in screen
+	if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
+	    if( $username == "" || $password == "" ){
+	        // wp_redirect( home_url( '/perfil/?login=empty' ));
+	        // wp_redirect( get_permalink( 66 ) . "?login=empty" );
+	        wp_redirect( $referrer . "?login=empty" );
+	        exit;
+	    }
+	}
 
 }
-// Replace my constant 'LOGIN_PAGE_ID' with your custom login page id.
 
 
 /*
- * TODO: Replace redirect plugin with custom code for when logged out
+ * TODO: Replace redirect plugin with custom code for when logged out, with message
+ * (see Hongkiat)
  */
