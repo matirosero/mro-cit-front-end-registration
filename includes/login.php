@@ -21,7 +21,16 @@ function pippin_login_form() {
 
 		//Show error message
 		if ( $login === "failed" ) {
-			_e( '<p class="callout alert login-msg"><strong>ERROR:</strong> Invalid username and/or password.</p>', 'mro-cit-frontend');
+
+			$lostpasword_url = wp_lostpassword_url();
+
+			$alert = '<p class="callout alert login-msg">'
+				. __( '<strong>ERROR:</strong> Invalid username and/or password.', 'mro-cit-frontend')
+				. '<br /><a href="' . $lostpasword_url . '">' . __( 'Lost password?', 'mro-cit-frontend') . '</a>'
+				. '</p>';
+
+			echo $alert;
+
 		} elseif ( $login === "empty" ) {
 		  	_e( '<p class="callout alert login-msg"><strong>ERROR:</strong> Username and/or Password is empty.</p>', 'mro-cit-frontend');
 		} elseif ( $login === "false" ) {
@@ -43,11 +52,16 @@ add_shortcode('login_form', 'pippin_login_form');
 // login form fields
 function pippin_login_form_fields() {
 
-	return wp_login_form( array( 
+	// See parameters: https://code.tutsplus.com/tutorials/build-a-custom-wordpress-user-flow-part-1-replace-the-login-page--cms-23627
+
+
+	$return = wp_login_form( array(
 		'echo' => false,
 		'label_username' => __( 'Username or Email Address', 'mro-cit-frontend' ),
-		// 'label_password' => __( 'Username' ), 
+		// 'label_password' => __( 'Username' ),
 	) );
+
+	return $return;
 
 }
 
@@ -71,6 +85,9 @@ function mro_cit_front_end_login_fail( $username ) {
 
 	// Getting URL of the login page
 	$referrer = $_SERVER['HTTP_REFERER'];
+
+	$referrer = mro_cit_remove_qs_key($referrer, 'login');
+
 	// if there's a valid referrer, and it's not the default log-in screen
 	if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {
 	    // wp_redirect( home_url( '/perfil/?login=failed' ));
@@ -90,6 +107,7 @@ function mro_cit_check_username_password( $login, $username, $password ) {
 
 	// Getting URL of the login page
 	$referrer = $_SERVER['HTTP_REFERER'];
+	$referrer = mro_cit_remove_qs_key($referrer, 'login');
 
 	// if there's a valid referrer, and it's not the default log-in screen
 	if( !empty( $referrer ) && !strstr( $referrer,'wp-login' ) && !strstr( $referrer,'wp-admin' ) ) {

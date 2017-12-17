@@ -80,3 +80,28 @@ function mro_cit_frontend_messages( $new_message = null) {
 	}
 	return $message;
 }
+
+//http://developer-paradize.blogspot.com/2013/10/how-to-remove-query-string-from-url-in.html
+function mro_cit_remove_qs_key($url, $key) {
+	return preg_replace('/(?:&|(\?))' . $key . '=[^&]*(?(1)&|)?/i', "$1", $url);
+}
+
+
+//https://maxchadwick.xyz/blog/stripping-a-query-parameter-from-a-url-in-php
+function mro_cit_http_strip_query_param($url, $param) {
+    $pieces = parse_url($url);
+    if (!$pieces['query']) {
+        return $url;
+    }
+
+    $query = [];
+    parse_str($pieces['query'], $query);
+    if (!isset($query[$param])) {
+        return $url;
+    }
+
+    unset($query[$param]);
+    $pieces['query'] = http_build_query($query);
+
+    return http_build_url($pieces);
+}
