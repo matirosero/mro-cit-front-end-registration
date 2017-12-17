@@ -20,16 +20,27 @@ function pippin_login_form() {
 }
 add_shortcode('login_form', 'pippin_login_form');
 
+add_filter( 'login_url', 'my_login_page', 10, 3 );
+function my_login_page( $login_url, $redirect, $force_reauth ) {
+    return home_url( '/perfil/?redirect_to=' . $redirect );
+}
+
+
+
 
 // login form fields
 function pippin_login_form_fields() {
 
+
+	
 	ob_start(); ?>
 		<h3 class="pippin_header"><?php _e('Login'); ?></h3>
 
 		<?php
 		// show any error messages after form submission
 		pippin_show_error_messages(); ?>
+
+
 
 		<form id="pippin_login_form"  class="pippin_form" action="" method="post">
 			<fieldset>
@@ -54,6 +65,7 @@ function pippin_login_form_fields() {
 		</form>
 	<?php
 	return ob_get_clean();
+	
 }
 
 // logs a member in after submitting a form
@@ -83,6 +95,8 @@ function pippin_login_member() {
 		}
 
 		// check the user's login with their password
+
+		//THIS FAILS WHEN USER IS WRONG
 		if(!wp_check_password($_POST['pippin_user_pass'], $user->user_pass, $user->ID)) {
 			// if the password is incorrect for the specified user
 			pippin_errors()->add('empty_password', __('Incorrect password'));
