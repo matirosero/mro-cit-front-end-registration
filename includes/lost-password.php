@@ -128,49 +128,58 @@ function mro_reset_password() {
 			}
 
 			write_log('Sitename: '.$site_name);
+
+			$message = __( 'Someone has requested a password reset for the following account:', 'mro-cit-frontend' ) . "\r\n\r\n";
+			/* translators: %s: site name */
+			$message .= sprintf( __( 'Site Name: %s', 'mro-cit-frontend'), $site_name ) . "\r\n\r\n";
+			/* translators: %s: user login */
+			$message .= sprintf( __( 'Username: %s', 'mro-cit-frontend'), $user_login ) . "\r\n\r\n";
+			$message .= __( 'If this was a mistake, just ignore this email and nothing will happen.', 'mro-cit-frontend' ) . "\r\n\r\n";
+			$message .= __( 'To reset your password, visit the following address:', 'mro-cit-frontend' ) . "\r\n\r\n";
+			$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . ">\r\n";
+
+			/* translators: Password reset email subject. %s: Site name */
+			$title = sprintf( __( '[%s] Password Reset', 'mro-cit-frontend' ), $site_name );
+
+
+			/**
+			 * Filters the subject of the password reset email.
+			 *
+			 * @since 2.8.0
+			 * @since 4.4.0 Added the `$user_login` and `$user_data` parameters.
+			 *
+			 * @param string  $title      Default email title.
+			 * @param string  $user_login The username for the user.
+			 * @param WP_User $user_data  WP_User object.
+			 */
+			$title = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
+
+			/**
+			 * Filters the message body of the password reset mail.
+			 *
+			 * If the filtered message is empty, the password reset email will not be sent.
+			 *
+			 * @since 2.8.0
+			 * @since 4.1.0 Added `$user_login` and `$user_data` parameters.
+			 *
+			 * @param string  $message    Default mail message.
+			 * @param string  $key        The activation key.
+			 * @param string  $user_login The username for the user.
+			 * @param WP_User $user_data  WP_User object.
+			 */
+			$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
+
+			if ( $message && !wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) ) {
+				write_log('Something went wrong');
+				wp_die( __('The email could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
+			} else {
+				write_log('Email was sent');
+			}
+
+			write_log($message);
+
 		}
 
-
-
-		// $user_login	= sanitize_user( $_POST["user_login"] );
-
-		//https://hitchhackerguide.com/2011/02/12/retrieve_password/
-		//http://www.sutanaryan.com/2011/10/how-to-create-custom-reset-or-forget-password-in-wordpress/
-
-		// require_once(rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/wp-login.php');
-
-		// $errors = retrieve_password();
-		// do_action( 'lostpassword_post');
-
-		//SEE THIS http://www.sutanaryan.com/2014/08/custom-user-reset-forgot-password-using-ajax-wordpress/
-
-        // if ( is_wp_error( $errors ) ) {
-        //     // Errors found
-        //     $redirect_url = home_url( 'member-password-lost' );
-        //     $redirect_url = add_query_arg( 'errors', join( ',', $errors->get_error_codes() ), $redirect_url );
-        // } else {
-        //     // Email sent
-        //     $redirect_url = home_url( 'member-login' );
-        //     $redirect_url = add_query_arg( 'checkemail', 'confirm', $redirect_url );
-        // }
-
-		//meh
-		// if(!username_exists($user_login)) {
-		// 	// Username already registered
-		// 	pippin_errors()->add('username_unavailable', __('Username does not exist', 'mro-cit-frontend'));
-		// }
-		// if(!validate_username($user_login)) {
-		// 	// invalid username
-		// 	pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
-		// }
-		// if($user_login == '') {
-		// 	// empty username
-		// 	pippin_errors()->add('username_empty', __('Please enter a username', 'mro-cit-frontend'));
-		// }
-
-		// $errors = pippin_errors()->get_error_messages();
-
-		if(empty($errors)) {}
 	}
 }
 add_action('init', 'mro_reset_password');
