@@ -42,7 +42,10 @@ function mro_cit_lost_password_form_fields() {
 			// show any error messages after form submission
 			pippin_show_error_messages();
 
-
+			//Show any messages
+			if ( mro_cit_frontend_messages() != '' ) {
+				echo mro_cit_frontend_messages();
+			}
 			?>
 
 			<form id="lostpasswordform" action="<?php echo wp_lostpassword_url(); ?>" method="post">
@@ -173,6 +176,7 @@ function mro_reset_password() {
 				write_log('Something went wrong');
 				wp_die( __('The email could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
 			} else {
+				mro_cit_frontend_messages( '<p class="callout success">' . __('Check your email for your confirmation link.', 'mro-cit-frontend') . '</p>' );
 				write_log('Email was sent');
 			}
 

@@ -71,7 +71,7 @@ function pippin_login_form_fields() {
  */
 add_filter( 'login_url', 'mro_cit_login_page', 10, 3 );
 function mro_cit_login_page( $login_url, $redirect, $force_reauth ) {
-    return home_url( '/perfil/?redirect_to=' . $redirect );
+    return home_url( '/perfil/' );
 }
 
 

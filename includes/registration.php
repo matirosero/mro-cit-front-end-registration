@@ -1,5 +1,16 @@
 <?php
 
+// Replace registration link
+add_filter( 'register', 'mro_cit_register_link' );
+function mro_cit_register_link( $link ) {
+	/*Required: Replace Register_URL with the URL of registration*/
+	// $custom_register_link = 'Register_URL';
+	/*Optional: You can optionally change the register text e.g. Signup*/
+	$register_text = __('Become a member', 'mro-cit-frontend');
+	$link = '<a href="'.get_permalink( 1839 ).'">'.$register_text.'</a>';
+    return $link;
+}
+
 // user registration login form
 function pippin_registration_form() {
 
