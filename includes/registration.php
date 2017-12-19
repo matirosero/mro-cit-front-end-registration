@@ -51,7 +51,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		<h3><?php _e('Register as a Member', 'mro-cit-frontend'); ?></h3>
 
 		<?php
-		if ( $membership == 'enterprise' ) { ?>
+		if ( $membership != 'enterprise' ) { ?>
 
 			<p><?php _e('Use this form if you wish to sign up for a Personal membership.', 'mro-cit-frontend'); ?>
 				<br /><a href="<?php echo get_permalink( 1853 ); ?>"><?php _e('Sign up for an Enterprise membership instead.', 'mro-cit-frontend'); ?></a>
@@ -74,28 +74,70 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				<p>
 					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?></label>
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
-				</p>
-				<p>
-					<label for="pippin_user_email"><?php _e('Email', 'mro-cit-frontend'); ?></label>
-					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
+					<?php
+					if ( $membership == 'enterprise' ) { ?>
+						<span>Sugerimos utilizar algo relacionado al nombre de la empresa.</span>
+					<?php } ?>
 				</p>
 
 				<?php
-				if ( $membership != 'enterprise' ) { ?>
+				if ( $membership == 'enterprise' ) { ?>
 					<p>
-						<label for="pippin_user_first"><?php _e('First Name', 'mro-cit-frontend'); ?></label>
-						<input name="pippin_user_first" id="pippin_user_first" type="text"/>
-					</p>
-					<p>
-						<label for="pippin_user_last"><?php _e('Last Name', 'mro-cit-frontend'); ?></label>
-						<input name="pippin_user_last" id="pippin_user_last" type="text"/>
-					</p>
+						<label for="pippin_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
+						<input name="pippin_user_nickname" id="pippin_user_nickname" type="text"/>
+					</p>					
 				<?php } ?>
+
+				<?php
+				// Set labels for email and name according to type of membership
+				if ( $membership == 'enterprise' ) { 
+					$first_label = __('Contact First Name', 'mro-cit-frontend');
+					$last_label = __('Contact Last Name', 'mro-cit-frontend');
+					$email_label = __('Contact Email', 'mro-cit-frontend');
+				} else {
+					$first_label = __('First Name', 'mro-cit-frontend');
+					$last_label = __('Last Name', 'mro-cit-frontend');
+					$email_label = __('Email', 'mro-cit-frontend');
+				} ?>
+
+				<p>
+					<label for="pippin_user_email"><?php echo $email_label; ?></label>
+					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
+					<?php
+					if ( $membership == 'enterprise' ) { ?>
+						<span>Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</span>
+					<?php } ?>
+				</p>
+
+				<p>
+					<label for="pippin_user_first"><?php echo $first_label; ?></label>
+					<input name="pippin_user_first" id="pippin_user_first" type="text"/>
+				</p>
+				<p>
+					<label for="pippin_user_last"><?php echo $last_label; ?></label>
+					<input name="pippin_user_last" id="pippin_user_last" type="text"/>
+				</p>
 
 				<p>
 		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
 		        </p>
+
+			    <?php
+				// If NOT enterprise, more details
+				if ( $membership != 'enterprise' ) { ?>
+
+					<p>
+			            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
+		                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
+			        </p>
+			    	<p>
+			            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
+			                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
+			        </p>
+
+				<?php } ?>
+
 		        <p>
 		            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?><br />
 
@@ -112,6 +154,30 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 	                </select>
 		             </label>
 		        </p>
+
+				<?php
+				// If enterprise, secondary contact details
+				if ( $membership == 'enterprise' ) { ?>
+
+				</fieldset>
+				<fieldset class="register-secondary-contact">
+
+					<p>
+						<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'demo-functions' ); ?></label>
+						<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
+					</p>
+
+					<p>
+						<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-functions' ); ?></label>
+						<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
+					</p>
+					<p>
+						<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-functions' ); ?></label>
+						<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
+					</p>
+
+				<?php } ?>
+
 		        <?php
 		        /*
 				<p>
@@ -129,19 +195,9 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		        */
 		        ?>
 
-		    </fieldset>
-		    <fieldset class="register-extra-info">
 
-				<p>
-		            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
-	                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
-		        </p>
-		    	<p>
-		            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
-		                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
-		        </p>
+			</fieldset>
 
-		    </fieldset>
 		    <fieldset class="register-password">
 				<p>
 					<label for="password"><?php _e('Password', 'mro-cit-frontend'); ?></label>
@@ -255,6 +311,8 @@ function pippin_add_new_member() {
 					'user_email'		=> $user_email,
 					'first_name'		=> $user_first,
 					'last_name'			=> $user_last,
+					'nickname'       	=> $user_first,
+				    'display_name'   	=> $user_first,
 					'user_registered'	=> date('Y-m-d H:i:s'),
 					'role'				=> 'afiliado_personal'
 				)

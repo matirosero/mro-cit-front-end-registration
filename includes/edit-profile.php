@@ -27,8 +27,8 @@ function mro_cit_edit_profile_form_fields() {
 
 	// var_dump($current_user);
 
-	// $current_user = wp_get_current_user();
-	// $user_info = get_userdata(1);
+	// $user_info = get_userdata($current_user->ID);
+	// var_dump($user_info);
 
 	if ( is_user_logged_in() ) {
 
@@ -162,6 +162,8 @@ function mro_edit_member() {
 		if ( !empty( $_POST["pippin_user_first"] ) ) {
 			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
 			$updated_info['first_name'] = $user_first;
+			$updated_info['nickname'] = $user_first;
+			$updated_info['display_name'] = $user_first;
 		}
 
 		if ( !empty( $_POST["pippin_user_last"] ) ) {
