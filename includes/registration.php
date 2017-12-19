@@ -12,7 +12,11 @@ function mro_cit_register_link( $link ) {
 }
 
 // user registration login form
-function pippin_registration_form() {
+function pippin_registration_form($atts) {
+
+	extract(shortcode_atts(array(
+        'membership' => 'personal',
+    ), $atts));
 
 	// only show the registration form to non-logged-in members
 	if(!is_user_logged_in()) {
@@ -27,7 +31,18 @@ function pippin_registration_form() {
 
 		// only show the registration form if allowed
 		if($registration_enabled) {
-			$output = pippin_registration_form_fields();
+
+			// $membership = array('membership');
+
+			var_dump($membership);
+
+			if ( $membership == 'personal' ) {
+				$output = pippin_registration_form_fields();
+			} else {
+				$output = array('membership');
+			}
+
+			
 		} else {
 			$output = __('User registration is not enabled', 'mro-cit-frontend');
 		}
@@ -42,6 +57,9 @@ function pippin_registration_form_fields() {
 
 	ob_start(); ?>
 		<h3><?php _e('Register as a Member', 'mro-cit-frontend'); ?></h3>
+
+		<p><?php _e('Use this form if you wish to sign up for a Personal membership.', 'mro-cit-frontend'); ?>
+			<br /><a href="<?php echo get_permalink( 1853 ); ?>"><?php _e('Sign up for an Enterprise membership instead.', 'mro-cit-frontend'); ?></a></p>
 
 		<?php
 		// show any error messages after form submission
@@ -85,6 +103,8 @@ function pippin_registration_form_fields() {
 	                </select>
 		             </label>
 		        </p>
+		        <?php
+		        /*
 				<p>
 		            <label for="mro_cit_user_membership"><?php _e( 'Membership type', 'mro-cit-frontend' ) ?></label>
 
@@ -97,6 +117,8 @@ function pippin_registration_form_fields() {
 
 		            <span>La cuota anual para Afiliados Enterprise es $650. Le daremos seguimiento a su inscripción por correo.</span>
 		        </p>
+		        */
+		        ?>
 
 		    </fieldset>
 		    <fieldset class="register-extra-info">
@@ -129,6 +151,9 @@ function pippin_registration_form_fields() {
 
 				<p>
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
+
+					<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
+
 					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>"/>
 
 				</p>
