@@ -161,6 +161,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 				</fieldset>
 				<fieldset class="register-secondary-contact">
+					 <legend><?php _e( 'Secondary Contact (optional)', 'demo-functions' ); ?></legend>
 
 					<p>
 						<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'demo-functions' ); ?></label>
