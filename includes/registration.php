@@ -59,7 +59,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 		<?php } else { ?>
 
-			<p><?php _e('Use this form if you wish to sign up for an Enterprise membership.', 'mro-cit-frontend'); ?>
+			<p><?php _e('Use this form if you wish to sign up for an Enterprise membership. We will be in contact with you to arrange payment and other final details.', 'mro-cit-frontend'); ?>
 				<br /><a href="<?php echo get_permalink( 1839 ); ?>"><?php _e('Sign up for a Personal membership instead.', 'mro-cit-frontend'); ?></a>
 			</p>
 
@@ -83,14 +83,14 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				<?php
 				if ( $membership == 'enterprise' ) { ?>
 					<p>
-						<label for="pippin_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
-						<input name="pippin_user_nickname" id="pippin_user_nickname" type="text"/>
-					</p>					
+						<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
+						<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
+					</p>
 				<?php } ?>
 
 				<?php
 				// Set labels for email and name according to type of membership
-				if ( $membership == 'enterprise' ) { 
+				if ( $membership == 'enterprise' ) {
 					$first_label = __('Contact First Name', 'mro-cit-frontend');
 					$last_label = __('Contact Last Name', 'mro-cit-frontend');
 					$email_label = __('Contact Email', 'mro-cit-frontend');
@@ -159,43 +159,25 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				// If enterprise, secondary contact details
 				if ( $membership == 'enterprise' ) { ?>
 
-				</fieldset>
-				<fieldset class="register-secondary-contact">
-					 <legend><?php _e( 'Secondary Contact (optional)', 'demo-functions' ); ?></legend>
+					</fieldset>
+					<fieldset class="register-secondary-contact">
+						 <legend><?php _e( 'Secondary Contact (optional)', 'demo-functions' ); ?></legend>
 
-					<p>
-						<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'demo-functions' ); ?></label>
-						<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
-					</p>
+						<p>
+							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'demo-functions' ); ?></label>
+							<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
+						</p>
 
-					<p>
-						<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-functions' ); ?></label>
-						<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
-					</p>
-					<p>
-						<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-functions' ); ?></label>
-						<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
-					</p>
+						<p>
+							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-functions' ); ?></label>
+							<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
+						</p>
+						<p>
+							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-functions' ); ?></label>
+							<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
+						</p>
 
 				<?php } ?>
-
-		        <?php
-		        /*
-				<p>
-		            <label for="mro_cit_user_membership"><?php _e( 'Membership type', 'mro-cit-frontend' ) ?></label>
-
-	                <select class="cmb2_select" name="mro_cit_user_membership" id="mro_cit_user_membership">
-
-	                    <option value="Afiliado Personal" selected="selected">Afiliado Personal</option>
-	                    <option value="Afiliado Enterprise">Afiliado Enterprise</option>
-
-	                </select>
-
-		            <span>La cuota anual para Afiliados Enterprise es $650. Le daremos seguimiento a su inscripción por correo.</span>
-		        </p>
-		        */
-		        ?>
-
 
 			</fieldset>
 
@@ -239,22 +221,10 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 // register a new user
 function pippin_add_new_member() {
   	if (isset( $_POST["pippin_user_login"] ) && isset( $_POST['pippin_register_nonce'] ) && wp_verify_nonce($_POST['pippin_register_nonce'], 'pippin-register-nonce')) {
-		$user_login		= sanitize_user( $_POST["pippin_user_login"] );
-		$user_email		= sanitize_email( $_POST["pippin_user_email"] );
-		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
-		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
-		$user_pass		= $_POST["pippin_user_pass"];
-		$pass_confirm 	= $_POST["pippin_user_pass_confirm"];
 
-		//MRo custom user fields
-		$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
-		$mro_cit_user_country = $_POST["mro_cit_user_country"];
-		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
-		$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
-		$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 
-		// this is required for username checks
-		// require_once(ABSPATH . WPINC . '/registration.php');
+		// Process username
+		$user_login = sanitize_user( $_POST["pippin_user_login"] );
 
 		if(username_exists($user_login)) {
 			// Username already registered
@@ -268,6 +238,11 @@ function pippin_add_new_member() {
 			// empty username
 			pippin_errors()->add('username_empty', __('Please enter a username', 'mro-cit-frontend'));
 		}
+
+
+		//Process email
+		$user_email = sanitize_email( $_POST["pippin_user_email"] );
+
 		if(!is_email($user_email)) {
 			//invalid email
 			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
@@ -276,6 +251,48 @@ function pippin_add_new_member() {
 			//Email address already registered
 			pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
 		}
+
+
+		// Process membership type
+		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
+	    // Valid membership type
+	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
+            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mro-cit-frontend' ) );
+	    } else {
+	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
+
+	    	if ( $mro_cit_user_membership == 'afiliado_enterprise') {
+	    		$mro_cit_user_membership = 'afiliado_enterprise_pendiente';
+	    	}
+	    }
+
+
+		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
+			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+		}
+		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
+			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+		}
+
+		if ( isset( $_POST["mro_cit_user_company"] ) ) {
+			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+		}
+
+
+		//Process country
+		$mro_cit_user_country = $_POST["mro_cit_user_country"];
+	    // Valid country
+	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
+	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mro-cit-frontend' ) );
+	    } else {
+	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
+	    }
+
+
+		//Process password
+		$user_pass		= $_POST["pippin_user_pass"];
+		$pass_confirm 	= $_POST["pippin_user_pass_confirm"];
+
 		if($user_pass == '') {
 			// passwords do not match
 			pippin_errors()->add('password_empty', __('Please enter a password', 'mro-cit-frontend'));
@@ -285,21 +302,32 @@ function pippin_add_new_member() {
 			pippin_errors()->add('password_mismatch', __('Passwords do not match', 'mro-cit-frontend'));
 		}
 
-		//MRo custom validation
 
-	    // Valid membership type
-	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
-            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mro-cit-frontend' ) );
-	    } else {
-	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
-	    }
+		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
+		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
 
-	    // Valid country
-	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
-	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mro-cit-frontend' ) );
-	    } else {
-	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
-	    }
+
+		if ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
+			
+			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
+				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
+			} else {
+				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
+				$user_display_name 	= $user_nickname;
+			}
+		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
+
+			$user_nickname 	= '';
+			
+			if ( $user_first != '' && $user_last != '' ) {
+				$user_display_name 	= $user_first.' '.$user_last;
+			} if ( $user_first != '' ) {
+				$user_display_name 	= $user_first;
+			} else {
+				$user_display_name 	= $user_login;
+			}
+		}
+
 
 		$errors = pippin_errors()->get_error_messages();
 
@@ -312,10 +340,10 @@ function pippin_add_new_member() {
 					'user_email'		=> $user_email,
 					'first_name'		=> $user_first,
 					'last_name'			=> $user_last,
-					'nickname'       	=> $user_first,
-				    'display_name'   	=> $user_first,
+					'nickname'       	=> $user_nickname,
+				    'display_name'   	=> $user_display_name,
 					'user_registered'	=> date('Y-m-d H:i:s'),
-					'role'				=> 'afiliado_personal'
+					'role'				=> $mro_cit_user_membership,
 				)
 			);
 			if($new_user_id) {
@@ -325,7 +353,7 @@ function pippin_add_new_member() {
 				update_user_meta( $new_user_id, 'mro_cit_user_phone', $mro_cit_user_phone );
 				update_user_meta( $new_user_id, 'mro_cit_user_occupation', $mro_cit_user_occupation );
 				update_user_meta( $new_user_id, 'mro_cit_user_country', $mro_cit_user_country );
-				update_user_meta( $new_user_id, 'mro_cit_user_membership', $mro_cit_user_membership );
+				// update_user_meta( $new_user_id, 'mro_cit_user_membership', $mro_cit_user_membership );
 
 
 				// send an email to the admin alerting them of the registration
