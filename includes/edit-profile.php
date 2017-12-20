@@ -5,7 +5,7 @@ add_filter( 'edit_profile_url', 'mro_cit_modify_profile_url', 10, 3 );
 /**
  * http://core.trac.wordpress.org/browser/tags/3.5.1/wp-includes/link-template.php#L2284
  *
- * @param string $scheme The scheme to use. 
+ * @param string $scheme The scheme to use.
  * Default is 'admin'. 'http' or 'https' can be passed to force those schemes.
 */
 function mro_cit_modify_profile_url( $url, $user_id, $scheme ) {
@@ -26,9 +26,9 @@ function mro_cit_edit_profile_form() {
 		// set this to true so the CSS is loaded
 		$pippin_load_css = true;
 
-		$output = mro_cit_edit_profile_form_fields();
+		$output = mro_cit_profile_info();
+		$output .= mro_cit_edit_profile_form_fields();
 
-		
 	} else {
 		$output = '<p class="callout warning">' . __('You must log in to edit your profile.', 'mro-cit-frontend') . '</p>';
 	}
@@ -38,22 +38,50 @@ function mro_cit_edit_profile_form() {
 add_shortcode('edit_profile_form', 'mro_cit_edit_profile_form');
 
 
+// profile info
+function mro_cit_profile_info() {
+	global $current_user, $wp_roles;
+	$user = get_userdata( $current_user->ID );//use this for email or it wont update
+
+
+	if ( is_user_logged_in() ) {
+		ob_start(); ?>
+
+		<?php if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) ) {
+			$membership = 'Afiliado Enterprise (pendiente)';
+		} else {
+			$role = $user->roles[0];
+			$membership = $wp_roles->roles[ $role ]['name'];
+		} ?>
+
+		<h2>
+			<?php echo $user->display_name; ?>
+			<small><?php echo $membership; ?></small>
+		</h2>
+
+		<?php
+		$registered = $user->user_registered;
+		$date = date_i18n( 'F j, Y', strtotime( $registered ) ); 
+		?>
+
+		<p><?php _ex('Member since', 'Registration date', 'mro-cit-frontend'); ?> <strong><?php echo $date; ?></strong>.</p>
+
+		<?php
+		return ob_get_clean();
+	}
+}
+
+
 // registration form fields
 function mro_cit_edit_profile_form_fields() {
 
 	global $current_user, $wp_roles;
 	$user = get_userdata( $current_user->ID );//use this for email or it wont update
 
-	// var_dump($current_user);
-
-	// $user_info = get_userdata($current_user->ID);
-	// var_dump($user_info);
-
 	if ( is_user_logged_in() ) {
 
 		ob_start(); ?>
-			<h1>Hi <?php echo $current_user->user_firstname; ?></h1>
-			<h3><?php _e('Edit your profile', 'mro-cit-frontend'); ?></h3>
+			<h4><?php _e('Edit your profile', 'mro-cit-frontend'); ?></h4>
 
 			<?php
 			// show any error messages after form submission
@@ -70,9 +98,11 @@ function mro_cit_edit_profile_form_fields() {
 			<form id="mro_edit_profile_form" class="pippin_form" action="" method="POST">
 				<fieldset class="register-main-info">
 					<p>
-						<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?></label>
+						<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?>
 						<input name="pippin_user_login" id="pippin_user_login" class="required" type="text" value="<?php echo $current_user->user_login; ?>" disabled="disabled" />
+
 					</p>
+					<p class="help-text"><?php _e('Usernames can\'t be changed.', 'mro-cit-frontend'); ?></p>
 
 					<p>
 						<label for="pippin_user_email"><?php _e('Email', 'mro-cit-frontend'); ?></label>
@@ -125,7 +155,7 @@ function mro_cit_edit_profile_form_fields() {
 			    </fieldset>
 			    <fieldset class="register-password">
 					<h5><?php _e('New Password', 'mro-cit-frontend'); ?></h5>
-					<p><?php _e('Leave blank to keep password unchanged.', 'mro-cit-frontend'); ?></p>
+					<p class="help-text"><?php _e('Leave blank to keep password unchanged.', 'mro-cit-frontend'); ?></p>
 					<p>
 						<label for="password"><?php _e('New Password', 'mro-cit-frontend'); ?></label>
 						<input name="pippin_user_pass" id="password" class="required" type="password"/>
