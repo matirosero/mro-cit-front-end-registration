@@ -161,19 +161,19 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 					</fieldset>
 					<fieldset class="register-secondary-contact">
-						 <legend><?php _e( 'Secondary Contact (optional)', 'demo-functions' ); ?></legend>
+						 <legend><?php _e( 'Secondary Contact (optional)', 'mro-cit-frontend' ); ?></legend>
 
 						<p>
-							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'demo-functions' ); ?></label>
+							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
 							<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
 						</p>
 
 						<p>
-							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-functions' ); ?></label>
+							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
 							<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
 						</p>
 						<p>
-							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-functions' ); ?></label>
+							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
 							<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
 						</p>
 
@@ -201,7 +201,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
 					<?php
-					if ( $membership == 'enterprise' ) { ?>
+					if ( $membership != 'enterprise' ) { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } else { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_enterprise_pendiente"/>
@@ -223,109 +223,176 @@ function pippin_add_new_member() {
   	if (isset( $_POST["pippin_user_login"] ) && isset( $_POST['pippin_register_nonce'] ) && wp_verify_nonce($_POST['pippin_register_nonce'], 'pippin-register-nonce')) {
 
 
+  		//Array to hold meta values
+  		$updated_meta = array();
+
+
 		// Process username
 		$user_login = sanitize_user( $_POST["pippin_user_login"] );
+		write_log('1. login: '.$user_login);
 
 		if(username_exists($user_login)) {
 			// Username already registered
 			pippin_errors()->add('username_unavailable', __('Username already taken', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Username already taken');
 		}
 		if(!validate_username($user_login)) {
 			// invalid username
 			pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
+			write_log('LOGIN Error Invalid username');
 		}
 		if($user_login == '') {
 			// empty username
 			pippin_errors()->add('username_empty', __('Please enter a username', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty username');
 		}
 
 
 		//Process email
 		$user_email = sanitize_email( $_POST["pippin_user_email"] );
+		write_log('2. Email is '.$user_email);
 
 		if(!is_email($user_email)) {
 			//invalid email
 			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
+			write_log('Email error: Invalid email');
 		}
 		if(email_exists($user_email)) {
 			//Email address already registered
 			pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
+			write_log('Email error: Email already in use');
 		}
 
 
 		// Process membership type
 		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
+		write_log('3. Membership type: '.$mro_cit_user_membership);
 	    // Valid membership type
 	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
             pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mro-cit-frontend' ) );
+            write_log('Membership error: INVALID ACCORDING TO mro_cit_validate_membership()');
 	    } else {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
+	    	write_log('Sanitized membership type: '.$mro_cit_user_membership );
 
 	    	if ( $mro_cit_user_membership == 'afiliado_enterprise') {
 	    		$mro_cit_user_membership = 'afiliado_enterprise_pendiente';
+	    		write_log('Had to change membership to pending');
 	    	}
 	    }
 
 
+
 		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+			write_log('4. Phone is '.$mro_cit_user_phone);
 		}
+
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
+			write_log('5. Occupation is '.$mro_cit_user_occupation);
 		}
 
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+			write_log('6. COmpany is '.$mro_cit_user_company);
 		}
 
 
 		//Process country
 		$mro_cit_user_country = $_POST["mro_cit_user_country"];
+		write_log('7. Country is '.$mro_cit_user_country);
 	    // Valid country
 	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
 	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mro-cit-frontend' ) );
+	        write_log('Country error: invalid due to mro_cit_validate_country()');
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
+	    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
+	    	write_log('Sanitized country is '.$mro_cit_user_country);
 	    }
 
 
 		//Process password
 		$user_pass		= $_POST["pippin_user_pass"];
+		write_log('8. Password is '.$user_pass);
 		$pass_confirm 	= $_POST["pippin_user_pass_confirm"];
+		write_log('9. Confirmed password is '.$user_pass);
 
 		if($user_pass == '') {
 			// passwords do not match
 			pippin_errors()->add('password_empty', __('Please enter a password', 'mro-cit-frontend'));
+			write_log('Password error: empty');
 		}
 		if($user_pass != $pass_confirm) {
 			// passwords do not match
 			pippin_errors()->add('password_mismatch', __('Passwords do not match', 'mro-cit-frontend'));
+			write_log('Password error: mismatch');
 		}
 
 
 		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
+		write_log('10. First name is '.$user_first);
 		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
+		write_log('11. Last name is '.$user_last);
 
 
 		if ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
-			
+			write_log('11.5 ENTERPRISE IS CHOSEN');
+
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
 				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
+				write_log('Nickname error: nickname not set');
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
 				$user_display_name 	= $user_nickname;
+				write_log('Sanitized company nick is'.$user_display_name);
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
 
+			write_log('11.5 PERSONAL IS CHOSEN');
+
 			$user_nickname 	= '';
-			
+			write_log('Personal nick is '.$user_nickname. ' (should be blank');
+
 			if ( $user_first != '' && $user_last != '' ) {
 				$user_display_name 	= $user_first.' '.$user_last;
-			} if ( $user_first != '' ) {
+				write_log('Diplay name is '.$user_display_name).' (Should be name lastname)';
+			} elseif ( $user_first != '' ) {
 				$user_display_name 	= $user_first;
+				write_log('Diplay name is '.$user_display_name).' (Should be name)';
 			} else {
 				$user_display_name 	= $user_login;
+				write_log('Diplay name is '.$user_display_name).' (Should be username)';
 			}
+		}
+
+
+		// Secondary contact
+		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
+			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
+			if(!is_email($user_email)) {
+				//invalid email
+				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
+				write_log('Email error: Invalid secondary email');
+			} else {
+				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
+				write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
+			}
+
+		}
+		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
+			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
+			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
+			write_log('13. Secondary name is '.$mro_cit_user_secondary_first);
+		}
+		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
+			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
+			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
+			write_log('14. Secondary lastname is '.$mro_cit_user_secondary_last);
 		}
 
 
@@ -349,18 +416,14 @@ function pippin_add_new_member() {
 			if($new_user_id) {
 
 				// MRo: Update user meta
-				update_user_meta( $new_user_id, 'mro_cit_user_company', $mro_cit_user_company );
-				update_user_meta( $new_user_id, 'mro_cit_user_phone', $mro_cit_user_phone );
-				update_user_meta( $new_user_id, 'mro_cit_user_occupation', $mro_cit_user_occupation );
-				update_user_meta( $new_user_id, 'mro_cit_user_country', $mro_cit_user_country );
-				// update_user_meta( $new_user_id, 'mro_cit_user_membership', $mro_cit_user_membership );
+				foreach ($updated_meta as $key => $value) {
+					update_user_meta( $new_user_id, $key, $value );
+				}
 
 
 				// send an email to the admin alerting them of the registration
 				wp_new_user_notification($new_user_id);
 
-				// log the new user in
-				// wp_setcookie($user_login, $user_pass, true); //obsolete
 
 				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
 				wp_set_auth_cookie( $new_user_id, true);

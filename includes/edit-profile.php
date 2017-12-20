@@ -249,16 +249,10 @@ function mro_edit_member() {
 				write_log('YAY! it worked');
 				//Send success message
 			}
-			
+
 			do_action('edit_user_profile_update', $current_user->ID);
 
 			mro_cit_frontend_messages( '<p class="callout success">' . __('Your profile has been succesfully edited!', 'mro-cit-frontend') . '</p>' );
-
-			// if ( count($error) == 0 ) {
-			// 	//action hook for plugins and extra fields saving
-			// 	do_action('edit_user_profile_update', $current_user->ID);
-			// 	wp_redirect( get_permalink().'?updated=true' ); exit;
-			// } 
 
 		}
 
