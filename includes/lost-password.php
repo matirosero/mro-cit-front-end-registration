@@ -23,8 +23,11 @@ function mro_cit_lost_password_form() {
 
 		$output = mro_cit_lost_password_form_fields();
 
-		return $output;
+	} else {
+		$output = '<p class="callout warning">' . __('A password can\'t be reset if the user is logged in.', 'mro-cit-frontend') . '</p>';
 	}
+
+	return $output;
 }
 add_shortcode('lost_password', 'mro_cit_lost_password_form');
 

@@ -35,8 +35,11 @@ function pippin_registration_form($atts) {
 		} else {
 			$output = __('User registration is not enabled', 'mro-cit-frontend');
 		}
-		return $output;
+
+	} else {
+		$output = '<p class="callout warning">' . sprintf( wp_kses( __( 'Please <a href="%s">log out</a> in order to register a new account.', 'mro-cit-frontend'), array(  'a' => array( 'href' => array() ) ) ), wp_logout_url() ) . '</p>';
 	}
+	return $output;
 }
 add_shortcode('register_form', 'pippin_registration_form');
 

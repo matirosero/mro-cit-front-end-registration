@@ -28,8 +28,12 @@ function mro_cit_edit_profile_form() {
 
 		$output = mro_cit_edit_profile_form_fields();
 
-		return $output;
+		
+	} else {
+		$output = '<p class="callout warning">' . __('You must log in to edit your profile.', 'mro-cit-frontend') . '</p>';
 	}
+
+	return $output;
 }
 add_shortcode('edit_profile_form', 'mro_cit_edit_profile_form');
 

@@ -32,9 +32,9 @@ function pippin_login_form() {
 			echo $alert;
 
 		} elseif ( $login === "empty" ) {
-		  	_e( '<p class="callout alert login-msg"><strong>ERROR:</strong> Username and/or Password is empty.</p>', 'mro-cit-frontend');
+		  	echo '<p class="callout alert login-msg">' . __( '<strong>ERROR:</strong> Username and/or Password is empty.', 'mro-cit-frontend') . '</p>';
 		} elseif ( $login === "false" ) {
-		  	_e( '<p class="callout warning login-msg"><strong>ERROR:</strong> You are logged out.</p>', 'mro-cit-frontend');
+		  	echo '<p class="callout warning login-msg">' . __( '<strong>ERROR:</strong> You are logged out.', 'mro-cit-frontend') . '</p>';
 		}
 
 
