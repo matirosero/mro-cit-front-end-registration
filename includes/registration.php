@@ -31,10 +31,7 @@ function pippin_registration_form($atts) {
 
 		// only show the registration form if allowed
 		if($registration_enabled) {
-
 			$output = pippin_registration_form_fields($membership);
-
-
 		} else {
 			$output = __('User registration is not enabled', 'mro-cit-frontend');
 		}
