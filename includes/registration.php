@@ -76,7 +76,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
 					<?php
 					if ( $membership == 'enterprise' ) { ?>
-						<span>Sugerimos utilizar algo relacionado al nombre de la empresa.</span>
+						<p class="help-text">Sugerimos utilizar algo relacionado al nombre de la empresa.</p>
 					<?php } ?>
 				</p>
 
@@ -341,32 +341,33 @@ function pippin_add_new_member() {
 
 
 		if ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
-			// write_log('11.5 ENTERPRISE IS CHOSEN');
+			write_log('11.5 ENTERPRISE IS CHOSEN');
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
 				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
-				// write_log('Nickname error: nickname not set');
+				write_log('Nickname error: nickname not set');
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
 				$user_display_name 	= $user_nickname;
-				// write_log('Sanitized company nick is'.$user_display_name);
+				write_log('Sanitized company nick is'.$user_nickname);
+				write_log('Display name is'.$user_display_name);
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
 
-			// write_log('11.5 PERSONAL IS CHOSEN');
+			write_log('11.5 PERSONAL IS CHOSEN');
 
 			$user_nickname 	= '';
-			// write_log('Personal nick is '.$user_nickname. ' (should be blank');
+			write_log('Personal nick is '.$user_nickname. ' (should be blank');
 
 			if ( $user_first != '' && $user_last != '' ) {
 				$user_display_name 	= $user_first.' '.$user_last;
-				// write_log('Diplay name is '.$user_display_name).' (Should be name lastname)';
+				write_log('Diplay name is '.$user_display_name).' (Should be name lastname)';
 			} elseif ( $user_first != '' ) {
 				$user_display_name 	= $user_first;
-				// write_log('Diplay name is '.$user_display_name).' (Should be name)';
+				write_log('Diplay name is '.$user_display_name).' (Should be name)';
 			} else {
 				$user_display_name 	= $user_login;
-				// write_log('Diplay name is '.$user_display_name).' (Should be username)';
+				write_log('Diplay name is '.$user_display_name).' (Should be username)';
 			}
 		}
 
@@ -400,6 +401,8 @@ function pippin_add_new_member() {
 
 		// only create the user in if there are no errors
 		if(empty($errors)) {
+
+			write_log('12. Display name for DB is '.$user_display_name);
 
 			$new_user_id = wp_insert_user(array(
 					'user_login'		=> $user_login,
