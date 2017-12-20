@@ -1,5 +1,20 @@
 <?php
 
+add_filter( 'edit_profile_url', 'mro_cit_modify_profile_url', 10, 3 );
+
+/**
+ * http://core.trac.wordpress.org/browser/tags/3.5.1/wp-includes/link-template.php#L2284
+ *
+ * @param string $scheme The scheme to use. 
+ * Default is 'admin'. 'http' or 'https' can be passed to force those schemes.
+*/
+function mro_cit_modify_profile_url( $url, $user_id, $scheme ) {
+    // Makes the link to http://example.com/custom-profile
+    $url = get_permalink( 1844 );
+    return $url;
+}
+
+
 // user registration login form
 function mro_cit_edit_profile_form() {
 
