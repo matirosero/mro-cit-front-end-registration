@@ -61,7 +61,7 @@ function mro_cit_profile_info() {
 
 		<?php
 		$registered = $user->user_registered;
-		$date = date_i18n( 'F j, Y', strtotime( $registered ) ); 
+		$date = date_i18n( 'F j, Y', strtotime( $registered ) );
 		?>
 
 		<p><?php _ex('Member since', 'Registration date', 'mro-cit-frontend'); ?> <strong><?php echo $date; ?></strong>.</p>
@@ -85,7 +85,7 @@ function mro_cit_edit_profile_form_fields() {
 		} else {
 			$role = $user->roles[0];
 			$membership = $wp_roles->roles[ $role ]['name'];
-		} 
+		}
 
 		ob_start(); ?>
 			<h4><?php _e('Edit your profile', 'mro-cit-frontend'); ?></h4>
@@ -219,7 +219,7 @@ function mro_cit_edit_profile_form_fields() {
 				</fieldset>
 
 			    <fieldset class="register-password">
-			    	
+
 					<h5><?php _e('New Password', 'mro-cit-frontend'); ?></h5>
 					<p class="help-text"><?php _e('Leave blank to keep password unchanged.', 'mro-cit-frontend'); ?></p>
 					<p>
@@ -274,19 +274,7 @@ function mro_edit_member() {
 		}
 
 
-		if ( !empty( $_POST["pippin_user_first"] ) ) {
-			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
-			$updated_info['first_name'] = $user_first;
-			$updated_info['nickname'] = $user_first;
-			$updated_info['display_name'] = $user_first;
-		}
-
-		if ( !empty( $_POST["pippin_user_last"] ) ) {
-			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
-			$updated_info['last_name'] = $user_last;
-		}
-
-		//MRo custom user fields
+		//Phone
 		if ( !empty( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 		} else {
@@ -295,6 +283,7 @@ function mro_edit_member() {
 		$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
 
 
+		// Country
 		if ( !empty( $_POST["mro_cit_user_country"] ) ) {
 			$mro_cit_user_country = $_POST["mro_cit_user_country"];
 
@@ -322,6 +311,78 @@ function mro_edit_member() {
 			$mro_cit_user_company = '';
 		}
 		$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+
+
+
+		if ( !empty( $_POST["pippin_user_first"] ) ) {
+			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
+			$updated_info['first_name'] = $user_first;
+
+		}
+
+		if ( !empty( $_POST["pippin_user_last"] ) ) {
+			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
+			$updated_info['last_name'] = $user_last;
+		}
+
+
+		//Set display name and nickname if Enterprise
+		if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) {
+
+			if ( !empty( $_POST["mro_cit_user_nickname"] ) ) {
+				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
+				// $user_display_name 	= $user_nickname;
+
+				$updated_info['nickname'] = $user_nickname;
+				$updated_info['display_name'] = $user_nickname;
+
+			} else {
+				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
+			}
+
+		//Set display name if Personal
+		} else {
+			$user_nickname 	= '';
+
+			if ( !empty( $_POST["pippin_user_first"] ) && !empty( $_POST["pippin_user_last"] ) ) {
+				$user_display_name 	= $user_first.' '.$user_last;
+				// write_log('Diplay name is '.$user_display_name).' (Should be name lastname)';
+			} elseif ( !empty( $_POST["pippin_user_first"] ) ) {
+				$user_display_name 	= $user_first;
+				// write_log('Diplay name is '.$user_display_name).' (Should be name)';
+			} else {
+				$user_display_name 	= $user_login;
+				// write_log('Diplay name is '.$user_display_name).' (Should be username)';
+			}
+
+			$updated_info['display_name'] = $user_display_name;
+
+		}
+
+
+		if ( !empty( $_POST["mro_cit_user_secondary_email"] ) ) {
+			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
+			if(!is_email($mro_cit_user_secondary_email)) {
+				//invalid email
+				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
+				// write_log('Email error: Invalid secondary email');
+			} else {
+				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
+				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
+			}
+		}
+
+		if ( !empty( $_POST["mro_cit_user_secondary_first"] ) ) {
+			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
+			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
+		}
+
+		if ( !empty( $_POST["mro_cit_user_secondary_last"] ) ) {
+			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
+			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
+		}
+
+
 
 
 		if ( !empty($_POST['pippin_user_pass'] ) || !empty( $_POST['pippin_user_pass_confirm'] ) ) {
