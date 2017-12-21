@@ -103,11 +103,11 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				<p>
 					<label for="pippin_user_email"><?php echo $email_label; ?></label>
 					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
-					<?php
-					if ( $membership == 'enterprise' ) { ?>
-						<span>Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</span>
-					<?php } ?>
 				</p>
+				<?php
+				if ( $membership == 'enterprise' ) { ?>
+					<p class="help-text">Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
+				<?php } ?>
 
 				<p>
 					<label for="pippin_user_first"><?php echo $first_label; ?></label>
@@ -124,7 +124,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		        </p>
 
 			    <?php
-				// If NOT enterprise, more details
+				// If personal, occupation and company info
 				if ( $membership != 'enterprise' ) { ?>
 
 					<p>

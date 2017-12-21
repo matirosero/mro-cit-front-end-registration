@@ -80,6 +80,13 @@ function mro_cit_edit_profile_form_fields() {
 
 	if ( is_user_logged_in() ) {
 
+		if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) ) {
+			$membership = 'Afiliado Enterprise (pendiente)';
+		} else {
+			$role = $user->roles[0];
+			$membership = $wp_roles->roles[ $role ]['name'];
+		} 
+
 		ob_start(); ?>
 			<h4><?php _e('Edit your profile', 'mro-cit-frontend'); ?></h4>
 
@@ -104,22 +111,66 @@ function mro_cit_edit_profile_form_fields() {
 					</p>
 					<p class="help-text"><?php _e('Usernames can\'t be changed.', 'mro-cit-frontend'); ?></p>
 
+					<?php
+					//Enterprise: company name/nickname
+					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) { ?>
+						<p>
+							<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
+							<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text" value="<?php echo $user->nickname; ?>" />
+						</p>
+					<?php } ?>
+
+					<?php
+					// Set labels for email and name according to type of membership
+					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) {
+						$first_label = __('Contact First Name', 'mro-cit-frontend');
+						$last_label = __('Contact Last Name', 'mro-cit-frontend');
+						$email_label = __('Contact Email', 'mro-cit-frontend');
+					} else {
+						$first_label = __('First Name', 'mro-cit-frontend');
+						$last_label = __('Last Name', 'mro-cit-frontend');
+						$email_label = __('Email', 'mro-cit-frontend');
+					} ?>
+
 					<p>
-						<label for="pippin_user_email"><?php _e('Email', 'mro-cit-frontend'); ?></label>
+						<label for="pippin_user_email"><?php echo $email_label; ?></label>
 						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $user->user_email; ?>" />
 					</p>
+					<?php
+					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) { ?>
+						<p class="help-text">Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
+					<?php } ?>
+
 					<p>
-						<label for="pippin_user_first"><?php _e('First Name', 'mro-cit-frontend'); ?></label>
+						<label for="pippin_user_first"><?php echo $first_label; ?></label>
 						<input name="pippin_user_first" id="pippin_user_first" type="text" value="<?php echo $current_user->user_firstname; ?>" />
 					</p>
 					<p>
-						<label for="pippin_user_last"><?php _e('Last Name', 'mro-cit-frontend'); ?></label>
+						<label for="pippin_user_last"><?php echo $last_label; ?></label>
 						<input name="pippin_user_last" id="pippin_user_last" type="text" value="<?php echo $current_user->user_lastname; ?>" />
 					</p>
+
 					<p>
 			            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="<?php echo $current_user->mro_cit_user_phone; ?>" size="25" />
 			        </p>
+
+
+					<?php
+					//If personal account, occupation and company info
+					if ( members_current_user_has_role( 'afiliado_personal' ) ) { ?>
+
+						<p>
+				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
+			                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
+				        </p>
+				    	<p>
+				            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
+				                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
+				        </p>
+
+					<?php } ?>
+
 			        <p>
 			            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?><br />
 
@@ -139,21 +190,36 @@ function mro_cit_edit_profile_form_fields() {
 			             </label>
 			        </p>
 
+					<?php
+					// If enterprise, secondary contact details
+					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) { ?>
 
-			    </fieldset>
-			    <fieldset class="register-extra-info">
+						</fieldset>
+						<fieldset class="register-secondary-contact">
+							 <legend><?php _e( 'Secondary Contact (optional)', 'mro-cit-frontend' ); ?></legend>
 
-					<p>
-			            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
-		                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
-			        </p>
-			    	<p>
-			            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
-			                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
-			        </p>
+							<p>
+								<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
+								<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email" value="<?php echo $current_user->mro_cit_user_secondary_email; ?>" />
+							</p>
 
-			    </fieldset>
+							<p>
+								<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
+								<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text" value="<?php echo $current_user->mro_cit_user_secondary_first; ?>" />
+							</p>
+							<p>
+								<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
+								<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text" value="<?php echo $current_user->mro_cit_user_secondary_last; ?>" />
+							</p>
+
+					<?php } ?>
+
+
+
+				</fieldset>
+
 			    <fieldset class="register-password">
+			    	
 					<h5><?php _e('New Password', 'mro-cit-frontend'); ?></h5>
 					<p class="help-text"><?php _e('Leave blank to keep password unchanged.', 'mro-cit-frontend'); ?></p>
 					<p>
