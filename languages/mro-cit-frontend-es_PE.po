@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CIT Front End Registration and Login\n"
-"POT-Creation-Date: 2017-12-16 23:41-0600\n"
-"PO-Revision-Date: 2017-12-16 23:45-0600\n"
+"POT-Creation-Date: 2017-12-20 21:59-0600\n"
+"PO-Revision-Date: 2017-12-20 22:08-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_PE\n"
@@ -21,75 +21,129 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: includes/edit-profile.php:37
+#: includes/edit-profile.php:34
+msgid "Your account has been created successfully."
+msgstr "¡Su perfil ha sido creado!"
+
+#: includes/edit-profile.php:41
+msgid "You must log in to edit your profile."
+msgstr "Debés entrar al sitio para editar tu perfil"
+
+#: includes/edit-profile.php:75
+msgctxt "Registration date"
+msgid "Member since"
+msgstr "Afiliado desde"
+
+#: includes/edit-profile.php:99
 msgid "Edit your profile"
 msgstr "Edite su perfil"
 
-#: includes/edit-profile.php:54 includes/registration.php:42
+#: includes/edit-profile.php:116 includes/registration.php:75
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: includes/edit-profile.php:59 includes/registration.php:46
-msgid "Email"
-msgstr "Correo electrónico"
+#: includes/edit-profile.php:120
+msgid "Usernames can't be changed."
+msgstr "Los nombres de usuario no se pueden cambiar."
 
-#: includes/edit-profile.php:63 includes/registration.php:50
-msgid "First Name"
-msgstr "Nombre"
-
-#: includes/edit-profile.php:67 includes/registration.php:54
-msgid "Last Name"
-msgstr "Apellidos"
-
-#: includes/edit-profile.php:71 includes/registration.php:58
-msgid "Phone"
-msgstr "Teléfono"
-
-#: includes/edit-profile.php:75 includes/registration.php:62
-msgid "Country"
-msgstr "País"
-
-#: includes/edit-profile.php:98 includes/registration.php:94
-msgid "Occupation"
-msgstr "Ocupación"
-
-#: includes/edit-profile.php:102 includes/registration.php:98
+#: includes/edit-profile.php:126 includes/edit-profile.php:176
+#: includes/registration.php:86 includes/registration.php:135
 msgid "Company"
 msgstr "Compañía"
 
-#: includes/edit-profile.php:108 includes/edit-profile.php:111
+#: includes/edit-profile.php:134 includes/registration.php:94
+msgid "Contact First Name"
+msgstr "Nombre del contacto"
+
+#: includes/edit-profile.php:135 includes/registration.php:95
+msgid "Contact Last Name"
+msgstr "Apellidos del contacto"
+
+#: includes/edit-profile.php:136 includes/registration.php:96
+msgid "Contact Email"
+msgstr "Correo electrónico de contacto"
+
+#: includes/edit-profile.php:138 includes/registration.php:98
+msgid "First Name"
+msgstr "Nombre"
+
+#: includes/edit-profile.php:139 includes/registration.php:99
+msgid "Last Name"
+msgstr "Apellidos"
+
+#: includes/edit-profile.php:140 includes/registration.php:100
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: includes/edit-profile.php:162 includes/registration.php:122
+msgid "Phone"
+msgstr "Teléfono"
+
+#: includes/edit-profile.php:172 includes/registration.php:131
+msgid "Occupation"
+msgstr "Ocupación"
+
+#: includes/edit-profile.php:183 includes/registration.php:142
+msgid "Country"
+msgstr "País"
+
+#: includes/edit-profile.php:207 includes/registration.php:164
+msgid "Secondary Contact (optional)"
+msgstr "Contacto secundario (opcional)"
+
+#: includes/edit-profile.php:210 includes/registration.php:167
+msgid "Secondary Contact Email"
+msgstr "Correo electrónico de contacto secundario"
+
+#: includes/edit-profile.php:215 includes/registration.php:172
+msgid "Secondary Contact: First Name"
+msgstr "Nombre del contacto secundario"
+
+#: includes/edit-profile.php:219 includes/registration.php:176
+msgid "Secondary Contact: Last Name"
+msgstr "Apellidos del contacto secundario"
+
+#: includes/edit-profile.php:231 includes/edit-profile.php:234
 msgid "New Password"
 msgstr "Nueva contraseña"
 
-#: includes/edit-profile.php:109
+#: includes/edit-profile.php:232
 msgid "Leave blank to keep password unchanged."
 msgstr "Deje en blanco para mantener la misma contraseña."
 
-#: includes/edit-profile.php:115
+#: includes/edit-profile.php:238
 msgid "New Password Again"
 msgstr "Repetir nueva contraseña"
 
-#: includes/edit-profile.php:121
+#: includes/edit-profile.php:244
 msgid "Edit profile"
 msgstr "Editar perfil"
 
-#: includes/edit-profile.php:152 includes/registration.php:166
+#: includes/edit-profile.php:275 includes/registration.php:257
 msgid "Invalid email"
 msgstr "Correo inválido"
 
-#: includes/edit-profile.php:155 includes/registration.php:170
+#: includes/edit-profile.php:278 includes/registration.php:262
 msgid "Email already registered"
 msgstr "Correo previamente registrado"
 
-#: includes/edit-profile.php:186
+#: includes/edit-profile.php:300
 msgid "Please choose a valid country."
 msgstr "Por favor elija un país válido."
 
-#: includes/edit-profile.php:216 includes/registration.php:178
+#: includes/edit-profile.php:348 includes/registration.php:347
+msgid "<strong>ERROR</strong>: Please fill in your company's name."
+msgstr "Por favor, indique el nombre de su empresa."
+
+#: includes/edit-profile.php:375 includes/registration.php:379
+msgid "Invalid secondary email"
+msgstr "Correo electrónico secundario inválido"
+
+#: includes/edit-profile.php:402 includes/registration.php:332
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
 
-#: includes/edit-profile.php:253
+#: includes/edit-profile.php:439
 msgid "Your profile has been succesfully edited!"
 msgstr "¡Su perfil ha sido editado correctamente!"
 
@@ -97,22 +151,16 @@ msgstr "¡Su perfil ha sido editado correctamente!"
 msgid "<strong>ERROR:</strong> Invalid username and/or password."
 msgstr "<strong>ERROR</strong>: nombre de usuario o contraseña inválidos."
 
-#: includes/login.php:29
+#: includes/login.php:29 includes/lost-password.php:42
 msgid "Lost password?"
 msgstr "¿Olvidó su contraseña?"
 
 #: includes/login.php:35
-msgid ""
-"<p class=\"callout alert login-msg\"><strong>ERROR:</strong> Username and/or "
-"Password is empty.</p>"
-msgstr ""
-"<p class=“callout alert login-msn”><strong>ERROR:</strong> nombre de usuario "
-"o contraseña vacíos.</p>"
+msgid "<strong>ERROR:</strong> Username and/or Password is empty."
+msgstr "<strong>ERROR</strong>: nombre de usuario o contraseña vacíos."
 
 #: includes/login.php:37
-msgid ""
-"<p class=\"callout warning login-msg\"><strong>ERROR:</strong> You are "
-"logged out.</p>"
+msgid "<strong>ERROR:</strong> You are logged out."
 msgstr ""
 "<p class=“callout warning login-msn”><strong>ERROR:</strong> su sesión ha "
 "terminado.</p>"
@@ -121,58 +169,166 @@ msgstr ""
 msgid "Username or Email Address"
 msgstr "Usuario o correo electrónico"
 
-#: includes/registration.php:21
-msgid "User registration is not enabled"
-msgstr "El registro de usuarios no está habilitado"
+#: includes/lost-password.php:27
+msgid "A password can't be reset if the user is logged in."
+msgstr ""
+"La contraseña no se puede restablecer si el usuario tiene sesión activa."
 
-#: includes/registration.php:33
-msgid "Register as a Member"
-msgstr "Registrarse como afiliado"
+#: includes/lost-password.php:56
+msgid ""
+"Please enter your username or email address. You will receive a link to "
+"create a new password via email."
+msgstr ""
+"Por favor introduzca su nombre de usuario o dirección de correo electrónico. "
+"Recibirá un enlace para crear una contraseña nueva por correo electrónico."
 
-#: includes/registration.php:78
-msgid "Membership type"
-msgstr "Tipo de afiliación"
+#: includes/lost-password.php:59
+msgid "Username or E-mail"
+msgstr "Usuario o correo electrónico"
 
-#: includes/registration.php:105
-msgid "Password"
-msgstr "Contraseña"
+#: includes/lost-password.php:69
+msgid "Get New Password"
+msgstr "Obtener nueva contraseña"
 
-#: includes/registration.php:109
-msgid "Password Again"
-msgstr "Repetir contraseña"
+#: includes/lost-password.php:86
+msgid "<strong>ERROR</strong>: Enter a username or email address."
+msgstr ""
+"<strong> ERROR </ strong>: ingrese un nombre de usuario o dirección de "
+"correo electrónico."
 
-#: includes/registration.php:116
-msgid "Subscribe to our newsletter."
-msgstr "Suscribirse a nuestra lista de correos."
+#: includes/lost-password.php:93
+msgid ""
+"<strong>ERROR</strong>: There is no user registered with that email address."
+msgstr ""
+"<strong>ERROR</strong>: No hay ningún usuario registrado con esta dirección "
+"de correo electrónico."
 
-#: includes/registration.php:121
+#: includes/lost-password.php:102
+msgid "<strong>ERROR</strong>: There is no user registered with that username."
+msgstr ""
+"<strong>ERROR</strong>: No hay ningún usuario registrado con ese nombre de "
+"usuario."
+
+#: includes/lost-password.php:138
+msgid "Someone has requested a password reset for the following account:"
+msgstr "Solicitaron un cambio de password para la siguiente cuenta:"
+
+#. translators: %s: site name
+#: includes/lost-password.php:140
+#, php-format
+msgid "Site Name: %s"
+msgstr "Nombre del sitio: %s"
+
+#. translators: %s: user login
+#: includes/lost-password.php:142
+#, php-format
+msgid "Username: %s"
+msgstr "Nombre de usuario: %s"
+
+#: includes/lost-password.php:143
+msgid "If this was a mistake, just ignore this email and nothing will happen."
+msgstr ""
+"Si esto fue un error, por favor ignore este correo electrónico y no pasará "
+"nada."
+
+#: includes/lost-password.php:144
+msgid "To reset your password, visit the following address:"
+msgstr ""
+"Para restablecer tu contraseña, por favor visita la siguiente dirección:"
+
+#. translators: Password reset email subject. %s: Site name
+#: includes/lost-password.php:148
+#, php-format
+msgid "[%s] Password Reset"
+msgstr "[%s] Restablecer contraseña"
+
+#: includes/lost-password.php:180
+msgid "The email could not be sent."
+msgstr "El mail no fue enviado."
+
+#: includes/lost-password.php:180
+msgid "Possible reason: your host may have disabled the mail() function."
+msgstr ""
+"Posible razón: su anfitrión puede haber deshabilitado la función mail()."
+
+#: includes/lost-password.php:182
+msgid "Check your email for your confirmation link."
+msgstr "Revise su correo para encontrar el enlace de confirmación."
+
+#: includes/registration.php:9 includes/registration.php:210
 msgid "Become a member"
 msgstr "Convertirse en afiliado"
 
-#: includes/registration.php:154
+#: includes/registration.php:36
+msgid "User registration is not enabled"
+msgstr "El registro de usuarios no está habilitado"
+
+#: includes/registration.php:40
+#, php-format
+msgid "Please <a href=\"%s\">log out</a> in order to register a new account."
+msgstr ""
+"Por favor, <a href=“%s”>cierre sesión</a> para realizar una nueva afiliación."
+
+#: includes/registration.php:51
+msgid "Register as a Member"
+msgstr "Registrarse como afiliado"
+
+#: includes/registration.php:56
+msgid "Use this form if you wish to sign up for a Personal membership."
+msgstr "Utilice este formulario si desea inscribirse como Afiliado Personal."
+
+#: includes/registration.php:57
+msgid "Sign up for an Enterprise membership instead."
+msgstr "Inscríbase como Afiliado Enterprise en vez."
+
+#: includes/registration.php:62
+msgid ""
+"Use this form if you wish to sign up for an Enterprise membership. We will "
+"be in contact with you to arrange payment and other final details."
+msgstr ""
+"Utilice este formulario si desea inscribirse como Afiliado Enterprise. "
+"Estaremos en contacto para finalizar la afiliación."
+
+#: includes/registration.php:63
+msgid "Sign up for a Personal membership instead."
+msgstr "Inscríbase como Afiliado Personal en vez."
+
+#: includes/registration.php:186
+msgid "Password"
+msgstr "Contraseña"
+
+#: includes/registration.php:190
+msgid "Password Again"
+msgstr "Repetir contraseña"
+
+#: includes/registration.php:197
+msgid "Subscribe to our newsletter."
+msgstr "Suscribirse a nuestra lista de correos."
+
+#: includes/registration.php:236
 msgid "Username already taken"
 msgstr "El nombre de usuario ya está en uso"
 
-#: includes/registration.php:158
+#: includes/registration.php:241
 msgid "Invalid username"
 msgstr "Nombre de usuario inválido"
 
-#: includes/registration.php:162
+#: includes/registration.php:246
 msgid "Please enter a username"
 msgstr "Por favor, introducir un nombre de usuario"
 
-#: includes/registration.php:174
-msgid "Please enter a password"
-msgstr "Por favor, introducir una contraseña"
-
-#: includes/registration.php:185
+#: includes/registration.php:272
 msgid "<strong>ERROR</strong>: Please enter a valid membership type."
 msgstr ""
 "<strong>ERROR</strong>: por favor introduzca un tipo de afiliación válida."
 
-#: includes/registration.php:192
+#: includes/registration.php:310
 msgid "<strong>ERROR</strong>: Please choose a valid country."
 msgstr "<strong>ERROR</strong>: por favor elija un país válido."
+
+#: includes/registration.php:327
+msgid "Please enter a password"
+msgstr "Por favor, introducir una contraseña"
 
 #: mro-cit-front-end-registration.php:69
 msgid "Error"
@@ -202,3 +358,17 @@ msgstr ""
 #. Author URI of the plugin/theme
 msgid "https://matilderosero.com"
 msgstr ""
+
+#~ msgid ""
+#~ "<p class=\"callout alert login-msg\"><strong>ERROR:</strong> Username and/"
+#~ "or Password is empty.</p>"
+#~ msgstr ""
+#~ "<p class=“callout alert login-msn”><strong>ERROR:</strong> nombre de "
+#~ "usuario o contraseña vacíos.</p>"
+
+#~ msgid ""
+#~ "<p class=\"callout warning login-msg\"><strong>ERROR:</strong> You are "
+#~ "logged out.</p>"
+#~ msgstr ""
+#~ "<p class=“callout warning login-msn”><strong>ERROR:</strong> su sesión ha "
+#~ "terminado.</p>"

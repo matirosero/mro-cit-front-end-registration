@@ -26,7 +26,15 @@ function mro_cit_edit_profile_form() {
 		// set this to true so the CSS is loaded
 		$pippin_load_css = true;
 
-		$output = mro_cit_profile_info();
+		$output = '';
+
+		$registration  = (isset($_GET['registration']) ) ? $_GET['registration'] : 0;
+
+		if ( $registration === 'complete' ) {
+			$output .= '<p class="callout success">' . __( 'Your account has been created successfully.', 'mro-cit-frontend') . '</p>';
+		}
+
+		$output .= mro_cit_profile_info();
 		$output .= mro_cit_edit_profile_form_fields();
 
 	} else {

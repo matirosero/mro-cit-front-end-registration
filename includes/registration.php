@@ -432,7 +432,7 @@ function pippin_add_new_member() {
 				do_action('wp_login', $user_login);
 
 				// send the newly created user to the home page after logging them in
-				wp_redirect(home_url()); exit;
+				wp_redirect( get_edit_user_link() . "?registration=complete" ); exit;
 			}
 
 		}
