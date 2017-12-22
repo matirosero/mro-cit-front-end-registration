@@ -254,6 +254,33 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
     }
 }
 
+
+/*
+ * Email user on role change
+ */
+function mro_cit_user_role_update( $user_id, $role ) {
+    write_log('role changed');
+    write_log('new '.$role);
+
+    // write_log('old '.$old_roles);
+    if ($role == 'afiliado_enterprise') {
+        $site_url = get_bloginfo('wpurl');
+        $user_info = get_userdata( $user_id );
+        $to = $user_info->user_email;
+        $subject = "Su afiliación al Club de Investigación Tecnológica ha sido procesada";
+        $message = "Hola " .$user_info->display_name . ",\r\n\r\n";
+        $message .= "¡Su afiliación al Club de Investigación Tecnológica ha sido procesada con éxito! A partir de ahora podrá reservar espacios en los eventos del Club sin costo alguno; simplemente debe accesar la página del evento, ingresar a su cuenta y llenar el formulario correspondiente.\r\n\r\n";
+        $message .= "Igualmente, puede descargar los informes de investigación del Club.\r\n\r\n";
+        $message .= "Saludos,\r\n";
+        $message .= "Club de Investigación Tecnológica";
+        wp_mail($to, $subject, $message);
+    }
+}
+add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
+
+
+
+
 add_action('wp_mail_failed', 'log_mailer_errors', 10, 1);
 function log_mailer_errors(){
   $fn = ABSPATH . '/mail.log'; // say you've got a mail.log file in your server root
