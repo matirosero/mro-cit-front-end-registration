@@ -29,6 +29,7 @@ require_once( dirname( __FILE__ ) . '/includes/registration.php' );
 require_once( dirname( __FILE__ ) . '/includes/registration-helpers.php' );
 require_once( dirname( __FILE__ ) . '/includes/emails.php' );
 
+
 /**
  * Login.
  *
@@ -52,6 +53,13 @@ require_once( dirname( __FILE__ ) . '/includes/lost-password.php' );
  */
 require_once( dirname( __FILE__ ) . '/includes/edit-profile.php' );
 
+
+/**
+ * Mailchimp.
+ *
+ * @since 0.1.0
+ */
+require_once( dirname( __FILE__ ) . '/includes/mailchimp-connect.php' );
 
 
 // used for tracking error messages
