@@ -258,7 +258,7 @@ function mro_edit_member() {
 
   	if ( is_user_logged_in() && isset( $_POST['mro_edit_profile_nonce'] ) && wp_verify_nonce( $_POST['mro_edit_profile_nonce'], 'mro-edit-profile-nonce' ) ) {
 
-  		write_log('Edit form function works!');
+  		// write_log('Edit form function works!');
 
   		$updated_info = array(
   			'ID' => $current_user->ID,
@@ -426,13 +426,10 @@ function mro_edit_member() {
 			/* Let plugins hook in, like ACF who is handling the profile picture all by itself. Got to love the Elliot */
 		    do_action('edit_user_profile_update', $current_user->ID);
 
-			if ( is_wp_error( $user_data ) ) {
-				// There was an error, probably that user doesn't exist.
-				write_log('error :(');
-			} else {
-				write_log('YAY! it worked');
-				//Send success message
-			}
+			// if ( is_wp_error( $user_data ) ) {
+			// 	// There was an error, probably that user doesn't exist.
+			// 	// write_log('error :(');
+			// }
 
 			do_action('edit_user_profile_update', $current_user->ID);
 

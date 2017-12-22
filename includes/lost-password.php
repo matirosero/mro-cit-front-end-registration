@@ -79,19 +79,19 @@ function mro_cit_lost_password_form_fields() {
 function mro_reset_password() {
 	if ( !is_user_logged_in() && isset( $_POST['user_login'] ) && isset( $_POST['mro_lost_password_nonce'] ) && wp_verify_nonce( $_POST['mro_lost_password_nonce'], 'mro-lost-password-nonce' ) ) {
 
-		write_log('Step 1: reset process starts');
+		// write_log('Step 1: reset process starts');
 
 		if ( empty( $_POST['user_login'] ) || ! is_string( $_POST['user_login'] ) ) {
 
 			pippin_errors()->add('empty_username', __('<strong>ERROR</strong>: Enter a username or email address.'));
-			write_log('Empty username');
+			// write_log('Empty username');
 
 		} elseif ( strpos( $_POST['user_login'], '@' ) ) {
 			write_log('Step 1.5: This is an email!');
 			$user_data = get_user_by( 'email', trim( wp_unslash( $_POST['user_login'] ) ) );
 			if ( empty( $user_data ) ) {
 				pippin_errors()->add('invalid_email', __('<strong>ERROR</strong>: There is no user registered with that email address.'));
-				write_log('Invalid email! No one with that email');
+				// write_log('Invalid email! No one with that email');
 			}
 
 		} else {
@@ -100,7 +100,7 @@ function mro_reset_password() {
 			$user_data = get_user_by('login', $login);
 			if ( empty( $user_data ) ) {
 				pippin_errors()->add('invalid_username', __('<strong>ERROR</strong>: There is no user registered with that username.'));
-				write_log('Invalid username! No one with that name');
+				// write_log('Invalid username! No one with that name');
 			}
 		}
 
@@ -108,16 +108,16 @@ function mro_reset_password() {
 
 		if(empty($errors)) {
 
-			write_log('Step 2: no errors, can move on');
+			// write_log('Step 2: no errors, can move on');
 	
 			// Redefining user_login ensures we return the right case in the email.
 			$user_login = $user_data->user_login;
 			$user_email = $user_data->user_email;
 			$key = get_password_reset_key( $user_data );
 
-			write_log('User login: '.$user_login);
-			write_log('User email: '.$user_email);
-			write_log('Reset key: '.$key);
+			// write_log('User login: '.$user_login);
+			// write_log('User email: '.$user_email);
+			// write_log('Reset key: '.$key);
 
 			if ( is_wp_error( $key ) ) {
 				return $key;
@@ -133,7 +133,7 @@ function mro_reset_password() {
 				$site_name = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 			}
 
-			write_log('Sitename: '.$site_name);
+			// write_log('Sitename: '.$site_name);
 
 			$message = __( 'Someone has requested a password reset for the following account:', 'mro-cit-frontend' ) . "\r\n\r\n";
 			/* translators: %s: site name */
@@ -176,14 +176,14 @@ function mro_reset_password() {
 			$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
 
 			if ( $message && !wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) ) {
-				write_log('Something went wrong');
+				// write_log('Something went wrong');
 				wp_die( __('The email could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
 			} else {
 				mro_cit_frontend_messages( '<p class="callout success">' . __('Check your email for your confirmation link.', 'mro-cit-frontend') . '</p>' );
-				write_log('Email was sent');
+				// write_log('Email was sent');
 			}
 
-			write_log($message);
+			// write_log($message);
 
 		}
 

@@ -1,334 +1,193 @@
 <?php
-write_log('included mailchimp');
-// namespace DrewM\MailChimp;
-
-/**
- * Super-simple, minimum abstraction MailChimp API v3 wrapper
- * MailChimp API v3: http://developer.mailchimp.com
- * This wrapper: https://github.com/drewm/mailchimp-api
- *
- * @author Drew McLellan <drew.mclellan@gmail.com>
- * @version 2.2
+/*
+ * Srcs:
+ * https://rudrastyh.com/category/mailchimp-api
+ * https://pippinsplugins.com/create-a-simple-mail-chimp-sign-up-form/
  */
-class MailChimp
-{
-    private $api_key;
-    private $api_endpoint = 'https://<dc>.api.mailchimp.com/3.0';
 
-    /*  SSL Verification
-        Read before disabling:
-        http://snippets.webaware.com.au/howto/stop-turning-off-curlopt_ssl_verifypeer-and-fix-your-php-config/
-    */
-    public $verify_ssl = true;
 
-    private $request_successful = false;
-    private $last_error         = '';
-    private $last_response      = array();
-    private $last_request       = array();
+$mc_options = get_option('mro_cit_mailchimp_settings');
 
-    /**
-     * Create a new instance
-     * @param string $api_key Your MailChimp API key
-     * @throws \Exception
-     */
-    public function __construct($api_key)
-    {
-        $this->api_key = $api_key;
 
-        if (strpos($this->api_key, '-') === false) {
-            throw new \Exception("Invalid MailChimp API key `{$api_key}` supplied.");
-        }
+// register the plugin settings
+function mro_cit_mailchimp_register_settings() {
 
-        list(, $data_center) = explode('-', $this->api_key);
-        $this->api_endpoint  = str_replace('<dc>', $data_center, $this->api_endpoint);
-
-        $this->last_response = array('headers' => null, 'body' => null);
-    }
-
-    /**
-     * Create a new instance of a Batch request. Optionally with the ID of an existing batch.
-     * @param string $batch_id Optional ID of an existing batch, if you need to check its status for example.
-     * @return Batch            New Batch object.
-     */
-    public function new_batch($batch_id = null)
-    {
-        return new Batch($this, $batch_id);
-    }
-
-    /**
-     * Convert an email address into a 'subscriber hash' for identifying the subscriber in a method URL
-     * @param   string $email The subscriber's email address
-     * @return  string          Hashed version of the input
-     */
-    public function subscriberHash($email)
-    {
-        return md5(strtolower($email));
-    }
-
-    /**
-     * Was the last request successful?
-     * @return bool  True for success, false for failure
-     */
-    public function success()
-    {
-        return $this->request_successful;
-    }
-
-    /**
-     * Get the last error returned by either the network transport, or by the API.
-     * If something didn't work, this should contain the string describing the problem.
-     * @return  array|false  describing the error
-     */
-    public function getLastError()
-    {
-        return $this->last_error ?: false;
-    }
-
-    /**
-     * Get an array containing the HTTP headers and the body of the API response.
-     * @return array  Assoc array with keys 'headers' and 'body'
-     */
-    public function getLastResponse()
-    {
-        return $this->last_response;
-    }
-
-    /**
-     * Get an array containing the HTTP headers and the body of the API request.
-     * @return array  Assoc array
-     */
-    public function getLastRequest()
-    {
-        return $this->last_request;
-    }
-
-    /**
-     * Make an HTTP DELETE request - for deleting data
-     * @param   string $method URL of the API request method
-     * @param   array $args Assoc array of arguments (if any)
-     * @param   int $timeout Timeout limit for request in seconds
-     * @return  array|false   Assoc array of API response, decoded from JSON
-     */
-    public function delete($method, $args = array(), $timeout = 10)
-    {
-        return $this->makeRequest('delete', $method, $args, $timeout);
-    }
-
-    /**
-     * Make an HTTP GET request - for retrieving data
-     * @param   string $method URL of the API request method
-     * @param   array $args Assoc array of arguments (usually your data)
-     * @param   int $timeout Timeout limit for request in seconds
-     * @return  array|false   Assoc array of API response, decoded from JSON
-     */
-    public function get($method, $args = array(), $timeout = 10)
-    {
-        return $this->makeRequest('get', $method, $args, $timeout);
-    }
-
-    /**
-     * Make an HTTP PATCH request - for performing partial updates
-     * @param   string $method URL of the API request method
-     * @param   array $args Assoc array of arguments (usually your data)
-     * @param   int $timeout Timeout limit for request in seconds
-     * @return  array|false   Assoc array of API response, decoded from JSON
-     */
-    public function patch($method, $args = array(), $timeout = 10)
-    {
-        return $this->makeRequest('patch', $method, $args, $timeout);
-    }
-
-    /**
-     * Make an HTTP POST request - for creating and updating items
-     * @param   string $method URL of the API request method
-     * @param   array $args Assoc array of arguments (usually your data)
-     * @param   int $timeout Timeout limit for request in seconds
-     * @return  array|false   Assoc array of API response, decoded from JSON
-     */
-    public function post($method, $args = array(), $timeout = 10)
-    {
-        return $this->makeRequest('post', $method, $args, $timeout);
-    }
-
-    /**
-     * Make an HTTP PUT request - for creating new items
-     * @param   string $method URL of the API request method
-     * @param   array $args Assoc array of arguments (usually your data)
-     * @param   int $timeout Timeout limit for request in seconds
-     * @return  array|false   Assoc array of API response, decoded from JSON
-     */
-    public function put($method, $args = array(), $timeout = 10)
-    {
-        return $this->makeRequest('put', $method, $args, $timeout);
-    }
-
-    /**
-     * Performs the underlying HTTP request. Not very exciting.
-     * @param  string $http_verb The HTTP verb to use: get, post, put, patch, delete
-     * @param  string $method The API method to be called
-     * @param  array $args Assoc array of parameters to be passed
-     * @param int $timeout
-     * @return array|false Assoc array of decoded result
-     * @throws \Exception
-     */
-    private function makeRequest($http_verb, $method, $args = array(), $timeout = 10)
-    {
-        if (!function_exists('curl_init') || !function_exists('curl_setopt')) {
-            throw new \Exception("cURL support is required, but can't be found.");
-        }
-
-        $url = $this->api_endpoint . '/' . $method;
-
-        $this->last_error         = '';
-        $this->request_successful = false;
-        $response                 = array('headers' => null, 'body' => null);
-        $this->last_response      = $response;
-
-        $this->last_request = array(
-            'method'  => $http_verb,
-            'path'    => $method,
-            'url'     => $url,
-            'body'    => '',
-            'timeout' => $timeout,
-        );
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Accept: application/vnd.api+json',
-            'Content-Type: application/vnd.api+json',
-            'Authorization: apikey ' . $this->api_key
-        ));
-        curl_setopt($ch, CURLOPT_USERAGENT, 'DrewM/MailChimp-API/3.0 (github.com/drewm/mailchimp-api)');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->verify_ssl);
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        curl_setopt($ch, CURLOPT_ENCODING, '');
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-        switch ($http_verb) {
-            case 'post':
-                curl_setopt($ch, CURLOPT_POST, true);
-                $this->attachRequestPayload($ch, $args);
-                break;
-
-            case 'get':
-                $query = http_build_query($args, '', '&');
-                curl_setopt($ch, CURLOPT_URL, $url . '?' . $query);
-                break;
-
-            case 'delete':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-
-            case 'patch':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
-                $this->attachRequestPayload($ch, $args);
-                break;
-
-            case 'put':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-                $this->attachRequestPayload($ch, $args);
-                break;
-        }
-
-        $response['body']    = curl_exec($ch);
-        $response['headers'] = curl_getinfo($ch);
-
-        if (isset($response['headers']['request_header'])) {
-            $this->last_request['headers'] = $response['headers']['request_header'];
-        }
-
-        if ($response['body'] === false) {
-            $this->last_error = curl_error($ch);
-        }
-
-        curl_close($ch);
-
-        $formattedResponse = $this->formatResponse($response);
-
-        $this->determineSuccess($response, $formattedResponse);
-
-        return $formattedResponse;
-    }
-    
-    /**
-     * @return string The url to the API endpoint
-     */
-    public function getApiEndpoint()
-    {
-        return $this->api_endpoint;
-    }
-
-    /**
-     * Encode the data and attach it to the request
-     * @param   resource $ch cURL session handle, used by reference
-     * @param   array $data Assoc array of data to attach
-     */
-    private function attachRequestPayload(&$ch, $data)
-    {
-        $encoded = json_encode($data);
-        $this->last_request['body'] = $encoded;
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
-    }
-
-    /**
-     * Decode the response and format any error messages for debugging
-     * @param array $response The response from the curl request
-     * @return array|false    The JSON decoded into an array
-     */
-    private function formatResponse($response)
-    {
-        $this->last_response = $response;
-
-        if (!empty($response['body'])) {
-            return json_decode($response['body'], true);
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if the response was successful or a failure. If it failed, store the error.
-     * @param array $response The response from the curl request
-     * @param array|false $formattedResponse The response body payload from the curl request
-     * @return bool     If the request was successful
-     */
-    private function determineSuccess($response, $formattedResponse)
-    {
-        $status = $this->findHTTPStatus($response, $formattedResponse);
-
-        if ($status >= 200 && $status <= 299) {
-            $this->request_successful = true;
-            return true;
-        }
-
-        if (isset($formattedResponse['detail'])) {
-            $this->last_error = sprintf('%d: %s', $formattedResponse['status'], $formattedResponse['detail']);
-            return false;
-        }
-
-        $this->last_error = 'Unknown error, call getLastResponse() to find out what happened.';
-        return false;
-    }
-
-    /**
-     * Find the HTTP status code from the headers or API response body
-     * @param array $response The response from the curl request
-     * @param array|false $formattedResponse The response body payload from the curl request
-     * @return int  HTTP status code
-     */
-    private function findHTTPStatus($response, $formattedResponse)
-    {
-        if (!empty($response['headers']) && isset($response['headers']['http_code'])) {
-            return (int) $response['headers']['http_code'];
-        }
-
-        if (!empty($response['body']) && isset($formattedResponse['status'])) {
-            return (int) $formattedResponse['status'];
-        }
-
-        return 418;
-    }
+	// create our plugin settings
+	register_setting( 'mro_cit_mailchimp_settings_group', 'mro_cit_mailchimp_settings' );
 }
+add_action( 'admin_init', 'mro_cit_mailchimp_register_settings', 100 );
+
+
+function mro_cit_mailchimp_settings_menu() {
+	// add settings page
+	add_options_page(__('Mail Chimp', 'mro-cit-frontend'), __('Mail Chimp', 'mro-cit-frontend'),'manage_options', 'mro-cit-mailchimp', 'mro_cit_mailchimp_settings_page');
+}
+add_action('admin_menu', 'mro_cit_mailchimp_settings_menu', 100);
+
+
+//Settings page
+function mro_cit_mailchimp_settings_page() {
+
+	global $mc_options;
+
+	?>
+	<div class="wrap">
+		<h2><?php _e('Mail Chimp Settings', 'mro-cit-frontend'); ?></h2>
+
+		<form method="post" action="options.php" class="mro_cit_options_form">
+
+			<?php settings_fields( 'mro_cit_mailchimp_settings_group' ); ?>
+			<p>
+				<label for="mro_cit_mailchimp_settings[mailchimp_api]"><?php _e( 'Mail Chimp API Key', 'mro-cit-frontend' ); ?></label><br/>
+
+				<input class="regular-text" id="mro_cit_mailchimp_settings[mailchimp_api]" style="width: 300px;" name="mro_cit_mailchimp_settings[mailchimp_api]" value="<?php if(isset($mc_options['mailchimp_api'])) { echo $mc_options['mailchimp_api']; } ?>"/>
+
+				<div class="description"><?php _e('Enter your Mail Chimp API key to enable a newsletter signup option with the registration form.', 'mro-cit-frontend'); ?></div>
+			</p>
+
+			<p>
+				<?php $lists = mro_cit_get_mailchimp_lists(); ?>
+				<select id="mro_cit_mailchimp_settings[mailchimp_list]" name="mro_cit_mailchimp_settings[mailchimp_list]">
+					<option value="">none</option>
+					<?php
+						if($lists) :
+							foreach($lists as $list) :
+								echo '<option value="' . $list['id'] . '"' . selected($mc_options['mailchimp_list'], $list['id'], false) . '>' . $list['name'] . '</option>';
+							endforeach;
+						else :
+					?>
+					<option value="no list"><?php _e('no lists', 'mro-cit-frontend'); ?></option>
+				<?php endif; ?>
+				</select>
+
+				<label for="mro_cit_mailchimp_settings[mailchimp_list]"><?php _e( 'Newsletter List', 'mro-cit-frontend' ); ?></label><br/>
+
+				<div class="description"><?php _e('Choose the list to subscribe users to', 'mro-cit-frontend'); ?></div>
+			</p>
+			<!-- save the options -->
+			<p class="submit">
+				<input type="submit" class="button-primary" value="<?php _e( 'Save Options', 'mro-cit-frontend' ); ?>" />
+			</p>
+
+		</form>
+	</div><!--end .wrap-->
+	<?php
+}
+
+
+// get an array of all mailchimp subscription lists
+function mro_cit_get_mailchimp_lists() {
+
+	global $mc_options;
+
+	// check that an API key has been entered
+	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
+
+		// setup the $lists variable as a blank array
+		$lists = array();
+
+
+		$api_key = $api_key = $mc_options['mailchimp_api'];;
+		$dc = substr($api_key,strpos($api_key,'-')+1); // us5, us8 etc
+		$args = array(
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			)
+		);
+		$response = wp_remote_get( 'https://'.$dc.'.api.mailchimp.com/3.0/lists/', $args );
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+		if ( wp_remote_retrieve_response_code( $response ) == 200 ) {
+			foreach ( $body->lists as $key => $list ) {
+
+				$lists[$key]['id'] = $list->id;
+				$lists[$key]['name'] = $list->name;
+			}
+
+		}
+		return $lists;
+
+	}
+	return false;
+}
+
+
+
+
+//Subscribe new users to mailchimp automatically
+add_action('user_register', 'mro_cit_user_register_hook', 20, 1 );
+
+function mro_cit_user_register_hook( $user_id ){
+
+	write_log('Send new user\'s info to mailchimp');
+
+	global $mc_options;
+
+	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
+
+		write_log('API ok!');
+
+		$list_id = $mc_options['mailchimp_list'];
+		$api_key = $mc_options['mailchimp_api'];
+
+		$status = 'subscribed'; // subscribed, cleaned, pending, unsubscribed
+
+
+		$user = get_user_by('id', $user_id ); // feel fre to use get_userdata() instead
+		$user_roles = $user->roles;
+
+		if ( in_array( 'afiliado_enterprise_pendiente', $user_roles ) || in_array( 'afiliado_enterprise', $user_roles ) ) {
+			$membership = 'Empresarial';
+		} elseif ( in_array( 'afiliado_personal', $user_roles ) ) {
+			$membership = 'Personal';
+		} else {
+			$membership = '';
+		}
+
+		$merge_fields = array(
+			'FNAME' => $user->first_name,
+			'LNAME' => $user->last_name,
+			'AFILIADO' => $membership
+		);
+
+		$args = array(
+			'method' => 'PUT',
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			),
+			'body' => json_encode(array(
+		    	'email_address' => $user->user_email,
+				'status'        => $status, // subscribed, unsubscribed, pending
+				'merge_fields'  => $merge_fields // in this post we will use only FNAME and LNAME
+
+			))
+		);
+
+		$response = wp_remote_post( 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($user->user_email)), $args );
+
+		$body = json_decode( $response['body'] );
+
+		if ( $response['response']['code'] == 200 && $body->status == $status ) {
+			// echo 'The user has been successfully ' . $status . '.';
+			write_log('The user has been successfully ' . $status);
+		} else {
+			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
+			write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+		}
+
+
+
+
+
+		/*
+		 * if user subscription was failed you can try to store the errors the following way
+		 */
+		if( $body->status != $status )
+			update_user_meta( $user_id, '_subscription_error', 'User was not subscribed because:' . $body->detail );
+	}
+
+	// return FALSE if any of the above fail
+	return false;
+}
+
+
