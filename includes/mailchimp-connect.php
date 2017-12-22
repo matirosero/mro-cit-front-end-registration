@@ -170,7 +170,7 @@ add_action('init', 'mro_cit_check_for_email_signup');
 
 
 // adds an email to the mailchimp subscription list
-function mro_cit_subscribe_email($email) {
+function mro_cit_subscribe_email($email, $merge_fields) {
 
 	write_log('Send info to mailchimp');
 
@@ -180,9 +180,7 @@ function mro_cit_subscribe_email($email) {
 	// check that the API option is set
 	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
 
-
-		//TEMP
-		$list_id = 'a74476261a';
+		$list_id = $mc_options['mailchimp_list'];
 		$api_key = $mc_options['mailchimp_api'];
 
 		write_log('api key OK: '.$api_key);
@@ -201,7 +199,9 @@ function mro_cit_subscribe_email($email) {
 			),
 			'body' => json_encode(array(
 		    	'email_address' => $email,
-				'status'        => $status
+				'status'        => $status, // subscribed, unsubscribed, pending
+				'merge_fields'  => $merge_fields // in this post we will use only FNAME and LNAME
+	
 			))
 		);
 		$response = wp_remote_post( 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($email)), $args );
@@ -224,6 +224,79 @@ function mro_cit_subscribe_email($email) {
 }
 
 
+add_action('user_register', 'mro_cit_user_register_hook', 20, 1 );
+ 
+function mro_cit_user_register_hook( $user_id ){
+ 
+	write_log('Send new user\'s info to mailchimp');
 
+	global $mc_options;
+
+	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
+
+		write_log('API ok!');
+
+		$list_id = $mc_options['mailchimp_list'];
+		$api_key = $mc_options['mailchimp_api'];
+
+		$status = 'subscribed'; // subscribed, cleaned, pending, unsubscribed
+
+
+		$user = get_user_by('id', $user_id ); // feel fre to use get_userdata() instead
+		$user_roles = $user->roles;
+
+		if ( in_array( 'afiliado_enterprise_pendiente', $user_roles ) || in_array( 'afiliado_enterprise', $user_roles ) ) {
+			$membership = 'Empresarial';
+		} elseif ( in_array( 'afiliado_personal', $user_roles ) ) {
+			$membership = 'Personal';
+		} else {
+			$membership = '';
+		}
+
+		$merge_fields = array( 
+			'FNAME' => $user->first_name,
+			'LNAME' => $user->last_name,
+			'AFILIADO' => $membership
+		);
+
+		$args = array(
+			'method' => 'PUT',
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			),
+			'body' => json_encode(array(
+		    	'email_address' => $user->user_email,
+				'status'        => $status, // subscribed, unsubscribed, pending
+				'merge_fields'  => $merge_fields // in this post we will use only FNAME and LNAME
+	
+			))
+		);
+
+		$response = wp_remote_post( 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($user->user_email)), $args );
+
+		$body = json_decode( $response['body'] );
+
+		if ( $response['response']['code'] == 200 && $body->status == $status ) {
+			// echo 'The user has been successfully ' . $status . '.';
+			write_log('The user has been successfully ' . $status);
+		} else {
+			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
+			write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+		}
+
+
+
+
+	 
+		/*
+		 * if user subscription was failed you can try to store the errors the following way
+		 */
+		if( $body->status != $status )
+			update_user_meta( $user_id, '_subscription_error', 'User was not subscribed because:' . $body->detail );
+	}
+
+	// return FALSE if any of the above fail
+	return false;
+}
 
 

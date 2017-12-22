@@ -192,12 +192,6 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				</p>
 
 				<p>
-					<label>
-						<input type="checkbox" name="mc4wp-subscribe" value="1" checked />
-						<?php _e('Subscribe to our newsletter.', 'mro-cit-frontend'); ?></label>
-				</p>
-
-				<p>
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
 					<?php
