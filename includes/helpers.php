@@ -14,7 +14,7 @@ function pippin_show_error_messages() {
 		    // Loop error codes and display errors
 		   foreach($codes as $code){
 		        $message = pippin_errors()->get_error_message($code);
-		        echo '<span class="error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' . $message . '</span><br/>';
+		        echo '<p class="callout alert error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' . $message . '</p>';
 		    }
 		echo '</div>';
 	}

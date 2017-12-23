@@ -351,7 +351,7 @@ function mro_edit_member() {
 				$mc_merge_fields['EMPRESA'] = $user_nickname;
 
 			} else {
-				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
+				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
 			}
 
 		//Set display name if Personal

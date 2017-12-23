@@ -264,7 +264,7 @@ function pippin_add_new_member() {
 		// write_log('3. Membership type: '.$mro_cit_user_membership);
 	    // Valid membership type
 	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
-            pippin_errors()->add( 'membership_error', __( '<strong>ERROR</strong>: Please enter a valid membership type.', 'mro-cit-frontend' ) );
+            pippin_errors()->add( 'membership_error', __( 'Please enter a valid membership type.', 'mro-cit-frontend' ) );
             // write_log('Membership error: INVALID ACCORDING TO mro_cit_validate_membership()');
 	    } else {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
@@ -310,7 +310,7 @@ function pippin_add_new_member() {
 		// write_log('7. Country is '.$mro_cit_user_country);
 	    // Valid country
 	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
-	        pippin_errors()->add( 'country_error', __( '<strong>ERROR</strong>: Please choose a valid country.', 'mro-cit-frontend' ) );
+	        pippin_errors()->add( 'country_error', __( 'Please choose a valid country.', 'mro-cit-frontend' ) );
 	        // write_log('Country error: invalid due to mro_cit_validate_country()');
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
@@ -350,7 +350,7 @@ function pippin_add_new_member() {
 			// write_log('11.5 ENTERPRISE IS CHOSEN');
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
-				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
+				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
 				// write_log('Nickname error: nickname not set');
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );

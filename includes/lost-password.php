@@ -83,14 +83,14 @@ function mro_reset_password() {
 
 		if ( empty( $_POST['user_login'] ) || ! is_string( $_POST['user_login'] ) ) {
 
-			pippin_errors()->add('empty_username', __('<strong>ERROR</strong>: Enter a username or email address.'));
+			pippin_errors()->add('empty_username', __('Enter a username or email address.'));
 			// write_log('Empty username');
 
 		} elseif ( strpos( $_POST['user_login'], '@' ) ) {
 			write_log('Step 1.5: This is an email!');
 			$user_data = get_user_by( 'email', trim( wp_unslash( $_POST['user_login'] ) ) );
 			if ( empty( $user_data ) ) {
-				pippin_errors()->add('invalid_email', __('<strong>ERROR</strong>: There is no user registered with that email address.'));
+				pippin_errors()->add('invalid_email', __('There is no user registered with that email address.'));
 				// write_log('Invalid email! No one with that email');
 			}
 
@@ -99,7 +99,7 @@ function mro_reset_password() {
 			$login = trim($_POST['user_login']);
 			$user_data = get_user_by('login', $login);
 			if ( empty( $user_data ) ) {
-				pippin_errors()->add('invalid_username', __('<strong>ERROR</strong>: There is no user registered with that username.'));
+				pippin_errors()->add('invalid_username', __('There is no user registered with that username.'));
 				// write_log('Invalid username! No one with that name');
 			}
 		}
