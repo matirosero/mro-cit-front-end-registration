@@ -72,7 +72,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		<form id="pippin_registration_form" class="pippin_form" action="" method="POST">
 			<fieldset class="register-main-info">
 				<p>
-					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?></label>
+					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
 					<?php
 					if ( $membership == 'enterprise' ) { ?>
@@ -83,7 +83,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				<?php
 				if ( $membership == 'enterprise' ) { ?>
 					<p>
-						<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
+						<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 						<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
 					</p>
 				<?php } ?>
@@ -183,11 +183,11 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 		    <fieldset class="register-password">
 				<p>
-					<label for="password"><?php _e('Password', 'mro-cit-frontend'); ?></label>
+					<label for="password"><?php _e('Password', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 					<input name="pippin_user_pass" id="password" class="required" type="password"/>
 				</p>
 				<p>
-					<label for="password_again"><?php _e('Password Again', 'mro-cit-frontend'); ?></label>
+					<label for="password_again"><?php _e('Password Again', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 					<input name="pippin_user_pass_confirm" id="password_again" class="required" type="password"/>
 				</p>
 
