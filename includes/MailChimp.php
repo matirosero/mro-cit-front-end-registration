@@ -133,7 +133,7 @@ function mro_cit_user_register_hook( $user_id ){
 		$status = 'subscribed'; // subscribed, cleaned, pending, unsubscribed
 
 
-		$user = get_user_by('id', $user_id ); // feel fre to use get_userdata() instead
+		$user = get_userdata($user_id ); // feel fre to use get_userdata() instead
 		$user_roles = $user->roles;
 
 		if ( in_array( 'afiliado_enterprise_pendiente', $user_roles ) || in_array( 'afiliado_enterprise', $user_roles ) ) {
@@ -147,13 +147,15 @@ function mro_cit_user_register_hook( $user_id ){
 			$company = '';
 		}
 
+
+
 		$merge_fields = array(
 			'FNAME' 	=> $user->first_name,
 			'LNAME' 	=> $user->last_name,
 			'AFILIADO' 	=> $membership,
-			'EMPRESA'	=> $user->last_name,
-			'PHONE'		=> $user->mro_cit_user_phone,
-			'PAIS'		=> $user->mro_cit_user_country
+			'EMPRESA'	=> $company,
+			// 'PHONE'		=> $user->mro_cit_user_phone,
+			// 'PAIS'		=> $user->mro_cit_user_country
 		);
 
 		$args = array(
