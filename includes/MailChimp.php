@@ -138,16 +138,22 @@ function mro_cit_user_register_hook( $user_id ){
 
 		if ( in_array( 'afiliado_enterprise_pendiente', $user_roles ) || in_array( 'afiliado_enterprise', $user_roles ) ) {
 			$membership = 'Empresarial';
+			$company = $user->nickname;
 		} elseif ( in_array( 'afiliado_personal', $user_roles ) ) {
 			$membership = 'Personal';
+			$company = $user->mro_cit_user_company;
 		} else {
 			$membership = '';
+			$company = '';
 		}
 
 		$merge_fields = array(
-			'FNAME' => $user->first_name,
-			'LNAME' => $user->last_name,
-			'AFILIADO' => $membership
+			'FNAME' 	=> $user->first_name,
+			'LNAME' 	=> $user->last_name,
+			'AFILIADO' 	=> $membership,
+			'EMPRESA'	=> $user->last_name,
+			'PHONE'		=> $user->mro_cit_user_phone,
+			'PAIS'		=> $user->mro_cit_user_country
 		);
 
 		$args = array(
