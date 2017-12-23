@@ -265,6 +265,7 @@ function mro_edit_member() {
   		);
 
   		$updated_meta = array();
+  		$mc_merge_fields  = array();
 
 
 		if ( !empty( $_POST["pippin_user_email"] ) ) {
@@ -285,6 +286,7 @@ function mro_edit_member() {
 		//Phone
 		if ( !empty( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 		} else {
 			$mro_cit_user_phone = '';
 		}
@@ -301,6 +303,7 @@ function mro_edit_member() {
 		    } else {
 		    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
 		    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
+		    	$mc_merge_fields['PAIS'] = $mro_cit_user_country;
 		    }
 		}
 
@@ -315,6 +318,7 @@ function mro_edit_member() {
 
 		if ( !empty( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 		} else {
 			$mro_cit_user_company = '';
 		}
@@ -325,12 +329,13 @@ function mro_edit_member() {
 		if ( !empty( $_POST["pippin_user_first"] ) ) {
 			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
 			$updated_info['first_name'] = $user_first;
-
+			$mc_merge_fields['FNAME'] = $user_first;
 		}
 
 		if ( !empty( $_POST["pippin_user_last"] ) ) {
 			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
 			$updated_info['last_name'] = $user_last;
+			$mc_merge_fields['LNAME'] = $user_last;
 		}
 
 
@@ -343,6 +348,7 @@ function mro_edit_member() {
 
 				$updated_info['nickname'] = $user_nickname;
 				$updated_info['display_name'] = $user_nickname;
+				$mc_merge_fields['EMPRESA'] = $user_nickname;
 
 			} else {
 				pippin_errors()->add( 'nickname_error', __( '<strong>ERROR</strong>: Please fill in your company\'s name.', 'mro-cit-frontend' ) );
@@ -423,6 +429,9 @@ function mro_edit_member() {
 				update_user_meta( $current_user->ID, $key, $value );
 			}
 
+			// Send to mailchimp function
+			mro_cit_subscribe_email($user_email, $mc_merge_fields);
+
 			/* Let plugins hook in, like ACF who is handling the profile picture all by itself. Got to love the Elliot */
 		    do_action('edit_user_profile_update', $current_user->ID);
 
@@ -431,7 +440,7 @@ function mro_edit_member() {
 			// 	// write_log('error :(');
 			// }
 
-			do_action('edit_user_profile_update', $current_user->ID);
+			// do_action('edit_user_profile_update', $current_user->ID);
 
 			mro_cit_frontend_messages( '<p class="callout success">' . __('Your profile has been succesfully edited!', 'mro-cit-frontend') . '</p>' );
 
