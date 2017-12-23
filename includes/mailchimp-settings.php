@@ -113,9 +113,8 @@ function mro_cit_get_mailchimp_lists() {
 
 
 
-
 //Subscribe new users to mailchimp automatically
-add_action('user_register', 'mro_cit_user_register_hook', 20, 1 );
+// add_action('user_register', 'mro_cit_user_register_hook', 20, 1 );
 
 function mro_cit_user_register_hook( $user_id ){
 

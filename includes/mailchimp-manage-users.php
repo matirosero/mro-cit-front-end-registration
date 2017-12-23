@@ -44,7 +44,7 @@ function mro_cit_check_for_email_signup() {
 	// only proceed with this function if we are posting from our email subscribe form
 	if(isset($_POST['action']) && $_POST['action'] == 'mro_cit_mailchimp') {
 
-		write_log('OK to process mailchimp form');
+		//write_log('OK to process mailchimp form');
 
 		// this contains the email address entered in the subscribe form
 		$email = $_POST['mro_cit_mailchimp_email'];
@@ -53,7 +53,7 @@ function mro_cit_check_for_email_signup() {
 		if(!is_email($email)) {
 			wp_die(__('Your email address is invalid', 'mro-cit-frontend'), __('Invalid Email', 'mro-cit-frontend'));
 		} else {
-			write_log('Email OK');
+			//write_log('Email OK');
 		}
 
 
@@ -70,7 +70,7 @@ add_action('init', 'mro_cit_check_for_email_signup');
 // adds an email to the mailchimp subscription list
 function mro_cit_subscribe_email($email, $merge_fields) {
 
-	write_log('Send info to mailchimp');
+	// write_log('mro_cit_subscribe_email(): Send info to mailchimp');
 
 	global $mc_options;
 
@@ -81,9 +81,9 @@ function mro_cit_subscribe_email($email, $merge_fields) {
 		$list_id = $mc_options['mailchimp_list'];
 		$api_key = $mc_options['mailchimp_api'];
 
-		write_log('api key OK: '.$api_key);
-		write_log('list: '.$list_id);
-		write_log('subscribe this email: '.$email);
+		// write_log('api key OK: '.$api_key);
+		// write_log('list: '.$list_id);
+		// write_log('subscribe this email: '.$email);
 
 
 		// $api_key = 'YOUR API KEY';
@@ -108,10 +108,10 @@ function mro_cit_subscribe_email($email, $merge_fields) {
 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
 			// echo 'The user has been successfully ' . $status . '.';
-			write_log('The user has been successfully ' . $status);
+			//write_log('The user has been successfully ' . $status);
 		} else {
 			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
-			write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+			//write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
 		}
 
 	}

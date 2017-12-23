@@ -219,6 +219,7 @@ function pippin_add_new_member() {
 
   		//Array to hold meta values
   		$updated_meta = array();
+  		$mc_merge_fields  = array();
 
 
 		// Process username
@@ -273,6 +274,12 @@ function pippin_add_new_member() {
 	    		$mro_cit_user_membership = 'afiliado_enterprise_pendiente';
 	    		// write_log('Had to change membership to pending');
 	    	}
+
+	    	if ( $mro_cit_user_membership == 'afiliado_personal' ) {
+	    		$mc_merge_fields['AFILIADO'] = 'Personal';
+	    	} elseif ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
+	    		$mc_merge_fields['AFILIADO'] = 'Empresarial';
+	    	}
 	    }
 
 
@@ -280,6 +287,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 			// write_log('4. Phone is '.$mro_cit_user_phone);
 		}
 
@@ -292,6 +300,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 			// write_log('6. COmpany is '.$mro_cit_user_company);
 		}
 
@@ -306,6 +315,7 @@ function pippin_add_new_member() {
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
 	    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
+	    	$mc_merge_fields['PAIS'] = $mro_cit_user_country;
 	    	// write_log('Sanitized country is '.$mro_cit_user_country);
 	    }
 
@@ -329,8 +339,10 @@ function pippin_add_new_member() {
 
 
 		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
+		$mc_merge_fields['FNAME'] = $user_first;
 		// write_log('10. First name is '.$user_first);
 		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
+		$mc_merge_fields['LNAME'] = $user_last;
 		// write_log('11. Last name is '.$user_last);
 
 
@@ -343,6 +355,7 @@ function pippin_add_new_member() {
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
 				$user_display_name 	= $user_nickname;
+				$mc_merge_fields['EMPRESA'] = $user_nickname;
 				// write_log('Sanitized company nick is'.$user_display_name);
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
@@ -417,6 +430,9 @@ function pippin_add_new_member() {
 
 				// send an email to the admin alerting them of the registration
 				wp_new_user_notification($new_user_id, null, 'both');
+
+				// Send to mailchimp function
+				mro_cit_subscribe_email($user_email, $mc_merge_fields);
 
 
 				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
