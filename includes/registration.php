@@ -37,7 +37,8 @@ function pippin_registration_form($atts) {
 		}
 
 	} else {
-		$output = '<p class="callout warning">' . sprintf( wp_kses( __( 'Please <a href="%s">log out</a> in order to register a new account.', 'mro-cit-frontend'), array(  'a' => array( 'href' => array() ) ) ), wp_logout_url() ) . '</p>';
+		// $output = '<p class="callout warning">' . sprintf( wp_kses( __( 'Please <a href="%s">log out</a> in order to register a new account.', 'mro-cit-frontend'), array(  'a' => array( 'href' => array() ) ) ), wp_logout_url() ) . '</p>';
+		$output = '<p class="callout warning">Please <a href="'.wp_logout_url().'">log out</a> in order to register a new account.</p>';
 	}
 	return $output;
 }
