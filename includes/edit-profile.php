@@ -123,7 +123,7 @@ function mro_cit_edit_profile_form_fields() {
 					//Enterprise: company name/nickname
 					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) { ?>
 						<p>
-							<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?></label>
+							<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 							<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text" value="<?php echo $user->nickname; ?>" />
 						</p>
 					<?php } ?>
@@ -141,7 +141,7 @@ function mro_cit_edit_profile_form_fields() {
 					} ?>
 
 					<p>
-						<label for="pippin_user_email"><?php echo $email_label; ?></label>
+						<label for="pippin_user_email"><?php echo $email_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $user->user_email; ?>" />
 					</p>
 					<?php
@@ -284,7 +284,7 @@ function mro_edit_member() {
 
 
 		//Phone
-		if ( !empty( $_POST["mro_cit_user_phone"] ) ) {
+		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 		} else {
@@ -294,7 +294,7 @@ function mro_edit_member() {
 
 
 		// Country
-		if ( !empty( $_POST["mro_cit_user_country"] ) ) {
+		if ( isset( $_POST["mro_cit_user_country"] ) ) {
 			$mro_cit_user_country = $_POST["mro_cit_user_country"];
 
 		    // Valid country
@@ -308,7 +308,7 @@ function mro_edit_member() {
 		}
 
 
-		if ( !empty( $_POST["mro_cit_user_occupation"] ) ) {
+		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
 		} else {
 			$mro_cit_user_occupation = '';
@@ -316,7 +316,7 @@ function mro_edit_member() {
 		$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
 
 
-		if ( !empty( $_POST["mro_cit_user_company"] ) ) {
+		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 		} else {
@@ -374,7 +374,7 @@ function mro_edit_member() {
 		}
 
 
-		if ( !empty( $_POST["mro_cit_user_secondary_email"] ) ) {
+		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
 			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
 			if(!is_email($mro_cit_user_secondary_email)) {
 				//invalid email
@@ -386,12 +386,12 @@ function mro_edit_member() {
 			}
 		}
 
-		if ( !empty( $_POST["mro_cit_user_secondary_first"] ) ) {
+		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
 			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
 			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
 		}
 
-		if ( !empty( $_POST["mro_cit_user_secondary_last"] ) ) {
+		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
 			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
 			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
 		}

@@ -102,7 +102,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				} ?>
 
 				<p>
-					<label for="pippin_user_email"><?php echo $email_label; ?></label>
+					<label for="pippin_user_email"><?php echo $email_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
 				</p>
 				<?php
