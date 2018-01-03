@@ -43,6 +43,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 				$message .= sprintf( __( 'Empresa: %s' ), $user->nickname ) . "\r\n\r\n";
 
+				$message .= sprintf( __( 'Industria: %s' ), $user->mro_cit_user_sector ) . "\r\n\r\n";
+
 				$message .= sprintf( __( 'País: %s' ), $user->mro_cit_user_country ) . "\r\n\r\n";
 
 				$message .= sprintf( __( 'Teléfono: %s' ), $user->mro_cit_user_phone ) . "\r\n\r\n";

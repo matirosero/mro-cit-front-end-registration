@@ -124,6 +124,14 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
 		        </p>
 
+				<?php
+				if ( $membership == 'enterprise' ) { ?>
+					<p>
+			            <label for="mro_cit_user_sector"><?php _e( 'Sector/industry', 'mro-cit-frontend' ) ?></label>
+		                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="" size="25" />
+			        </p>
+				<?php } ?>
+				
 			    <?php
 				// If personal, occupation and company info
 				if ( $membership != 'enterprise' ) { ?>
@@ -290,6 +298,12 @@ function pippin_add_new_member() {
 			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
 			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 			// write_log('4. Phone is '.$mro_cit_user_phone);
+		}
+
+		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
+			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
+			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+			// write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
