@@ -127,7 +127,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				<?php
 				if ( $membership == 'enterprise' ) { ?>
 					<p>
-			            <label for="mro_cit_user_sector"><?php _e( 'Sector/industry', 'mro-cit-frontend' ) ?></label>
+			            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="" size="25" />
 			        </p>
 				<?php } ?>

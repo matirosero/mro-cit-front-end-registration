@@ -167,7 +167,7 @@ function mro_cit_edit_profile_form_fields() {
 					// If enterprise, secondary contact details
 					if ( members_current_user_has_role( 'afiliado_enterprise_pendiente' ) || members_current_user_has_role( 'afiliado_enterprise' ) ) { ?>
 						<p>
-				            <label for="mro_cit_user_sector"><?php _e( 'Sector/industry', 'mro-cit-frontend' ) ?></label>
+				            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 			                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="<?php echo $current_user->mro_cit_user_sector; ?>" size="25" />
 				        </p>
 					<?php } ?>
