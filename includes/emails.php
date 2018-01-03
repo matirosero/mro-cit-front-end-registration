@@ -281,6 +281,56 @@ add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
 
 
 
+/*
+ * Email update email
+ */
+add_filter( 'email_change_email', 'mro_cit_change_email_mail_message', 10, 3 );
+function mro_cit_change_email_mail_message( $email_change, $user, $userdata 
+) {
+
+    $modified_email_message = __( 'Hola ###USERNAME###,
+
+Esta es una confirmación de que el correo electrónico asociado con su cuenta en ###SITENAME### fue cambiado a ###NEW_EMAIL###.
+
+Si usted no cambió su correo, por favor contacte al administrador del sitio al correo ###ADMIN_EMAIL###
+
+Este mensaje fue enviado a ###EMAIL###
+
+Saludos cordiales,
+###SITENAME###
+###SITEURL###' ); //put your modified content in this section
+
+    $email_change[ 'message' ] = $modified_email_message;
+
+    return $email_change;
+}
+
+
+/*
+ * Password update email
+ */
+add_filter( 'password_change_email', 'mro_cit_change_password_mail_message', 10, 3 );
+function mro_cit_change_password_mail_message( $pass_change_mail, $user, $userdata 
+) {
+  $new_message_txt = __( 'Hola ###USERNAME###,
+
+Esta es una confirmación de que su contraseña en ###SITENAME### fue cambiada.
+
+Si usted no cambió su contraseña, por favor contacte al administrador del sitio al correo ###ADMIN_EMAIL###
+
+Este mensaje fue enviado a ###EMAIL###
+
+Saludos cordiales,
+###SITENAME###
+###SITEURL###' );
+  $pass_change_mail[ 'message' ] = $new_message_txt;
+  return $pass_change_mail;
+}
+
+
+
+
+
 add_action('wp_mail_failed', 'log_mailer_errors', 10, 1);
 function log_mailer_errors(){
   $fn = ABSPATH . '/mail.log'; // say you've got a mail.log file in your server root
