@@ -261,8 +261,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
  * Email user on role change
  */
 function mro_cit_user_role_update( $user_id, $role ) {
-    write_log('role changed');
-    write_log('new '.$role);
+    // write_log('role changed');
+    // write_log('new '.$role);
 
     // write_log('old '.$old_roles);
     if ($role == 'afiliado_enterprise') {
