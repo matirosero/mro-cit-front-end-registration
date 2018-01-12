@@ -17,7 +17,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
         // set content type to html
         // add_filter( 'wp_mail_content_type', 'wpmail_content_type' );
 
-		global $wpdb, $wp_hasher;
+		global $wpdb, $wp_hasher, $wp_roles;
 		$user = get_userdata( $user_id );
 
 		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
@@ -34,14 +34,23 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			// Admin email is Afiliado Empresarial
 			if ( in_array( array('afiliado_empresarial_pendiente', 'afiliado_institucional_pendiente'), $user_roles) ) {
 
-				$subject = 'Solicitud de afiliación empresarial al Club de Investigación Tecnológica';
+				if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) ) {
+					$membership = 'afiliación empresarial';
+					$member_type = 'Afiliado Empresarial';
+				} elseif ( in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
+					$membership = 'afiliación institucional';
+					$member_type = 'Afiliado Institucional';
+				}
 
-				$message  = sprintf( __( 'Se ha registrado un nuevo afiliado en %s, y desea ser un Afiliado Empresarial.' ), $blogname ) . "\r\n\r\n";
+
+				$subject = 'Solicitud de ' . $membership . ' al Club de Investigación Tecnológica';
+
+				$message  = sprintf( __( 'Se ha registrado un nuevo afiliado al Club, y desea ser %s.' ), $member_type ) . "\r\n\r\n";
 
 				/* translators: %s: user login */
 				$message .= sprintf( __( 'Usuario: %s' ), $user->user_login ) . "\r\n\r\n";
 
-				$message .= sprintf( __( 'Empresa: %s' ), $user->nickname ) . "\r\n\r\n";
+				$message .= sprintf( __( 'Empresa/Institución: %s' ), $user->nickname ) . "\r\n\r\n";
 
 				$message .= sprintf( __( 'Industria: %s' ), $user->mro_cit_user_sector ) . "\r\n\r\n";
 
@@ -158,7 +167,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
 
-		if ( in_array('afiliado_empresarial_pendiente', $user_roles) ) {
+		if ( in_array( array( 'afiliado_empresarial_pendiente', 'afiliado_institucional_pendiente' ), $user_roles ) ) {
 			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
 
 			$message .= sprintf(__('Pronto nos pondremos en contacto para finalizar el proceso de afiliación. Mientras tanto, está cuenta está en estado "Pendiente": puede ingresar al sitio y descargar informes de investigación. En cuanto finalice la afiliación, también será posible tramitar sus reservas a nuestros eventos. ')) . "\r\n\r\n";
@@ -265,7 +274,7 @@ function mro_cit_user_role_update( $user_id, $role ) {
     // write_log('new '.$role);
 
     // write_log('old '.$old_roles);
-    if ($role == 'afiliado_empresarial') {
+    if ( $role == 'afiliado_empresarial' || $role == 'afiliado_institucional' ) {
         $site_url = get_bloginfo('wpurl');
         $user_info = get_userdata( $user_id );
         $to = $user_info->user_email;
