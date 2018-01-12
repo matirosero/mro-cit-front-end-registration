@@ -18,8 +18,8 @@ function mro_cit_validate_membership( $value ) {
     'afiliado_personal',
     'afiliado_empresarial',
     'afiliado_empresarial_pendiente',
-    'afiliado_institucionial',
-    'afiliado_institucionial_pendiente',
+    'afiliado_institucional',
+    'afiliado_institucional_pendiente',
  	);
  	if ( mro_cit_validate_from_array($value, $valid_values) ) {
  		return true;
@@ -41,8 +41,8 @@ function sanitize_membership( $value ) {
     'afiliado_personal',
     'afiliado_empresarial',
     'afiliado_empresarial_pendiente',
-    'afiliado_institucionial',
-    'afiliado_institucionial_pendiente',
+    'afiliado_institucional',
+    'afiliado_institucional_pendiente',
   );
 
   if( ! in_array( $value, $valid_values ) ) {

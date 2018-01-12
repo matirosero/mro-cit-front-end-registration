@@ -32,14 +32,16 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$switched_locale = switch_to_locale( get_locale() );
 
 			// Admin email is Afiliado Empresarial
-			if ( in_array( array('afiliado_empresarial_pendiente', 'afiliado_institucional_pendiente'), $user_roles) ) {
+			if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 
 				if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) ) {
 					$membership = 'afiliación empresarial';
 					$member_type = 'Afiliado Empresarial';
+					$entity = 'Empresa';
 				} elseif ( in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 					$membership = 'afiliación institucional';
 					$member_type = 'Afiliado Institucional';
+					$entity = 'Institución';
 				}
 
 
@@ -167,7 +169,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
 
-		if ( in_array( array( 'afiliado_empresarial_pendiente', 'afiliado_institucional_pendiente' ), $user_roles ) ) {
+		if (  in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
 
 			$message .= sprintf(__('Pronto nos pondremos en contacto para finalizar el proceso de afiliación. Mientras tanto, está cuenta está en estado "Pendiente": puede ingresar al sitio y descargar informes de investigación. En cuanto finalice la afiliación, también será posible tramitar sus reservas a nuestros eventos. ')) . "\r\n\r\n";

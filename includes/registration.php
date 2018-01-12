@@ -214,7 +214,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					if ( $membership == 'empresarial' ) { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_empresarial_pendiente"/>
 					<?php } elseif ( $membership == 'institucional' ) { ?>
-						<input type="hidden" name="mro_cit_user_membership" value="afiliado_institucionial_pendiente"/>
+						<input type="hidden" name="mro_cit_user_membership" value="afiliado_institucional_pendiente"/>
 					<?php } else { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } ?>
@@ -263,39 +263,39 @@ function pippin_add_new_member() {
 
 		//Process email
 		$user_email = sanitize_email( $_POST["pippin_user_email"] );
-		// write_log('2. Email is '.$user_email);
+		write_log('2. Email is '.$user_email);
 
 		if(!is_email($user_email)) {
 			//invalid email
 			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
-			// write_log('Email error: Invalid email');
+			write_log('Email error: Invalid email');
 		}
 		if(email_exists($user_email)) {
 			//Email address already registered
 			pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
-			// write_log('Email error: Email already in use');
+			write_log('Email error: Email already in use');
 		}
 
 
 		// Process membership type
 		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
-		// write_log('3. Membership type: '.$mro_cit_user_membership);
+		write_log('3. Membership type: '.$mro_cit_user_membership);
 	    // Valid membership type
 	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
             pippin_errors()->add( 'membership_error', __( 'Please enter a valid membership type.', 'mro-cit-frontend' ) );
-            // write_log('Membership error: INVALID ACCORDING TO mro_cit_validate_membership()');
+            write_log('Membership error: INVALID ACCORDING TO mro_cit_validate_membership()');
 	    } else {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
-	    	// write_log('Sanitized membership type: '.$mro_cit_user_membership );
+	    	write_log('Sanitized membership type: '.$mro_cit_user_membership );
 
 	    	if ( $mro_cit_user_membership == 'afiliado_empresarial') {
 	    		$mro_cit_user_membership = 'afiliado_empresarial_pendiente';
-	    		// write_log('Had to change membership to pending');
+	    		write_log('Had to change membership to pending');
 	    	}
 
 	    	if ( $mro_cit_user_membership == 'afiliado_institucional') {
 	    		$mro_cit_user_membership = 'afiliado_institucional_pendiente';
-	    		// write_log('Had to change membership to pending');
+	    		write_log('Had to change membership to pending');
 	    	}
 
 	    	if ( $mro_cit_user_membership == 'afiliado_personal' ) {
@@ -305,6 +305,7 @@ function pippin_add_new_member() {
 	    	} elseif ( $mro_cit_user_membership == 'afiliado_institucional_pendiente' ) {
 	    		$mc_merge_fields['AFILIADO'] = 'Institucional';
 	    	}
+	    	write_log('MERGE FIELD: afiliado: '.$mc_merge_fields['AFILIADO']);
 	    }
 
 
@@ -313,41 +314,44 @@ function pippin_add_new_member() {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
 			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
-			// write_log('4. Phone is '.$mro_cit_user_phone);
+			write_log('4. Phone is '.$mro_cit_user_phone);
+			write_log('MERGE FIELD: phone: '.$mc_merge_fields['PHONE']);
 		}
 
 		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
 			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
 			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
-			// write_log('5. Sector is '.$mro_cit_user_sector);
+			write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
 			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
-			// write_log('5. Occupation is '.$mro_cit_user_occupation);
+			write_log('5. Occupation is '.$mro_cit_user_occupation);
 		}
 
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
 			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
-			// write_log('6. COmpany is '.$mro_cit_user_company);
+			write_log('6. COmpany is '.$mro_cit_user_company);
+			write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from custom field)');
 		}
 
 
 		//Process country
 		$mro_cit_user_country = $_POST["mro_cit_user_country"];
-		// write_log('7. Country is '.$mro_cit_user_country);
+		write_log('7. Country is '.$mro_cit_user_country);
 	    // Valid country
 	    if ( ! mro_cit_validate_country( $mro_cit_user_country ) ) {
 	        pippin_errors()->add( 'country_error', __( 'Please choose a valid country.', 'mro-cit-frontend' ) );
-	        // write_log('Country error: invalid due to mro_cit_validate_country()');
+	        write_log('Country error: invalid due to mro_cit_validate_country()');
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
 	    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
 	    	$mc_merge_fields['PAIS'] = $mro_cit_user_country;
-	    	// write_log('Sanitized country is '.$mro_cit_user_country);
+	    	write_log('Sanitized country is '.$mro_cit_user_country);
+	    	write_log('MERGE FIELD: country: '.$mc_merge_fields['PAIS']);
 	    }
 
 
@@ -371,23 +375,27 @@ function pippin_add_new_member() {
 
 		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
 		$mc_merge_fields['FNAME'] = $user_first;
-		// write_log('10. First name is '.$user_first);
+		write_log('10. First name is '.$user_first);
+		write_log('MERGE FIELD: FNAME: '.$mc_merge_fields['FNAME']);
+
 		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
 		$mc_merge_fields['LNAME'] = $user_last;
-		// write_log('11. Last name is '.$user_last);
+		write_log('11. Last name is '.$user_last);
+		write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
 
 
-		if ( $mro_cit_user_membership == 'afiliado_empresarial_pendiente' || $mro_cit_user_membership == 'afiliado_institucional_pendiente' ) {
-			// write_log('11.5 EMPRESARIAL IS CHOSEN');
+		if ( $mro_cit_user_membership != 'afiliado_personal' ) {
+			write_log('11.5 EMPRESARIAL/INSTITUCIONAL IS CHOSEN');
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
 				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
-				// write_log('Nickname error: nickname not set');
+				write_log('Nickname error: nickname not set');
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
 				$user_display_name 	= $user_nickname;
 				$mc_merge_fields['EMPRESA'] = $user_nickname;
-				// write_log('Sanitized company nick is'.$user_display_name);
+				write_log('Sanitized company nick is'.$user_display_name);
+				write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from nickname)');
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
 
@@ -463,6 +471,7 @@ function pippin_add_new_member() {
 				wp_new_user_notification($new_user_id, null, 'both');
 
 				// Send to mailchimp function
+				write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
 				mro_cit_subscribe_email($user_email, $mc_merge_fields);
 
 
