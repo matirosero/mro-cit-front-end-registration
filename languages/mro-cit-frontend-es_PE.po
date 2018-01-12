@@ -450,14 +450,14 @@ msgstr "Utilice este formulario si desea inscribirse como Afiliado Personal."
 
 #: includes/registration.php:58
 msgid "Sign up for an Enterprise membership instead."
-msgstr "Inscríbase como Afiliado Enterprise en vez."
+msgstr "Inscríbase como Afiliado Empresarial en vez."
 
 #: includes/registration.php:63
 msgid ""
 "Use this form if you wish to sign up for an Enterprise membership. We will "
 "be in contact with you to arrange payment and other final details."
 msgstr ""
-"Utilice este formulario si desea inscribirse como Afiliado Enterprise. "
+"Utilice este formulario si desea inscribirse como Afiliado Empresarial. "
 "Estaremos en contacto para finalizar la afiliación."
 
 #: includes/registration.php:64

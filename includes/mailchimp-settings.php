@@ -135,7 +135,7 @@ function mro_cit_user_register_hook( $user_id ){
 		$user = get_userdata($user_id ); // feel fre to use get_userdata() instead
 		$user_roles = $user->roles;
 
-		if ( in_array( 'afiliado_enterprise_pendiente', $user_roles ) || in_array( 'afiliado_enterprise', $user_roles ) ) {
+		if ( in_array( 'afiliado_empresarial_pendiente', $user_roles ) || in_array( 'afiliado_empresarial', $user_roles ) ) {
 			$membership = 'Empresarial';
 			$company = $user->nickname;
 		} elseif ( in_array( 'afiliado_personal', $user_roles ) ) {

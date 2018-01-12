@@ -16,8 +16,8 @@ function mro_cit_validate_from_array($value, $valid_values) {
 function mro_cit_validate_membership( $value ) {
 	$valid_values = array(
     'afiliado_personal',
-    'afiliado_enterprise',
-    'afiliado_enterprise_pendiente',
+    'afiliado_empresarial',
+    'afiliado_empresarial_pendiente',
  	);
  	if ( mro_cit_validate_from_array($value, $valid_values) ) {
  		return true;
@@ -37,8 +37,8 @@ function sanitize_membership( $value ) {
 
   $valid_values = array(
     'afiliado_personal',
-    'afiliado_enterprise',
-    'afiliado_enterprise_pendiente',
+    'afiliado_empresarial',
+    'afiliado_empresarial_pendiente',
   );
 
   if( ! in_array( $value, $valid_values ) ) {

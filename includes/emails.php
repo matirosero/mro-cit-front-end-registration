@@ -31,8 +31,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		if ( 'user' !== $notify ) {
 			$switched_locale = switch_to_locale( get_locale() );
 
-			// Admin email is Afiliado Enterprise
-			if ( in_array('afiliado_enterprise_pendiente', $user_roles) ) {
+			// Admin email is Afiliado Empresarial
+			if ( in_array('afiliado_empresarial_pendiente', $user_roles) ) {
 
 				$subject = 'Solicitud de afiliación empresarial al Club de Investigación Tecnológica';
 
@@ -158,7 +158,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
 
-		if ( in_array('afiliado_enterprise_pendiente', $user_roles) ) {
+		if ( in_array('afiliado_empresarial_pendiente', $user_roles) ) {
 			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
 
 			$message .= sprintf(__('Pronto nos pondremos en contacto para finalizar el proceso de afiliación. Mientras tanto, está cuenta está en estado "Pendiente": puede ingresar al sitio y descargar informes de investigación. En cuanto finalice la afiliación, también será posible tramitar sus reservas a nuestros eventos. ')) . "\r\n\r\n";
@@ -265,7 +265,7 @@ function mro_cit_user_role_update( $user_id, $role ) {
     // write_log('new '.$role);
 
     // write_log('old '.$old_roles);
-    if ($role == 'afiliado_enterprise') {
+    if ($role == 'afiliado_empresarial') {
         $site_url = get_bloginfo('wpurl');
         $user_info = get_userdata( $user_id );
         $to = $user_info->user_email;

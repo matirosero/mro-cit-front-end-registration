@@ -207,7 +207,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					if ( $membership != 'enterprise' ) { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } else { ?>
-						<input type="hidden" name="mro_cit_user_membership" value="afiliado_enterprise_pendiente"/>
+						<input type="hidden" name="mro_cit_user_membership" value="afiliado_empresarial_pendiente"/>
 					<?php } ?>
 
 					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>"/>
@@ -279,14 +279,14 @@ function pippin_add_new_member() {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
 	    	// write_log('Sanitized membership type: '.$mro_cit_user_membership );
 
-	    	if ( $mro_cit_user_membership == 'afiliado_enterprise') {
-	    		$mro_cit_user_membership = 'afiliado_enterprise_pendiente';
+	    	if ( $mro_cit_user_membership == 'afiliado_empresarial') {
+	    		$mro_cit_user_membership = 'afiliado_empresarial_pendiente';
 	    		// write_log('Had to change membership to pending');
 	    	}
 
 	    	if ( $mro_cit_user_membership == 'afiliado_personal' ) {
 	    		$mc_merge_fields['AFILIADO'] = 'Personal';
-	    	} elseif ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
+	    	} elseif ( $mro_cit_user_membership == 'afiliado_empresarial_pendiente' ) {
 	    		$mc_merge_fields['AFILIADO'] = 'Empresarial';
 	    	}
 	    }
@@ -361,7 +361,7 @@ function pippin_add_new_member() {
 		// write_log('11. Last name is '.$user_last);
 
 
-		if ( $mro_cit_user_membership == 'afiliado_enterprise_pendiente' ) {
+		if ( $mro_cit_user_membership == 'afiliado_empresarial_pendiente' ) {
 			// write_log('11.5 ENTERPRISE IS CHOSEN');
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
