@@ -32,7 +32,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$switched_locale = switch_to_locale( get_locale() );
 
 			// Admin email is Afiliado Empresarial
-			if ( in_array('afiliado_empresarial_pendiente', $user_roles) ) {
+			if ( in_array( array('afiliado_empresarial_pendiente', 'afiliado_institucional_pendiente'), $user_roles) ) {
 
 				$subject = 'Solicitud de afiliación empresarial al Club de Investigación Tecnológica';
 
