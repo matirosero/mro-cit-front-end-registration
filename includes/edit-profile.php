@@ -57,6 +57,8 @@ function mro_cit_profile_info() {
 
 		<?php if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) ) {
 			$membership = 'Afiliado Empresarial (pendiente)';
+		} elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) ) {
+			$membership = 'Afiliado Institucional (pendiente)';
 		} else {
 			$role = $user->roles[0];
 			$membership = $wp_roles->roles[ $role ]['name'];
@@ -88,12 +90,14 @@ function mro_cit_edit_profile_form_fields() {
 
 	if ( is_user_logged_in() ) {
 
-		if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) ) {
-			$membership = 'Afiliado Empresarial (pendiente)';
-		} else {
-			$role = $user->roles[0];
-			$membership = $wp_roles->roles[ $role ]['name'];
+		if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) {
+			$entity = 'empresa';
+		} elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
+			$entity = 'institución';
 		}
+
+		$role = $user->roles[0];
+		$membership = $wp_roles->roles[ $role ]['name'];
 
 		ob_start(); ?>
 			<h4><?php _e('Edit your profile', 'mro-cit-frontend'); ?></h4>
@@ -121,19 +125,19 @@ function mro_cit_edit_profile_form_fields() {
 
 					<?php
 					//Empresarial: company name/nickname
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) { ?>
+					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 						<p>
-							<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+							<label for="mro_cit_user_nickname"><?php echo $entity; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 							<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text" value="<?php echo $user->nickname; ?>" />
 						</p>
 					<?php } ?>
 
 					<?php
 					// Set labels for email and name according to type of membership
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) {
-						$first_label = __('Contact First Name', 'mro-cit-frontend');
-						$last_label = __('Contact Last Name', 'mro-cit-frontend');
-						$email_label = __('Contact Email', 'mro-cit-frontend');
+					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
+						$first_label = __('Representative\'s First Name', 'mro-cit-frontend');
+						$last_label = __('Representative\'s Last Name', 'mro-cit-frontend');
+						$email_label = __('Representative\'s Email', 'mro-cit-frontend');
 					} else {
 						$first_label = __('First Name', 'mro-cit-frontend');
 						$last_label = __('Last Name', 'mro-cit-frontend');
@@ -145,7 +149,7 @@ function mro_cit_edit_profile_form_fields() {
 						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $user->user_email; ?>" />
 					</p>
 					<?php
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) { ?>
+					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 						<p class="help-text">Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
 					<?php } ?>
 
@@ -165,7 +169,7 @@ function mro_cit_edit_profile_form_fields() {
 
 					<?php
 					// If empresarial, secondary contact details
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) { ?>
+					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 						<p>
 				            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 			                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="<?php echo $current_user->mro_cit_user_sector; ?>" size="25" />
@@ -208,7 +212,7 @@ function mro_cit_edit_profile_form_fields() {
 
 					<?php
 					// If empresarial, secondary contact details
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) { ?>
+					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 
 						</fieldset>
 						<fieldset class="register-secondary-contact">
@@ -355,7 +359,7 @@ function mro_edit_member() {
 
 
 		//Set display name and nickname if empresarial
-		if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial' ) ) {
+		if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
 
 			if ( !empty( $_POST["mro_cit_user_nickname"] ) ) {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
