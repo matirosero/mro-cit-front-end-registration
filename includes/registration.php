@@ -52,7 +52,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		<h3><?php _e('Register as a Member', 'mro-cit-frontend'); ?></h3>
 
 		<?php
-		if ( $membership != 'enterprise' ) { ?>
+		if ( $membership != 'empresarial' ) { ?>
 
 			<p><?php _e('Use this form if you wish to sign up for a Personal membership.', 'mro-cit-frontend'); ?>
 				<br /><a href="<?php echo get_permalink( 1853 ); ?>"><?php _e('Sign up for an Enterprise membership instead.', 'mro-cit-frontend'); ?></a>
@@ -76,13 +76,13 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 					<input name="pippin_user_login" id="pippin_user_login" class="required" type="text"/>
 					<?php
-					if ( $membership == 'enterprise' ) { ?>
+					if ( $membership == 'empresarial' ) { ?>
 						<p class="help-text">Sugerimos utilizar algo relacionado al nombre de la empresa.</p>
 					<?php } ?>
 				</p>
 
 				<?php
-				if ( $membership == 'enterprise' ) { ?>
+				if ( $membership == 'empresarial' ) { ?>
 					<p>
 						<label for="mro_cit_user_nickname"><?php _e('Company', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 						<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
@@ -91,7 +91,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				// Set labels for email and name according to type of membership
-				if ( $membership == 'enterprise' ) {
+				if ( $membership == 'empresarial' ) {
 					$first_label = __('Contact First Name', 'mro-cit-frontend');
 					$last_label = __('Contact Last Name', 'mro-cit-frontend');
 					$email_label = __('Contact Email', 'mro-cit-frontend');
@@ -106,7 +106,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
 				</p>
 				<?php
-				if ( $membership == 'enterprise' ) { ?>
+				if ( $membership == 'empresarial' ) { ?>
 					<p class="help-text">Este email será el utilizado para adminitrar la cuenta en el sitio (donde se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
 				<?php } ?>
 
@@ -125,7 +125,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		        </p>
 
 				<?php
-				if ( $membership == 'enterprise' ) { ?>
+				if ( $membership == 'empresarial' ) { ?>
 					<p>
 			            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="" size="25" />
@@ -134,7 +134,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				
 			    <?php
 				// If personal, occupation and company info
-				if ( $membership != 'enterprise' ) { ?>
+				if ( $membership != 'empresarial' ) { ?>
 
 					<p>
 			            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
@@ -165,8 +165,8 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		        </p>
 
 				<?php
-				// If enterprise, secondary contact details
-				if ( $membership == 'enterprise' ) { ?>
+				// If empresarial, secondary contact details
+				if ( $membership == 'empresarial' ) { ?>
 
 					</fieldset>
 					<fieldset class="register-secondary-contact">
@@ -204,7 +204,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
 					<?php
-					if ( $membership != 'enterprise' ) { ?>
+					if ( $membership != 'empresarial' ) { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } else { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_empresarial_pendiente"/>
@@ -362,7 +362,7 @@ function pippin_add_new_member() {
 
 
 		if ( $mro_cit_user_membership == 'afiliado_empresarial_pendiente' ) {
-			// write_log('11.5 ENTERPRISE IS CHOSEN');
+			// write_log('11.5 EMPRESARIAL IS CHOSEN');
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
 				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
