@@ -15,12 +15,12 @@ function mro_cit_frontend_contacts_form() {
     $group_contacts = $cmb->add_field( array(
         'id'          => $prefix . 'additional_contacts',
         'type'        => 'group',
-        'description' => __( 'Additional contacts', 'cmb2' ),
+        'description' => __( 'Additional contacts', 'mro-cit-frontend' ),
         'repeatable'  => true, // use false if you want non-repeatable group
         'options'     => array(
-            'group_title'   => __( 'Contact {#}', 'cmb2' ), // since version 1.1.4, {#} gets replaced by row number
-            'add_button'    => __( 'Add Another Contact', 'cmb2' ),
-            'remove_button' => __( 'Remove Contact', 'cmb2' ),
+            'group_title'   => __( 'Contact {#}', 'mro-cit-frontend' ), // since version 1.1.4, {#} gets replaced by row number
+            'add_button'    => __( 'Add Another Contact', 'mro-cit-frontend' ),
+            'remove_button' => __( 'Remove Contact', 'mro-cit-frontend' ),
             'sortable'      => true, // beta
             // 'closed'     => true, // true to have the groups closed by default
         ),
@@ -28,19 +28,19 @@ function mro_cit_frontend_contacts_form() {
 
     // Id's for group's fields only need to be unique for the group. Prefix is not needed.
     $cmb->add_group_field( $group_contacts, array(
-        'name' => __( 'Contact name', 'cmb2' ),
+        'name' => __( 'Contact name', 'mro-cit-frontend' ),
         'id'   => 'name',
         'type' => 'text',
         // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
     ) );
     $cmb->add_group_field( $group_contacts, array(
-        'name' => __( 'Contact last name', 'cmb2' ),
+        'name' => __( 'Contact last name', 'mro-cit-frontend' ),
         'id'   => 'lastname',
         'type' => 'text',
         // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
     ) );
     $cmb->add_group_field( $group_contacts, array(
-        'name' => __( 'Contact email', 'cmb2' ),
+        'name' => __( 'Contact email', 'mro-cit-frontend' ),
         'id'   => 'email',
         'type' => 'text_email',
         // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
@@ -56,70 +56,75 @@ add_action( 'cmb2_init', 'mro_cit_frontend_contacts_form' );
  * @param  array  $atts Array of shortcode attributes
  * @return string       Form html
  */
-function wds_do_frontend_form_submission_shortcode( $atts = array() ) {
+function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
+
+    global $current_user, $wp_roles;
 
     // Current user
     $user_id = get_current_user_id();
 
 
+    // User is logged in and can add contacts
+    if ( is_user_logged_in() && current_user_can( 'add_contacts' ) ) {
 
-    // Use ID of metabox in mro_cit_frontend_contacts_form
-    $metabox_id = 'mro_cit_user_frontend_additional_contacts';
+        // Use ID of metabox in mro_cit_frontend_contacts_form
+        $metabox_id = 'mro_cit_user_frontend_additional_contacts';
 
-    // since post ID will not exist yet, just need to pass it something
-    $object_id  = $user_id;
-    // var_dump($user_id);
+        // since post ID will not exist yet, just need to pass it something
+        $object_id  = $user_id;
+        // var_dump($user_id);
 
 
-    // Get CMB2 metabox object
-    $cmb = cmb2_get_metabox( $metabox_id, $user_id );
-    // var_dump($cmb);
+        // Get CMB2 metabox object
+        $cmb = cmb2_get_metabox( $metabox_id, $user_id );
+        // var_dump($cmb);
 
-    // Get $cmb object_types
-    $post_types = $cmb->prop( 'object_types' );
-    // var_dump($cmb->prop( 'object_types' ));
+        // Get $cmb object_types
+        $post_types = $cmb->prop( 'object_types' );
+        // var_dump($cmb->prop( 'object_types' ));
 
-    // // Parse attributes. These shortcode attributes can be optionally overridden.
-    $atts = shortcode_atts( array(
-        'user_id' => $user_id ? $user_id : 1, // Current user, or admin
-        // 'post_status' => 'pending',
-        'post_type'   => reset( $post_types ), // Only use first object_type in array
-    ), $atts, 'cmb-frontend-form' );
+        // // Parse attributes. These shortcode attributes can be optionally overridden.
+        $atts = shortcode_atts( array(
+            'user_id' => $user_id ? $user_id : 1, // Current user, or admin
+            // 'post_status' => 'pending',
+            'post_type'   => reset( $post_types ), // Only use first object_type in array
+        ), $atts, 'cmb-frontend-form' );
 
-    // Initiate our output variable
-    $output = '';
+        // Initiate our output variable
+        $output = '';
 
-    // Handle form saving (if form has been submitted)
-    $new_id = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
+        // Handle form saving (if form has been submitted)
+        $new_id = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
 
-    if ( $new_id ) {
+        if ( $new_id ) {
 
-        if ( is_wp_error( $new_id ) ) {
+            if ( is_wp_error( $new_id ) ) {
 
-            // If there was an error with the submission, add it to our ouput.
-            $output .= '<h3>' . sprintf( __( 'There was an error in the submission: %s', 'wds-post-submit' ), '<strong>'. $new_id->get_error_message() .'</strong>' ) . '</h3>';
+                // If there was an error with the submission, add it to our ouput.
+                $output .= '<h3>' . sprintf( __( 'There was an error in the submission: %s', 'mro-cit-frontend' ), '<strong>'. $new_id->get_error_message() .'</strong>' ) . '</h3>';
 
-        } else {
+            } else {
 
-            // Get submitter's name
-            // $name = isset( $_POST['submitted_author_name'] ) && $_POST['submitted_author_name']
-                // ? ' '. $_POST['submitted_author_name']
-                // : '';
+                // Add notice of submission
+                $output .= '<h3>' . sprintf( __( 'Thank you %s, your new post has been submitted and is pending review by a site administrator.', 'mro-cit-frontend' ), esc_html( $user_id ) ) . '</h3>';
+            }
 
-            // Add notice of submission
-            $output .= '<h3>' . sprintf( __( 'Thank you %s, your new post has been submitted and is pending review by a site administrator.', 'wds-post-submit' ), esc_html( $user_id ) ) . '</h3>';
         }
+
+        // Get our form
+        $output .= cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Submit Post', 'mro-cit-frontend' ) ) );
+
+    // User is not logged in or can't add contacts
+    } else {
+
+        $output = '<p class="callout warning">' . __('Your account doesn\'t have permission to see this page.', 'mro-cit-frontend') . '</p>';
 
     }
 
-    // Get our form
-    $output .= cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Submit Post', 'wds-post-submit' ) ) );
-
-    // Our CMB2 form stuff goes here
-
     return $output;
+
 }
-add_shortcode( 'cmb-frontend-form', 'wds_do_frontend_form_submission_shortcode' );
+add_shortcode( 'cit-manage-contacts', 'mro_cit_frontend_manage_contacts_form_shortcode' );
 
 
 
