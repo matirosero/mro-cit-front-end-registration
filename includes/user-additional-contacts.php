@@ -62,6 +62,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
     // Current user
     $user_id = get_current_user_id();
+    $name = $current_user->display_name;
 
 
     // User is logged in and can add contacts
@@ -101,18 +102,18 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
             if ( is_wp_error( $new_id ) ) {
 
                 // If there was an error with the submission, add it to our ouput.
-                $output .= '<h3>' . sprintf( __( 'There was an error in the submission: %s', 'mro-cit-frontend' ), '<strong>'. $new_id->get_error_message() .'</strong>' ) . '</h3>';
+                $output .= '<p class="callout alert error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' .  $new_id->get_error_message() . '</p>';
 
             } else {
 
                 // Add notice of submission
-                $output .= '<h3>' . sprintf( __( 'Thank you %s, your new post has been submitted and is pending review by a site administrator.', 'mro-cit-frontend' ), esc_html( $user_id ) ) . '</h3>';
+                $output .= '<p class="callout success">' . sprintf( __( 'Your contacts have been updated, %s.', 'mro-cit-frontend' ), esc_html( $name ) ) . '</p>';
             }
 
         }
 
         // Get our form
-        $output .= cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Submit Post', 'mro-cit-frontend' ) ) );
+        $output .= cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Save contacts', 'mro-cit-frontend' ) ) );
 
     // User is not logged in or can't add contacts
     } else {
@@ -149,13 +150,18 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
         ! isset( $_POST['submit-cmb'], $_POST['object_id'], $_POST[ $cmb->nonce() ] )
         || ! wp_verify_nonce( $_POST[ $cmb->nonce() ], $cmb->nonce() )
     ) {
-        return new WP_Error( 'security_fail', __( 'Security check failed.' ) );
+        return new WP_Error( 'security_fail', __( 'Security check failed.', 'mro-cit-frontend' ) );
         // write_log('Security check failed.');
     }
 
-    // if ( empty( $_POST['submitted_post_title'] ) ) {
-    //     return new WP_Error( 'post_data_missing', __( 'New post requires a title.' ) );
-    // }
+    if ( !is_user_logged_in() ) {
+        return new WP_Error( 'user_not_logged_in', __( 'You must log in to do this.' ), 'mro-cit-frontend' );
+    }
+
+    if ( !current_user_can( 'add_contacts' ) ) {
+        return new WP_Error( 'no_permission', __( 'Your account doesn\'t have permission to do this.', 'mro-cit-frontend' ) );
+    }
+
 
     // Do WordPress insert_post stuff
     // Fetch sanitized values
