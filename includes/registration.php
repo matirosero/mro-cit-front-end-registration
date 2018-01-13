@@ -417,29 +417,8 @@ function pippin_add_new_member() {
 		}
 
 
-		// Secondary contact
-		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
-			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
-			if(!is_email($user_email)) {
-				//invalid email
-				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
-				// write_log('Email error: Invalid secondary email');
-			} else {
-				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
-				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
-			}
 
-		}
-		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
-			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
-			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
-			// write_log('13. Secondary name is '.$mro_cit_user_secondary_first);
-		}
-		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
-			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
-			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
-			// write_log('14. Secondary lastname is '.$mro_cit_user_secondary_last);
-		}
+
 
 
 		$errors = pippin_errors()->get_error_messages();

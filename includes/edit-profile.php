@@ -210,29 +210,7 @@ function mro_cit_edit_profile_form_fields() {
 			             </label>
 			        </p>
 
-					<?php
-					// If empresarial, secondary contact details
-					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 
-						</fieldset>
-						<fieldset class="register-secondary-contact">
-							 <legend><?php _e( 'Secondary Contact (optional)', 'mro-cit-frontend' ); ?></legend>
-
-							<p>
-								<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email" value="<?php echo $current_user->mro_cit_user_secondary_email; ?>" />
-							</p>
-
-							<p>
-								<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text" value="<?php echo $current_user->mro_cit_user_secondary_first; ?>" />
-							</p>
-							<p>
-								<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text" value="<?php echo $current_user->mro_cit_user_secondary_last; ?>" />
-							</p>
-
-					<?php } ?>
 
 
 
@@ -392,28 +370,7 @@ function mro_edit_member() {
 
 		}
 
-		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
 
-			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
-			if( !is_email($mro_cit_user_secondary_email) && !empty($_POST['mro_cit_user_secondary_email'] ) ) {
-				//invalid email
-				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
-				// write_log('Email error: Invalid secondary email');
-			} else {
-				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
-				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
-			}
-		}
-
-		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
-			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
-			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
-		}
-
-		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
-			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
-			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
-		}
 
 
 
