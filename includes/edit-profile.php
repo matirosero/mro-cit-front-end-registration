@@ -270,7 +270,7 @@ function mro_edit_member() {
 
   	if ( is_user_logged_in() && isset( $_POST['mro_edit_profile_nonce'] ) && wp_verify_nonce( $_POST['mro_edit_profile_nonce'], 'mro-edit-profile-nonce' ) ) {
 
-  		// write_log('Edit form function works!');
+  		// write_log('1 Edit form function works!');
 
   		$updated_info = array(
   			'ID' => $current_user->ID,
@@ -434,10 +434,10 @@ function mro_edit_member() {
 
 		if(empty($errors)) {
 
-			write_log('No errors, can edit user!');
+			// write_log('No errors, can edit user!');
 
 			//edit profile
-			write_log('USER ID = '.$current_user->ID);
+			// write_log('USER ID = '.$current_user->ID);
 
 			// write_log(var_dump($updated_info));
 			// write_log(var_dump($updated_meta));

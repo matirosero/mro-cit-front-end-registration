@@ -132,7 +132,7 @@ add_shortcode( 'cmb-frontend-form', 'wds_do_frontend_form_submission_shortcode' 
  */
 function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array() ) {
 
-    write_log('handle running');
+    // write_log('handle running');
 
     // If no form submission, bail
     if ( empty( $_POST ) ) {
@@ -145,7 +145,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
         || ! wp_verify_nonce( $_POST[ $cmb->nonce() ], $cmb->nonce() )
     ) {
         return new WP_Error( 'security_fail', __( 'Security check failed.' ) );
-        write_log('Security check failed.');
+        // write_log('Security check failed.');
     }
 
     // if ( empty( $_POST['submitted_post_title'] ) ) {
@@ -156,7 +156,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     // Fetch sanitized values
     $sanitized_values = $cmb->get_sanitized_values( $_POST );
 
-    write_log('passed');
+    // write_log('passed');
 
 
     // Set our post data arguments
@@ -172,11 +172,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
             if(!is_email($email)) {
                 return new WP_Error( 'invalid_email', __( 'Invalid email.' ) );
-                write_log('Not a valid email.');
+                // write_log('Not a valid email.');
             }
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );
-            write_log('No email :(');
+            // write_log('No email :(');
         }
 
     }

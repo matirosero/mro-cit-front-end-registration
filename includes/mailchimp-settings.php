@@ -118,13 +118,13 @@ function mro_cit_get_mailchimp_lists() {
 
 function mro_cit_user_register_hook( $user_id ){
 
-	write_log('Send new user\'s info to mailchimp');
+	// write_log('Send new user\'s info to mailchimp');
 
 	global $mc_options;
 
 	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
 
-		write_log('API ok!');
+		// write_log('API ok!');
 
 		$list_id = $mc_options['mailchimp_list'];
 		$api_key = $mc_options['mailchimp_api'];
@@ -176,10 +176,10 @@ function mro_cit_user_register_hook( $user_id ){
 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
 			// echo 'The user has been successfully ' . $status . '.';
-			write_log('The user has been successfully ' . $status);
+			// write_log('The user has been successfully ' . $status);
 		} else {
 			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
-			write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+			// write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
 		}
 
 

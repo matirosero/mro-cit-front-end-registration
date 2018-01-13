@@ -87,7 +87,7 @@ function mro_reset_password() {
 			// write_log('Empty username');
 
 		} elseif ( strpos( $_POST['user_login'], '@' ) ) {
-			write_log('Step 1.5: This is an email!');
+			// write_log('Step 1.5: This is an email!');
 			$user_data = get_user_by( 'email', trim( wp_unslash( $_POST['user_login'] ) ) );
 			if ( empty( $user_data ) ) {
 				pippin_errors()->add('invalid_email', __('There is no user registered with that email address.'));
