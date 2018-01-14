@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CIT Front End Registration and Login\n"
-"POT-Creation-Date: 2018-01-13 01:59-0600\n"
-"PO-Revision-Date: 2018-01-13 02:02-0600\n"
+"POT-Creation-Date: 2018-01-13 22:53-0600\n"
+"PO-Revision-Date: 2018-01-13 22:55-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_PE\n"
@@ -256,7 +256,7 @@ msgid ""
 "###SITEURL###"
 msgstr ""
 
-#: includes/helpers.php:17
+#: includes/helpers.php:17 includes/user-additional-contacts.php:105
 msgid "Error"
 msgstr "Error"
 
@@ -479,8 +479,10 @@ msgid "Please enter a password"
 msgstr "Por favor, introducir una contraseña"
 
 #: includes/user-additional-contacts.php:18
-msgid "Additional contacts"
-msgstr "Contactos adicionales"
+msgid "Manage additional contacts by adding, removing or editing them here."
+msgstr ""
+"Administrar contactos adicionales aquí, añadiéndolos, borrándolos y "
+"editándolos."
 
 #: includes/user-additional-contacts.php:21
 msgid "Contact {#}"
@@ -506,31 +508,36 @@ msgstr "Apellidos del contacto"
 msgid "Contact email"
 msgstr "Correo electrónico del contacto"
 
-#: includes/user-additional-contacts.php:100
-#, php-format
-msgid "There was an error in the submission: %s"
-msgstr ""
-
 #: includes/user-additional-contacts.php:110
 #, php-format
-msgid ""
-"Thank you %s, your new post has been submitted and is pending review by a "
-"site administrator."
-msgstr ""
+msgid "Your contacts have been updated, %s."
+msgstr "Sus contactos han sido actualizados, %s."
 
 #: includes/user-additional-contacts.php:116
-msgid "Submit Post"
-msgstr "Enviar"
+msgid "Save contacts"
+msgstr "Guardar contactos"
 
-#: includes/user-additional-contacts.php:147
+#: includes/user-additional-contacts.php:121
+msgid "Your account doesn't have permission to see this page."
+msgstr ""
+
+#: includes/user-additional-contacts.php:153
 msgid "Security check failed."
 msgstr "La comprobación de seguridad ha fallado."
 
-#: includes/user-additional-contacts.php:174
-msgid "Invalid email."
-msgstr "Correo inválido"
+#: includes/user-additional-contacts.php:158
+msgid "You must log in to do this."
+msgstr "Ingrese al sitio para hacer esto."
 
-#: includes/user-additional-contacts.php:178
+#: includes/user-additional-contacts.php:162
+msgid "Your account doesn't have permission to do this."
+msgstr ""
+
+#: includes/user-additional-contacts.php:185
+msgid "Invalid email."
+msgstr "Correo inválido."
+
+#: includes/user-additional-contacts.php:189
 msgid "All contacts must have an email."
 msgstr "Todos los contactos deben tener un correo electrónico."
 
@@ -558,6 +565,12 @@ msgstr ""
 #. Author URI of the plugin/theme
 msgid "https://matilderosero.com"
 msgstr ""
+
+#~ msgid "Additional contacts"
+#~ msgstr "Contactos adicionales"
+
+#~ msgid "Submit Post"
+#~ msgstr "Enviar"
 
 #~ msgid "Invalid secondary email"
 #~ msgstr "Correo electrónico secundario inválido"
