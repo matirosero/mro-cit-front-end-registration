@@ -73,7 +73,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         // since post ID will not exist yet, just need to pass it something
         $object_id  = $user_id;
-        // var_dump($user_id);
+        // var_dump($current_user);
 
 
         // Get CMB2 metabox object
@@ -84,11 +84,23 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         $post_types = $cmb->prop( 'object_types' );
         // var_dump($cmb->prop( 'object_types' ));
 
+        // Get role
+        // $role = $current_user->roles[0];
+        if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ) {
+            $role = 'Empresarial';
+        } elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
+            $role = 'Institucional';
+        }
+
         // // Parse attributes. These shortcode attributes can be optionally overridden.
         $atts = shortcode_atts( array(
-            'user_id' => $user_id ? $user_id : 1, // Current user, or admin
+            'user_id'       => $user_id ? $user_id : 1, // Current user, or admin
             // 'post_status' => 'pending',
-            'post_type'   => reset( $post_types ), // Only use first object_type in array
+            'post_type'     => reset( $post_types ), // Only use first object_type in array
+            'membership'    => $role,
+            'company'       => $name,
+            'country'       => $current_user->mro_cit_user_country,
+            'sector'        => $current_user->mro_cit_user_sector,
         ), $atts, 'cmb-frontend-form' );
 
         // Initiate our output variable
@@ -178,13 +190,33 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
     foreach ($additional_contacts as $contact) {
         // var_dump($contact);
+
         if ( isset( $contact['email'] ) ) {
             $email = sanitize_email( $contact['email'] );
+
+            $contact['email'] = $email;
 
             if(!is_email($email)) {
                 return new WP_Error( 'invalid_email', __( 'Invalid email.' ) );
                 // write_log('Not a valid email.');
             }
+
+            $mc_merge_fields  = array();
+            $mc_merge_fields['AFILIADO'] = $post_data['membership'];
+            $mc_merge_fields['PAIS'] = $post_data['country'];
+            $mc_merge_fields['SECTOR'] = $post_data['sector'];
+            $mc_merge_fields['EMPRESA'] = $post_data['company'];
+
+            if ( !empty( $contact['name'] ) ) {
+                $mc_merge_fields['FNAME'] = $contact['name'];
+            }
+            if ( !empty( $contact['lastname'] ) ) {
+                $mc_merge_fields['LNAME'] = $contact['lastname'];
+            }
+
+            // Send to mailchimp function
+            mro_cit_subscribe_email( $contact['email'], $mc_merge_fields );
+
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );
             // write_log('No email :(');
@@ -199,6 +231,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     // write_log('additonal contacts form submitted');
 
     $new_submission_id = update_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', $post_data['additional_contacts'] );
+
+
 
     return $new_submission_id;
 

@@ -281,6 +281,7 @@ function mro_edit_member() {
 			$mro_cit_user_phone = '';
 		}
 		$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+		$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 
 
 		// Country
@@ -303,6 +304,7 @@ function mro_edit_member() {
 			$mro_cit_user_sector = '';
 		}
 		$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+		$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
 
 
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
@@ -311,15 +313,16 @@ function mro_edit_member() {
 			$mro_cit_user_occupation = '';
 		}
 		$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
+		$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
 
 
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
-			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 		} else {
 			$mro_cit_user_company = '';
 		}
 		$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+		$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 
 
 

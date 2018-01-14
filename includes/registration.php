@@ -37,7 +37,6 @@ function pippin_registration_form($atts) {
 		}
 
 	} else {
-		// $output = '<p class="callout warning">' . sprintf( wp_kses( __( 'Please <a href="%s">log out</a> in order to register a new account.', 'mro-cit-frontend'), array(  'a' => array( 'href' => array() ) ) ), wp_logout_url() ) . '</p>';
 		$output = '<p class="callout warning">Por favor <a href="'.wp_logout_url().'">cierra su sesión</a> para realizar una nueva afiliación.</p>';
 	}
 	return $output;
@@ -56,8 +55,6 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 
 	ob_start();
 	?>
-
-
 
 		<?php
 		if ( $membership != 'empresarial' && $membership != 'institucional' ) { ?>
@@ -321,12 +318,14 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
 			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
 			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+			$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
 			// write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
 			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
+			$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
 			// write_log('5. Occupation is '.$mro_cit_user_occupation);
 		}
 
