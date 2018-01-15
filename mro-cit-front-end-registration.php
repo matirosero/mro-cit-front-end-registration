@@ -33,6 +33,7 @@ require_once( dirname( __FILE__ ) . '/includes/helpers.php' );
  *
  * @since 0.1.0
  */
+require_once( dirname( __FILE__ ) . '/includes/cmb2-frontend-edit-profile.php' );
 require_once( dirname( __FILE__ ) . '/includes/registration.php' );
 require_once( dirname( __FILE__ ) . '/includes/registration-helpers.php' );
 require_once( dirname( __FILE__ ) . '/includes/emails.php' );

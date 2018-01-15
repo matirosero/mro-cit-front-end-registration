@@ -1,7 +1,6 @@
 <?php
 
 add_filter( 'edit_profile_url', 'mro_cit_modify_profile_url', 10, 3 );
-
 /**
  * http://core.trac.wordpress.org/browser/tags/3.5.1/wp-includes/link-template.php#L2284
  *
