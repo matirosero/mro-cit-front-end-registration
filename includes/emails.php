@@ -67,7 +67,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 				//Fix
 				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->first_name, $user->last_name ) . "\r\n\r\n";
 
-				$message .= sprintf( __( 'CONTACTO SECUNDARIO' ) ) . "\r\n";
+				$message .= sprintf( __( 'CC' ) ) . "\r\n";
 
 				$message .= sprintf( __( 'Email: %s' ), $user->mro_cit_user_secondary_email ) . "\r\n";
 
@@ -76,8 +76,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 
 				$recipient = array(
-					// get_option( 'admin_email' ),
-					'gekidasa+admin@gmail.com',
+					get_option( 'admin_email' ),
+					'gekidasa+admincit@gmail.com',
 				);
 
 			// Admin email is Afiliado Personal
@@ -101,8 +101,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 				$message .= sprintf( __( 'Empresa: %s' ), $user->mro_cit_user_company ) . "\r\n";
 
-				// $recipient = get_option( 'admin_email' );
-				$recipient = get_option( 'gekidasa+admin@gmail.com' );
+				$recipient = get_option( 'admin_email' );
+				$recipient = get_option( 'gekidasa+admincit@gmail.com' );
 			}
 
 
@@ -295,7 +295,7 @@ function mro_cit_user_role_update( $user_id, $role ) {
         $message = "Hola " .$user_info->display_name . ",\r\n\r\n";
         $message .= "¡Su afiliación al Club de Investigación Tecnológica ha sido procesada con éxito! A partir de ahora podrá reservar espacios en los eventos del Club sin costo alguno; simplemente debe accesar la página del evento, ingresar a su cuenta y llenar el formulario correspondiente.\r\n\r\n";
         $message .= "Igualmente, puede descargar los informes de investigación del Club.\r\n\r\n";
-        $message .= "Saludos,\r\n";
+        $message .= "Saludos cordiales,\r\n";
         $message .= "Club de Investigación Tecnológica";
         wp_mail($to, $subject, $message);
     }
