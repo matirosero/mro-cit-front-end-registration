@@ -76,8 +76,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 
 				$recipient = array(
-					get_option( 'admin_email' ),
-					'matirosero@icloud.com',
+					// get_option( 'admin_email' ),
+					'gekidasa+admin@gmail.com',
 				);
 
 			// Admin email is Afiliado Personal
@@ -101,7 +101,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 				$message .= sprintf( __( 'Empresa: %s' ), $user->mro_cit_user_company ) . "\r\n";
 
-				$recipient = get_option( 'admin_email' );
+				// $recipient = get_option( 'admin_email' );
+				$recipient = get_option( 'gekidasa+admin@gmail.com' );
 			}
 
 
@@ -151,7 +152,6 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			return;
 		}
 
-		
 		/** Generate something random for a password reset key. */
 		// $key = wp_generate_password( 20, false );
 
@@ -178,6 +178,12 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
 			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
 
+
+			$to = array(
+				$user->user_email,
+				$user->mro_cit_user_secondary_email
+			);
+
 		} else {
 			/* translators: %s: user login */
 			$message = '¡Bienvenido al Club de Investigación Tecnológica, ' . $user->first_name . '!' . "\r\n\r\n";
@@ -188,6 +194,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
 
 			$message .= 'Puede usar estas credenciales para ingresar al sitio y descargar los informes de investigación o adquirir entradas a los eventos del Club.' . "\r\n\r\n";
+
+			$to = $user->user_email;
 		}
 
 
@@ -200,7 +208,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$message .= site_url();
 
 		$wp_new_user_notification_email = array(
-			'to'      => $user->user_email,
+			'to'      => $to,
 			/* translators: Password change notification email subject. %s: Site title */
 			'subject' => __( 'Bienvenido al Club de Investigación Tecnológica' ),
 			'message' => $message,
@@ -279,7 +287,10 @@ function mro_cit_user_role_update( $user_id, $role ) {
     if ( $role == 'afiliado_empresarial' || $role == 'afiliado_institucional' ) {
         $site_url = get_bloginfo('wpurl');
         $user_info = get_userdata( $user_id );
-        $to = $user_info->user_email;
+        $to = array(
+			$user_info->user_email,
+			$user_info->mro_cit_user_secondary_email
+		);
         $subject = "Su afiliación al Club de Investigación Tecnológica ha sido procesada";
         $message = "Hola " .$user_info->display_name . ",\r\n\r\n";
         $message .= "¡Su afiliación al Club de Investigación Tecnológica ha sido procesada con éxito! A partir de ahora podrá reservar espacios en los eventos del Club sin costo alguno; simplemente debe accesar la página del evento, ingresar a su cuenta y llenar el formulario correspondiente.\r\n\r\n";
@@ -298,8 +309,10 @@ add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
  * Email update email
  */
 add_filter( 'email_change_email', 'mro_cit_change_email_mail_message', 10, 3 );
-function mro_cit_change_email_mail_message( $email_change, $user, $userdata 
+function mro_cit_change_email_mail_message( $email_change, $user, $userdata
 ) {
+
+    global $current_user;
 
     $modified_email_message = __( 'Hola ###USERNAME###,
 
@@ -315,6 +328,13 @@ Saludos cordiales,
 
     $email_change[ 'message' ] = $modified_email_message;
 
+    $role = $current_user->roles[0];
+
+	if ( $role == 'afiliado_empresarial_pendiente' || $role == 'afiliado_empresarial' || $role == 'afiliado_institucional_pendiente' ||  $role == 'afiliado_institucional' ) {
+
+		$email_change[ 'to' ] = $current_user->user_email.','.$current_user->mro_cit_user_secondary_email;
+	}
+
     return $email_change;
 }
 
@@ -323,9 +343,11 @@ Saludos cordiales,
  * Password update email
  */
 add_filter( 'password_change_email', 'mro_cit_change_password_mail_message', 10, 3 );
-function mro_cit_change_password_mail_message( $pass_change_mail, $user, $userdata 
+function mro_cit_change_password_mail_message( $pass_change_mail, $user, $userdata
 ) {
-  $new_message_txt = __( 'Hola ###USERNAME###,
+  	global $current_user;
+
+  	$new_message_txt = __( 'Hola ###USERNAME###,
 
 Esta es una confirmación de que su contraseña en ###SITENAME### fue cambiada.
 
@@ -336,7 +358,15 @@ Este mensaje fue enviado a ###EMAIL###
 Saludos cordiales,
 ###SITENAME###
 ###SITEURL###' );
-  $pass_change_mail[ 'message' ] = $new_message_txt;
+  	$pass_change_mail[ 'message' ] = $new_message_txt;
+
+  	$role = $current_user->roles[0];
+
+	if ( $role == 'afiliado_empresarial_pendiente' || $role == 'afiliado_empresarial' || $role == 'afiliado_institucional_pendiente' ||  $role == 'afiliado_institucional' ) {
+
+		$pass_change_mail[ 'to' ] = $current_user->user_email.','.$current_user->mro_cit_user_secondary_email;
+	}
+
   return $pass_change_mail;
 }
 

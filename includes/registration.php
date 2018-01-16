@@ -123,6 +123,40 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_last" id="pippin_user_last" type="text"/>
 				</p>
 
+
+
+				<?php
+				// If empresarial, secondary contact details
+				if ( $membership == 'empresarial' || $membership == 'institucional'  ) { ?>
+
+					</fieldset>
+					<fieldset class="register-secondary-contact">
+						<p><strong><?php _e( 'Secondary Contact (cc:)', 'mro-cit-frontend' ); ?></strong></p>
+
+						<p class="help-text"><?php _e( 'Fill this in if you\'d like someone copied on all website account management emails.', 'mro-cit-frontend' ); ?></p>
+
+						<p>
+							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
+							<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
+						</p>
+
+						<p>
+							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
+							<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
+						</p>
+						<p>
+							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
+							<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
+						</p>
+					</fieldset>
+					<fieldset class="register-business-information">
+
+
+				<?php } ?>
+
+
+
+
 				<p>
 		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
@@ -167,30 +201,6 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 	                </select>
 		             </label>
 		        </p>
-
-				<?php
-				// If empresarial, secondary contact details
-				if ( $membership == 'empresarial' || $membership == 'institucional'  ) { ?>
-
-					</fieldset>
-					<fieldset class="register-secondary-contact">
-						 <legend><?php _e( 'Secondary Contact (optional)', 'mro-cit-frontend' ); ?></legend>
-
-						<p>
-							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
-						</p>
-
-						<p>
-							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
-						</p>
-						<p>
-							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
-						</p>
-
-				<?php } ?>
 
 			</fieldset>
 
@@ -415,6 +425,42 @@ function pippin_add_new_member() {
 			}
 		}
 
+		// CC email
+		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
+			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
+			if(!is_email($user_email)) {
+				//invalid email
+				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
+				// write_log('Email error: Invalid secondary email');
+			} else {
+				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
+				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
+
+				$mc_merge_fields_cc = $mc_merge_fields;
+				unset($mc_merge_fields_cc['FNAME']);
+				unset($mc_merge_fields_cc['LNAME']);
+			}
+		}
+
+		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
+			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
+			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
+
+			if ( $mc_merge_fields_cc ) {
+				$mc_merge_fields_cc['FNAME'] = $mro_cit_user_secondary_first;
+			}
+			// write_log('13. Secondary name is '.$mro_cit_user_secondary_first);
+		}
+		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
+			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
+			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
+			// write_log('14. Secondary lastname is '.$mro_cit_user_secondary_last);
+
+			if ( $mc_merge_fields_cc ) {
+				$mc_merge_fields_cc['LNAME'] = $mro_cit_user_secondary_last;
+			}
+		}
+
 
 
 
@@ -451,6 +497,11 @@ function pippin_add_new_member() {
 				// Send to mailchimp function
 				// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
 				mro_cit_subscribe_email($user_email, $mc_merge_fields);
+
+				//CC to mailchimp
+				if ( $mc_merge_fields_cc ) {
+					mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
+				}
 
 
 				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
