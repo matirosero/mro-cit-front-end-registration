@@ -221,11 +221,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
             $old_email = $old_contact[$key]['email'];
 
-            write_log('Old email is '.$old_email);
-            write_log('New email is '.$email);
+            // write_log('Old email is '.$old_email);
+            // write_log('New email is '.$email);
 
             if ( $email != $old_email ) {
-                write_log( 'Emails don\'t match, trigger unsubscribe');
+                // write_log( 'Emails don\'t match, trigger unsubscribe');
                 mro_cit_unsubscribe_email( $old_email );
             }
 

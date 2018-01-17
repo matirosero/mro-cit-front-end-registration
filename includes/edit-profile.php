@@ -470,7 +470,7 @@ function mro_edit_member() {
 		if(empty($errors)) {
 
 			$old_user_email = $current_user->user_email;
-			write_log('Old user email is '.$old_user_email);
+			// write_log('Old user email is '.$old_user_email);
 
 			$user_data = wp_update_user( $updated_info );
 
@@ -482,8 +482,8 @@ function mro_edit_member() {
 			mro_cit_subscribe_email($user_email, $mc_merge_fields);
 
 			if ( $user_email != $old_user_email ) {
-				write_log('New user email is '.$user_email);
-				write_log('Email is different, so trigger unsubscribe function');
+				// write_log('New user email is '.$user_email);
+				// write_log('Email is different, so trigger unsubscribe function');
 				mro_cit_unsubscribe_email( $old_user_email );
 			}
 
@@ -493,8 +493,8 @@ function mro_edit_member() {
 				mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
 
 				if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
-					write_log('New CC: email is '.$user_email);
-					write_log('CC: Email is different, so trigger unsubscribe function for CC:');
+					// write_log('New CC: email is '.$user_email);
+					// write_log('CC: Email is different, so trigger unsubscribe function for CC:');
 					mro_cit_unsubscribe_email( $old_secondary_email );
 				}
 			}

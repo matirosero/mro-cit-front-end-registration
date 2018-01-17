@@ -124,7 +124,7 @@ function mro_cit_subscribe_email($email, $merge_fields) {
 // adds an email to the mailchimp subscription list
 function mro_cit_unsubscribe_email($email) {
 
-	write_log('mro_cit_unsubscribe_email(): Send info to mailchimp');
+	// write_log('mro_cit_unsubscribe_email(): Send info to mailchimp');
 
 	global $mc_options;
 
