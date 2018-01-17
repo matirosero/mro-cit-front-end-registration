@@ -206,7 +206,7 @@ function mro_cit_edit_profile_form_fields() {
 
 					<?php
 					//If personal account, occupation and company info
-					if ( members_current_user_has_role( 'afiliado_personal' ) ) { ?>
+					if ( members_current_user_has_role( 'afiliado_personal' ) || members_current_user_has_role( 'afiliado_especial' ) ) { ?>
 
 						<p>
 				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
