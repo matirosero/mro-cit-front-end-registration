@@ -120,3 +120,54 @@ function mro_cit_subscribe_email($email, $merge_fields) {
 	return false;
 
 }
+
+// adds an email to the mailchimp subscription list
+function mro_cit_unsubscribe_email($email) {
+
+	write_log('mro_cit_unsubscribe_email(): Send info to mailchimp');
+
+	global $mc_options;
+
+
+	// check that the API option is set
+	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
+
+		$list_id = $mc_options['mailchimp_list'];
+		$api_key = $mc_options['mailchimp_api'];
+
+		// write_log('api key OK: '.$api_key);
+		// write_log('list: '.$list_id);
+		// write_log('subscribe this email: '.$email);
+
+
+		// $api_key = 'YOUR API KEY';
+		// $email = 'USER EMAIL';
+		$status = 'unsubscribed'; // subscribed, cleaned, pending, unsubscribed
+
+		$args = array(
+			'method' => 'PATCH',
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			),
+			'body' => json_encode(array(
+				'status'        => $status, // subscribed, unsubscribed, pending
+			))
+		);
+		$response = wp_remote_post( 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($email)), $args );
+
+		$body = json_decode( $response['body'] );
+
+		if ( $response['response']['code'] == 200 && $body->status == $status ) {
+			// echo 'The user has been successfully ' . $status . '.';
+			//write_log('The user has been successfully ' . $status);
+		} else {
+			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
+			//write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+		}
+
+	}
+
+	// return FALSE if any of the above fail
+	return false;
+
+}

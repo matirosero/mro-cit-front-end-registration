@@ -402,9 +402,56 @@ function mro_edit_member() {
 		}
 
 
+		//Keep member type when updating Mailchimp
+		if ( members_current_user_has_role( 'afiliado_personal' ) ) {
+    		$mc_merge_fields['AFILIADO'] = 'Personal';
+    	
+    	} elseif ( members_current_user_has_role( 'afiliado_especial' ) ) {
+    		$mc_merge_fields['AFILIADO'] = 'Especial';
 
+    	} elseif ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ) {
+    		$mc_merge_fields['AFILIADO'] = 'Empresarial';
+    	
+    	} elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
+    		$mc_merge_fields['AFILIADO'] = 'Institucional';
+    	}
 
+		//Handle secondary (CC:) Contact
+		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
+			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
+			if( !is_email($mro_cit_user_secondary_email) && !empty($_POST['mro_cit_user_secondary_email'] ) ) {
+				//invalid email
+				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
+				// write_log('Email error: Invalid secondary email');
+			} else {
+				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
+				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
 
+				$old_secondary_email = $current_user->mro_cit_user_secondary_email;
+
+				$mc_merge_fields_cc = $mc_merge_fields;
+				unset($mc_merge_fields_cc['FNAME']);
+				unset($mc_merge_fields_cc['LNAME']);
+			}
+		}
+		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
+			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
+			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
+
+			if ( $mc_merge_fields_cc ) {
+				$mc_merge_fields_cc['FNAME'] = $mro_cit_user_secondary_first;
+			}
+
+		}
+		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
+			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
+			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
+
+			if ( $mc_merge_fields_cc ) {
+				$mc_merge_fields_cc['LNAME'] = $mro_cit_user_secondary_last;
+			}
+		}
+		
 
 		if ( !empty($_POST['pippin_user_pass'] ) || !empty( $_POST['pippin_user_pass_confirm'] ) ) {
 			$new_user_pass		= $_POST["pippin_user_pass"];
@@ -422,13 +469,8 @@ function mro_edit_member() {
 
 		if(empty($errors)) {
 
-			// write_log('No errors, can edit user!');
-
-			//edit profile
-			// write_log('USER ID = '.$current_user->ID);
-
-			// write_log(var_dump($updated_info));
-			// write_log(var_dump($updated_meta));
+			$old_user_email = $current_user->user_email;
+			write_log('Old user email is '.$old_user_email);
 
 			$user_data = wp_update_user( $updated_info );
 
@@ -438,6 +480,26 @@ function mro_edit_member() {
 
 			// Send to mailchimp function
 			mro_cit_subscribe_email($user_email, $mc_merge_fields);
+
+			if ( $user_email != $old_user_email ) {
+				write_log('New user email is '.$user_email);
+				write_log('Email is different, so trigger unsubscribe function');
+				mro_cit_unsubscribe_email( $old_user_email );
+			}
+
+
+			//Update CC in Mailchimp
+			if ( $mc_merge_fields_cc ) {
+				mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
+
+				if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
+					write_log('New CC: email is '.$user_email);
+					write_log('CC: Email is different, so trigger unsubscribe function for CC:');
+					mro_cit_unsubscribe_email( $old_secondary_email );
+				}
+			}
+
+
 
 			/* Let plugins hook in, like ACF who is handling the profile picture all by itself. Got to love the Elliot */
 		    do_action('edit_user_profile_update', $current_user->ID);
