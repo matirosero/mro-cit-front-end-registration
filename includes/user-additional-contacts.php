@@ -188,7 +188,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
     // var_dump( $additional_contacts);
 
-    foreach ($additional_contacts as $contact) {
+    foreach ($additional_contacts as $key => $contact) {
         // var_dump($contact);
 
         if ( isset( $contact['email'] ) ) {
@@ -216,6 +216,18 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
             // Send to mailchimp function
             mro_cit_subscribe_email( $contact['email'], $mc_merge_fields );
+
+            $old_contact = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
+
+            $old_email = $old_contact[$key]['email'];
+
+            write_log('Old email is '.$old_email);
+            write_log('New email is '.$email);
+
+            if ( $email != $old_email ) {
+                write_log( 'Emails don\'t match, trigger unsubscribe');
+                mro_cit_unsubscribe_email( $old_email );
+            }
 
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );
