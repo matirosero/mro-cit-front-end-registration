@@ -95,7 +95,7 @@ function mro_reset_password() {
 			}
 
 		} else {
-			write_log('Step 1.5: this is a username, trim it');
+			// write_log('Step 1.5: this is a username, trim it');
 			$login = trim($_POST['user_login']);
 			$user_data = get_user_by('login', $login);
 			if ( empty( $user_data ) ) {
