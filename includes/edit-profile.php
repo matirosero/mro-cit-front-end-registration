@@ -489,7 +489,7 @@ function mro_edit_member() {
 
 
 			//Update CC in Mailchimp
-			if ( $mc_merge_fields_cc ) {
+			if ( isset( $mc_merge_fields_cc ) ) {
 				mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
 
 				if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
