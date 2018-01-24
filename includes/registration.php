@@ -490,18 +490,24 @@ function pippin_add_new_member() {
 					update_user_meta( $new_user_id, $key, $value );
 				}
 
-
 				// send an email to the admin alerting them of the registration
 				wp_new_user_notification($new_user_id, null, 'both');
 
-				// Send to mailchimp function
-				// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
-				mro_cit_subscribe_email($user_email, $mc_merge_fields);
 
-				//CC to mailchimp
-				if ( $mc_merge_fields_cc ) {
-					mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
-				}
+				//Subscribe to mailchimp if it's a personal account
+				if ( $mro_cit_user_membership == 'afiliado_personal') :
+
+					$status = 'subscribed';
+
+					// Send to mailchimp function
+					// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
+					mro_cit_subscribe_email($user_email, $mc_merge_fields, $status);
+
+					//CC to mailchimp
+					if ( $mc_merge_fields_cc ) {
+						mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc, $status);
+					}
+				endif;
 
 
 				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/

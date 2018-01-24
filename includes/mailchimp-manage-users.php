@@ -68,7 +68,7 @@ add_action('init', 'mro_cit_check_for_email_signup');
 
 
 // adds an email to the mailchimp subscription list
-function mro_cit_subscribe_email($email, $merge_fields) {
+function mro_cit_subscribe_email($email, $merge_fields, $status = 'subscribed') {
 
 	// write_log('mro_cit_subscribe_email(): Send info to mailchimp');
 
@@ -88,7 +88,7 @@ function mro_cit_subscribe_email($email, $merge_fields) {
 
 		// $api_key = 'YOUR API KEY';
 		// $email = 'USER EMAIL';
-		$status = 'subscribed'; // subscribed, cleaned, pending, unsubscribed
+		// $status = 'subscribed'; // subscribed, cleaned, pending, unsubscribed
 
 		$args = array(
 			'method' => 'PUT',

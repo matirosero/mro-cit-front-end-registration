@@ -465,6 +465,13 @@ function mro_edit_member() {
 			}
 		}
 
+		//Should be subscribed or pending in mailchimp
+		if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_institucional_pendiente') ) :
+			$status = 'pending';
+		else :
+			$status = 'subscribed';
+		endif;
+
 		$errors = pippin_errors()->get_error_messages();
 
 		if(empty($errors)) {
@@ -478,26 +485,35 @@ function mro_edit_member() {
 				update_user_meta( $current_user->ID, $key, $value );
 			}
 
-			// Send to mailchimp function
-			mro_cit_subscribe_email($user_email, $mc_merge_fields);
+			
 
-			if ( $user_email != $old_user_email ) {
-				// write_log('New user email is '.$user_email);
-				// write_log('Email is different, so trigger unsubscribe function');
-				mro_cit_unsubscribe_email( $old_user_email );
-			}
+			//Send to mailchimp only if not pending
+			if ( ! members_current_user_has_role( 'afiliado_empresarial_pendiente' ) && ! members_current_user_has_role( 'afiliado_institucional_pendiente') ) :
 
+				$status = 'subscribed';
 
-			//Update CC in Mailchimp
-			if ( isset( $mc_merge_fields_cc ) ) {
-				mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc);
+				// Send to mailchimp function
+				mro_cit_subscribe_email($user_email, $mc_merge_fields, $status);
 
-				if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
-					// write_log('New CC: email is '.$user_email);
-					// write_log('CC: Email is different, so trigger unsubscribe function for CC:');
-					mro_cit_unsubscribe_email( $old_secondary_email );
+				if ( $user_email != $old_user_email ) {
+					// write_log('New user email is '.$user_email);
+					// write_log('Email is different, so trigger unsubscribe function');
+					mro_cit_unsubscribe_email( $old_user_email );
 				}
-			}
+
+
+				//Update CC in Mailchimp
+				if ( isset( $mc_merge_fields_cc ) ) {
+					mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc, $status);
+
+					if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
+						// write_log('New CC: email is '.$user_email);
+						// write_log('CC: Email is different, so trigger unsubscribe function for CC:');
+						mro_cit_unsubscribe_email( $old_secondary_email );
+					}
+				}
+
+			endif;
 
 
 
