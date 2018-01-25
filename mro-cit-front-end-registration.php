@@ -49,6 +49,14 @@ require_once( dirname( __FILE__ ) . '/includes/login.php' );
 
 
 /**
+ * Password strength.
+ *
+ * @since 0.1.0
+ */
+require_once( dirname( __FILE__ ) . '/includes/password-strength.php' );
+
+
+/**
  * Lost password.
  *
  * @since 0.1.0

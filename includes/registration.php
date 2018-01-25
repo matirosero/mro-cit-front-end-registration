@@ -214,6 +214,8 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_pass_confirm" id="password_again" class="required" type="password"/>
 				</p>
 
+				<span id="password-strength"></span>
+
 				<p>
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
@@ -226,7 +228,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } ?>
 
-					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>"/>
+					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>" disabled="disabled" />
 
 				</p>
 			</fieldset>

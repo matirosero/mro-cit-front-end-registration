@@ -257,6 +257,8 @@ function mro_cit_edit_profile_form_fields() {
 						<input name="pippin_user_pass_confirm" id="password_again" class="required" type="password"/>
 					</p>
 
+					<span id="password-strength"></span>
+
 					<p>
 						<input type="hidden" name="mro_edit_profile_nonce" value="<?php echo wp_create_nonce('mro-edit-profile-nonce'); ?>"/>
 						<input type="submit" class="button button-primary" value="<?php _e('Edit profile', 'mro-cit-frontend'); ?>"/>
