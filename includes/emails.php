@@ -300,7 +300,7 @@ function mro_cit_user_role_update( $user_id, $role ) {
         wp_mail($to, $subject, $message);
     }
 }
-// add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
+add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
 
 
 
