@@ -37,7 +37,7 @@ function pippin_registration_form($atts) {
 		}
 
 	} else {
-		$output = '<p class="callout warning">Por favor <a href="'.wp_logout_url().'">cierra su sesión</a> para realizar una nueva afiliación.</p>';
+		$output = '<p class="callout warning">Por favor <a href="'.wp_logout_url().'">cierre su sesión</a> para realizar una nueva afiliación.</p>';
 	}
 	return $output;
 }
