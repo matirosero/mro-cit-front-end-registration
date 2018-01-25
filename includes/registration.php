@@ -228,7 +228,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } ?>
 
-					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>" disabled="disabled" />
+					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>" />
 
 				</p>
 			</fieldset>

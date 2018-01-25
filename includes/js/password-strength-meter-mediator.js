@@ -46,7 +46,9 @@ jQuery( document ).ready( function( $ ) {
 	    // enable only the submit button if the password is strong and
 	    // both passwords are filled up
 	    if ( ( 4 === strength || 3 === strength ) && '' !== pass2.trim() ) {
-	        $submitButton.removeAttr( 'disabled' );
+	        $submitButton.prop( "disabled", false );
+	    } else if ( 2 === strength || 5 === strength ) {
+	    	$submitButton.prop( "disabled", true );
 	    }
 
 	    return strength;
