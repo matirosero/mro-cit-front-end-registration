@@ -3,11 +3,7 @@
 
 function mro_cit_mailchimp_members_shortcode($atts, $content = null ) {
 
-	global $current_user, $wp_roles, $wp;
-
-	$current_url = home_url(add_query_arg(array(),$wp->request));
-
-	var_dump($current_url);
+	global $current_user, $wp_roles;
 
 	extract( shortcode_atts( array(
 		'afiliado' => ''
@@ -20,7 +16,7 @@ function mro_cit_mailchimp_members_shortcode($atts, $content = null ) {
 		//Show any messages
 		if ( mro_cit_frontend_messages() != '' ) {
 			echo mro_cit_frontend_messages();
-			write_log('frontend messages: '.mro_cit_frontend_messages());
+			// write_log('frontend messages: '.mro_cit_frontend_messages());
 		}
 
 		$output .= mro_cit_show_temp_members_table();
@@ -83,42 +79,6 @@ function mro_cit_show_temp_members_table() {
 	}
 
 }
-
-
-function mro_cit_mc_unsubscribe_temp_member() {
-
-	global $wp;
-
-	if ( empty( $_GET ) ) {
-        return false;
-    }
-
-    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_GET['mc_remove'] ) && isset( $_GET['cit-nonce'] ) && wp_verify_nonce($_GET['cit-nonce'], 'cit-unsusbcribe-nonce') ) {
-
-    	// write_log('unsubscribe it!');
-    	$current_url = home_url(add_query_arg(array(),$wp->request));
-
-    	$email = sanitize_email( $_GET['mc_remove'] );
-
-    	if(!is_email($email)) {
-			//invalid email
-			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
-			// write_log('Email error: Invalid email');
-		}
-
-		$errors = pippin_errors()->get_error_messages();
-
-		// only create the user in if there are no errors
-		if(empty($errors)) {
-			mro_cit_unsubscribe_email( $email );
-
-			wp_redirect( $current_url . '?unsubscribe=complete&email='.urlencode($email) ); exit;
-		}
-
-
-    }
-}
-add_action('init', 'mro_cit_mc_unsubscribe_temp_member');
 
 
 function mro_cit_add_temp_member_form() {
@@ -201,7 +161,7 @@ function mro_cit_mc_add_temp_member() {
 			// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
 			$subscribe = mro_cit_subscribe_email($email, $mc_merge_fields, $status);
 
-			write_log('Response: '.$subscribe);
+			// write_log('Response: '.$subscribe);
 
 			//Check success to send this
 			mro_cit_frontend_messages( $subscribe );
@@ -212,3 +172,43 @@ function mro_cit_mc_add_temp_member() {
 }
 add_action('init', 'mro_cit_mc_add_temp_member');
 
+
+function mro_cit_mc_unsubscribe_temp_member() {
+
+	$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+	$slug = $uri_parts[0];
+
+	if ( empty( $_GET ) ) {
+        return false;
+    }
+
+    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_GET['mc_remove'] ) && isset( $_GET['cit-nonce'] ) && wp_verify_nonce($_GET['cit-nonce'], 'cit-unsusbcribe-nonce') ) {
+
+    	// write_log('unsubscribe it!');
+    	// $current_url = home_url(add_query_arg(array(),$wp->request));
+
+    	$email = sanitize_email( $_GET['mc_remove'] );
+
+    	if(!is_email($email)) {
+			//invalid email
+			pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
+			// write_log('Email error: Invalid email');
+		}
+
+		$errors = pippin_errors()->get_error_messages();
+
+		// only create the user in if there are no errors
+		if(empty($errors)) {
+			$unsubscribe = mro_cit_unsubscribe_email( $email );
+			mro_cit_frontend_messages( $unsubscribe );
+
+			// write_log('after finished: '.$current_url);
+
+			//Message disappears
+			wp_redirect( $slug ); exit;
+
+
+		}
+    }
+}
+add_action('init', 'mro_cit_mc_unsubscribe_temp_member');

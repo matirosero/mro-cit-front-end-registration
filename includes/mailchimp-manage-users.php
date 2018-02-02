@@ -134,8 +134,7 @@ function mro_cit_unsubscribe_email($email) {
 
 	// write_log('mro_cit_unsubscribe_email(): Send info to mailchimp');
 
-	global $mc_options;
-
+	global $mc_options, $wpdb;
 
 	// check that the API option is set
 	if(strlen(trim($mc_options['mailchimp_api'])) > 0 ) {
@@ -166,11 +165,9 @@ function mro_cit_unsubscribe_email($email) {
 		$body = json_decode( $response['body'] );
 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
-			// echo 'The user has been successfully ' . $status . '.';
-			//write_log('The user has been successfully ' . $status);
+			return '<p class="callout success">' . __('The email address '.$email.'  has been unsubscribed.', 'mro-cit-frontend') . '</p>';
 		} else {
-			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
-			//write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+			return '<p class="callout success">' . __('Something went wrong! Please let us know at <a href="mailto:'.get_option( 'admin_email' ).'">'.get_option( 'admin_email' ).'</a>.', 'mro-cit-frontend') . '</p>';
 		}
 
 	}
