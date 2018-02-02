@@ -79,3 +79,4 @@ require_once( dirname( __FILE__ ) . '/includes/edit-profile.php' );
  */
 require_once( dirname( __FILE__ ) . '/includes/mailchimp-settings.php' );
 require_once( dirname( __FILE__ ) . '/includes/mailchimp-manage-users.php' );
+require_once( dirname( __FILE__ ) . '/includes/mailchimp-manage-temp-users.php' );
