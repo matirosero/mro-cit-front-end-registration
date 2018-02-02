@@ -171,3 +171,62 @@ function mro_cit_unsubscribe_email($email) {
 	return false;
 
 }
+
+
+
+
+
+// get an array of all mailchimp subscription lists
+function mro_cit_get_mailchimp_list_members() {
+
+	global $mc_options;
+
+	// check that an API key has been entered
+	if( strlen( trim ( $mc_options['mailchimp_api'] ) ) > 0 && strlen( trim ( $mc_options['mailchimp_list'] ) ) > 0  && strlen( trim ( $mc_options['mailchimp_segment_temp'] ) ) > 0 ) {
+
+		$members = array();
+
+		$api_key = $api_key = $mc_options['mailchimp_api'];
+
+		$list_id = $mc_options['mailchimp_list'];
+
+		$segment_id = $mc_options['mailchimp_segment_temp'];
+
+		$dc = substr($api_key,strpos($api_key,'-')+1); // us5, us8 etc
+
+		// Get and count members in segment?
+		// https://developer.mailchimp.com/documentation/mailchimp/reference/lists/segments/members/#%20
+
+		$args = array(
+		 	'method' => 'GET',
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			)
+		);
+		$response = wp_remote_get( 'https://'.$dc.'.api.mailchimp.com/3.0/lists/'.$list_id.'/segments/'.$segment_id.'/members?count=50', $args );
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+		// var_dump($body->members);
+
+		foreach ( $body->members as $member ) {
+			// var_dump($member);
+			$members[] = array(
+				'id' => $member->id,
+				'email' => $member->email_address,
+				'status' => $member->status,
+				'fname' => $member->merge_fields->FNAME,
+				'lname' => $member->merge_fields->LNAME,
+				'type' => $member->merge_fields->AFILIADO,
+				'phone' => $member->merge_fields->PHONE,
+				'company' => $member->merge_fields->EMPRESA,
+			);
+		}
+		// var_dump($members);
+
+		return $members;
+
+	} else {
+		return false;
+	}
+
+}

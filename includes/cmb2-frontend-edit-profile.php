@@ -14,7 +14,7 @@ function cmb2_do_frontend_form_shortcode( $atts = array() ) {
 	$metabox_id = 'mro_cit_user_edit';
 
 		$form = cmb2_get_metabox_form( 'mro_cit_page_metabox', 1 );
-        var_dump($form);
+        // var_dump($form);
     }
 
     /**

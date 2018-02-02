@@ -64,6 +64,26 @@ function mro_cit_mailchimp_settings_page() {
 
 				<div class="description"><?php _e('Choose the list to subscribe users to', 'mro-cit-frontend'); ?></div>
 			</p>
+
+			<p>
+				<?php $segments = mro_cit_get_mailchimp_segments(); ?>
+				<select id="mro_cit_mailchimp_settings[mailchimp_segment_temp]" name="mro_cit_mailchimp_settings[mailchimp_segment_temp]">
+					<option value="">none</option>
+					<?php
+						if($segments) :
+							foreach($segments as $segment) :
+								echo '<option value="' . $segment['id'] . '"' . selected($mc_options['mailchimp_segment_temp'], $segment['id'], false) . '>' . $segment['name'] . '</option>';
+							endforeach;
+						else :
+					?>
+					<option value="no segment"><?php _e('no segments', 'mro-cit-frontend'); ?></option>
+				<?php endif; ?>
+				</select>
+
+				<label for="mro_cit_mailchimp_settings[mailchimp_segment_temp]"><?php _e( 'Temporary members segment', 'mro-cit-frontend' ); ?></label><br/>
+
+				<div class="description"><?php _e('Choose the temporary members segment', 'mro-cit-frontend'); ?></div>
+			</p>
 			<!-- save the options -->
 			<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e( 'Save Options', 'mro-cit-frontend' ); ?>" />
@@ -106,6 +126,44 @@ function mro_cit_get_mailchimp_lists() {
 
 		}
 		return $lists;
+
+	}
+	return false;
+}
+
+
+// get an array of all mailchimp subscription lists
+function mro_cit_get_mailchimp_segments() {
+
+	global $mc_options;
+
+	// check that an API key has been entered
+	if(strlen(trim($mc_options['mailchimp_api'])) > 0 && strlen( trim ( $mc_options['mailchimp_list'] ) ) > 0 ) {
+
+		// setup the $lists variable as a blank array
+		$segments = array();
+
+
+		$api_key = $api_key = $mc_options['mailchimp_api'];
+		$list_id = $mc_options['mailchimp_list'];
+		$dc = substr($api_key,strpos($api_key,'-')+1); // us5, us8 etc
+		$args = array(
+		 	'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( 'user:'. $api_key )
+			)
+		);
+		$response = wp_remote_get( 'https://'.$dc.'.api.mailchimp.com/3.0/lists/'.$list_id.'/segments/', $args );
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
+		// var_dump($body->segments);
+		if ( wp_remote_retrieve_response_code( $response ) == 200 ) {
+			foreach ( $body->segments as $key => $segment ) {
+				// var_dump($segment);
+				$segments[$key]['id'] = $segment->id;
+				$segments[$key]['name'] = $segment->name;
+			}
+
+		}
+		return $segments;
 
 	}
 	return false;
