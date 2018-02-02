@@ -86,6 +86,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         // Get role
         // $role = $current_user->roles[0];
+        $role = '';
         if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ) {
             $role = 'Empresarial';
         } elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {

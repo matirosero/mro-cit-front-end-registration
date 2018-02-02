@@ -45,15 +45,16 @@ function mro_cit_show_temp_members_table() {
 		$output = '';
 
 		if ( count( $members ) > 0 ) {
-			$output .= '<h3>Suscriptores temporales</h3>
-				<table>
-					<tr>
-						<th>E-mail</th>
-						<th>Nombre</th>
-						<th>Apellidos</th>
-						<th>Estado</th>
-						<th></th>
-					</tr>';
+			$output .= '<div class="temporary-subscribers">
+				<h3>Suscriptores temporales</h3>
+					<table>
+						<tr>
+							<th>E-mail</th>
+							<th>Nombre</th>
+							<th>Apellidos</th>
+							<th>Estado</th>
+							<th></th>
+						</tr>';
 
 			foreach ($members as $key => $member) {
 
@@ -64,11 +65,11 @@ function mro_cit_show_temp_members_table() {
 					<td>'.$member['fname'].'</td>
 					<td>'.$member['lname'].'</td>
 					<td>'.$member['status'].'</td>
-					<td><a href="/'.$slug.'/?mc_remove='.urlencode($member['email']).'&cit-nonce='.$nonce.'"><i class="icon-cancel"></i></a></td>
+					<td><a class="delete" href="/'.$slug.'/?mc_remove='.urlencode($member['email']).'&cit-nonce='.$nonce.'"><i class="icon-cancel"></i></a></td>
 				</tr>';
 			}
 
-			$output .= '</table>';
+			$output .= '</table></div>';
 		} else {
 			$output .= '<p class="callout alert">No hay suscriptores temporales.</p>';
 		}
@@ -90,28 +91,30 @@ function mro_cit_add_temp_member_form() {
 
 	?>
 
-	<h3><?php _e('Add temporary members', 'mro-cit-frontend'); ?></h3>
-	<form id="cit-mailchimp-add-temp" class="pippin_form" action="" method="POST">
-		<p>
-			<label for="mailchimp_email"><?php _e('Email', 'mro-cit-frontend'); ?><span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
-			<input name="mailchimp_email" id="mailchimp_email" class="required" type="email"/>
-		</p>
-		<p>
-			<label for="mailchimp_fname"><?php _e('Name', 'mro-cit-frontend'); ?></label>
-			<input name="mailchimp_fname" id="mailchimp_fname" type="text"/>
-		</p>
-		<p>
-			<label for="mailchimp_lname"><?php _e('Lastname', 'mro-cit-frontend'); ?></label>
-			<input name="mailchimp_lname" id="mailchimp_lname" type="text"/>
-		</p>
-		<p>
-			<input type="hidden" name="cit_mc_add_subscriber_nonce" value="<?php echo wp_create_nonce('cit-mc-add-subscriber-nonce'); ?>"/>
+	<div class="add-temporary-subscriber">
+		<h3><?php _e('Add temporary members', 'mro-cit-frontend'); ?></h3>
+		<form id="cit-mailchimp-add-temp" class="pippin_form" action="" method="POST">
+			<p>
+				<label for="mailchimp_email"><?php _e('Email', 'mro-cit-frontend'); ?><span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				<input name="mailchimp_email" id="mailchimp_email" class="required" type="email"/>
+			</p>
+			<p>
+				<label for="mailchimp_fname"><?php _e('Name', 'mro-cit-frontend'); ?></label>
+				<input name="mailchimp_fname" id="mailchimp_fname" type="text"/>
+			</p>
+			<p>
+				<label for="mailchimp_lname"><?php _e('Lastname', 'mro-cit-frontend'); ?></label>
+				<input name="mailchimp_lname" id="mailchimp_lname" type="text"/>
+			</p>
+			<p>
+				<input type="hidden" name="cit_mc_add_subscriber_nonce" value="<?php echo wp_create_nonce('cit-mc-add-subscriber-nonce'); ?>"/>
 
-			<input type="hidden" name="mailchimp_type" value="Temporal" />
+				<input type="hidden" name="mailchimp_type" value="Temporal" />
 
-			<input type="submit" class="button button-primary" value="<?php _e('Add member', 'mro-cit-frontend'); ?>" />
-		</p>
-	</form>
+				<input type="submit" class="button button-primary" value="<?php _e('Add member', 'mro-cit-frontend'); ?>" />
+			</p>
+		</form>
+	</div>
 	<?php
 	return ob_get_clean();
 }
