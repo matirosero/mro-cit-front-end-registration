@@ -3,7 +3,11 @@
 
 function mro_cit_mailchimp_members_shortcode($atts, $content = null ) {
 
-	global $current_user, $wp_roles;
+	global $current_user, $wp_roles, $wp;
+
+	$current_url = home_url(add_query_arg(array(),$wp->request));
+
+	var_dump($current_url);
 
 	extract( shortcode_atts( array(
 		'afiliado' => ''
@@ -33,56 +37,65 @@ add_shortcode('cit-mailchimp-members', 'mro_cit_mailchimp_members_shortcode');
 
 function mro_cit_show_temp_members_table() {
 
-	$members = mro_cit_get_mailchimp_list_members();
+	if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) )  {
+		$members = mro_cit_get_mailchimp_list_members();
 
-	// Get the queried object and sanitize it
-	$current_page = sanitize_post( $GLOBALS['wp_the_query']->get_queried_object() );
-	// Get the page slug
-	$slug = $current_page->post_name;
+		// Get the queried object and sanitize it
+		$current_page = sanitize_post( $GLOBALS['wp_the_query']->get_queried_object() );
+		// Get the page slug
+		$slug = $current_page->post_name;
 
-	$output = '';
+		$output = '';
 
-	if ( count( $members ) > 0 ) {
-		$output .= '<h3>Suscriptores temporales</h3>
-			<table>
-				<tr>
-					<th>E-mail</th>
-					<th>Nombre</th>
-					<th>Apellidos</th>
-					<th>Estado</th>
-					<th></th>
+		if ( count( $members ) > 0 ) {
+			$output .= '<h3>Suscriptores temporales</h3>
+				<table>
+					<tr>
+						<th>E-mail</th>
+						<th>Nombre</th>
+						<th>Apellidos</th>
+						<th>Estado</th>
+						<th></th>
+					</tr>';
+
+			foreach ($members as $key => $member) {
+
+				$nonce = wp_create_nonce('cit-unsusbcribe-nonce');
+
+				$output .= '<tr>
+					<td>'.$member['email'].'</td>
+					<td>'.$member['fname'].'</td>
+					<td>'.$member['lname'].'</td>
+					<td>'.$member['status'].'</td>
+					<td><a href="/'.$slug.'/?mc_remove='.urlencode($member['email']).'&cit-nonce='.$nonce.'"><i class="icon-cancel"></i></a></td>
 				</tr>';
+			}
 
-		foreach ($members as $key => $member) {
-
-			$nonce = wp_create_nonce('cit-unsusbcribe-nonce');
-
-			$output .= '<tr>
-				<td>'.$member['email'].'</td>
-				<td>'.$member['fname'].'</td>
-				<td>'.$member['lname'].'</td>
-				<td>'.$member['status'].'</td>
-				<td><a href="/'.$slug.'/?mc_remove='.urlencode($member['email']).'&cit-nonce='.$nonce.'"><i class="icon-cancel"></i></a></td>
-			</tr>';
+			$output .= '</table>';
+		} else {
+			$output .= '<p class="callout alert">No hay suscriptores temporales.</p>';
 		}
 
-		$output .= '</table>';
+		return $output;	
 	} else {
-		$output .= '<p class="callout alert">No hay suscriptores temporales.</p>';
+		return false;
 	}
 
-	return $output;
 }
 
 
 function mro_cit_mc_unsubscribe_temp_member() {
+
+	global $wp;
+
 	if ( empty( $_GET ) ) {
         return false;
     }
 
-    if ( isset( $_GET['mc_remove'] ) && isset( $_GET['cit-nonce'] ) && wp_verify_nonce($_GET['cit-nonce'], 'cit-unsusbcribe-nonce') ) {
+    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_GET['mc_remove'] ) && isset( $_GET['cit-nonce'] ) && wp_verify_nonce($_GET['cit-nonce'], 'cit-unsusbcribe-nonce') ) {
 
-    	write_log('unsubscribe it!');
+    	// write_log('unsubscribe it!');
+    	$current_url = home_url(add_query_arg(array(),$wp->request));
 
     	$email = sanitize_email( $_GET['mc_remove'] );
 
@@ -97,9 +110,11 @@ function mro_cit_mc_unsubscribe_temp_member() {
 		// only create the user in if there are no errors
 		if(empty($errors)) {
 			mro_cit_unsubscribe_email( $email );
+
+			wp_redirect( $current_url . '?unsubscribe=complete&email='.urlencode($email) ); exit;
 		}
 
-    	
+
     }
 }
 add_action('init', 'mro_cit_mc_unsubscribe_temp_member');
@@ -147,8 +162,7 @@ function mro_cit_mc_add_temp_member() {
         return false;
     }
 
-
-    if ( isset( $_POST['mailchimp_email'] ) && isset( $_POST['cit_mc_add_subscriber_nonce'] ) && wp_verify_nonce($_POST['cit_mc_add_subscriber_nonce'], 'cit-mc-add-subscriber-nonce') ) {
+    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_POST['mailchimp_email'] ) && isset( $_POST['cit_mc_add_subscriber_nonce'] ) && wp_verify_nonce($_POST['cit_mc_add_subscriber_nonce'], 'cit-mc-add-subscriber-nonce') ) {
     	// write_log( 'Trigger send to mailchimp' );
 
     	// array to hold merge fields
