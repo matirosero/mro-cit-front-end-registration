@@ -20,6 +20,7 @@ function mro_cit_mailchimp_members_shortcode($atts, $content = null ) {
 		//Show any messages
 		if ( mro_cit_frontend_messages() != '' ) {
 			echo mro_cit_frontend_messages();
+			write_log('frontend messages: '.mro_cit_frontend_messages());
 		}
 
 		$output .= mro_cit_show_temp_members_table();
@@ -200,13 +201,10 @@ function mro_cit_mc_add_temp_member() {
 			// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
 			$subscribe = mro_cit_subscribe_email($email, $mc_merge_fields, $status);
 
+			write_log('Response: '.$subscribe);
 
-			//Not working
-			if ( $subscribe != false ) {
-				mro_cit_frontend_messages( '<p class="callout success">' . __('The email address '.$email.' has been succesfully subscribed!', 'mro-cit-frontend') . '</p>' );
-			}
-
-
+			//Check success to send this
+			mro_cit_frontend_messages( $subscribe );
 
 		}
 

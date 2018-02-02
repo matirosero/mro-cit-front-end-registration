@@ -107,11 +107,19 @@ function mro_cit_subscribe_email($email, $merge_fields, $status = 'subscribed') 
 		$body = json_decode( $response['body'] );
 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
-			// echo 'The user has been successfully ' . $status . '.';
-			//write_log('The user has been successfully ' . $status);
+
+			if ( $status == 'subscribed' ) {
+				return '<p class="callout success">' . __('The email address '.$email.' has been succesfully subscribed!', 'mro-cit-frontend') . '</p>';
+			} elseif ( $status == 'pending' ) {
+				return '<p class="callout success">' . __('The email address '.$email.'  has been added and is pending confirmation.', 'mro-cit-frontend') . '</p>';
+			} elseif ( $status == 'unsubscribed' ) {
+				return '<p class="callout success">' . __('The email address '.$email.'  has been unsubscribed.', 'mro-cit-frontend') . '</p>';
+			} else {
+				return 'The user has been successfully ' . $status;
+			}
+
 		} else {
-			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
-			//write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
+			return '<p class="callout warning"><strong>' . $response['response']['code'] . $body->title . ':</strong> ' . $body->detail . '</p>';
 		}
 
 	}
