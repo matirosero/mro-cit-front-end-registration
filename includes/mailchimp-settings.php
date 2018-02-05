@@ -173,7 +173,7 @@ function mro_cit_get_mailchimp_segments() {
 
 //Subscribe new users to mailchimp automatically
 // add_action('user_register', 'mro_cit_user_register_hook', 20, 1 );
-
+//Not used!
 function mro_cit_user_register_hook( $user_id ){
 
 	// write_log('Send new user\'s info to mailchimp');
@@ -239,9 +239,6 @@ function mro_cit_user_register_hook( $user_id ){
 			// echo '<b>' . $response['response']['code'] . $body->title . ':</b> ' . $body->detail;
 			// write_log($response['response']['code'] . $body->title . ': ' . $body->detail);
 		}
-
-
-
 
 
 		/*

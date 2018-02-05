@@ -65,7 +65,7 @@ function mro_cit_show_temp_members_table() {
 					<td>'.$member['fname'].'</td>
 					<td>'.$member['lname'].'</td>
 					<td>'.$member['status'].'</td>
-					<td><a class="delete" href="/'.$slug.'/?mc_remove='.urlencode($member['email']).'&cit-nonce='.$nonce.'"><i class="icon-cancel"></i></a></td>
+					<td><a class="delete" data-action="mc-unsubscribe" data-email="'.$member['email'].'" href="#"><i class="icon-cancel"></i></a></td>
 				</tr>';
 			}
 
