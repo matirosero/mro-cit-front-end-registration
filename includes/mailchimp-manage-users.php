@@ -109,17 +109,17 @@ function mro_cit_subscribe_email($email, $merge_fields, $status = 'subscribed') 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
 
 			if ( $status == 'subscribed' ) {
-				return '<p class="callout success">' . __('The email address '.$email.' has been succesfully subscribed!', 'mro-cit-frontend') . '</p>';
+				return '<p class="callout success">El correo '.$email.' ha sido suscrito.</p>';
 			} elseif ( $status == 'pending' ) {
-				return '<p class="callout success">' . __('The email address '.$email.'  has been added and is pending confirmation.', 'mro-cit-frontend') . '</p>';
+				return '<p class="callout success">El correo '.$email.'  ha sido añadido, y el sistema está a la espera de su confirmación.</p>';
 			} elseif ( $status == 'unsubscribed' ) {
-				return '<p class="callout success">' . __('The email address '.$email.'  has been unsubscribed.', 'mro-cit-frontend') . '</p>';
+				return '<p class="callout success">La dirección de correo <strong>'.$email . '</strong> ha sido eliminada</p>';
 			} else {
 				return 'The user has been successfully ' . $status;
 			}
 
 		} else {
-			return '<p class="callout warning"><strong>' . $response['response']['code'] . $body->title . ':</strong> ' . $body->detail . '</p>';
+			return '<p class="callout alert">¡Algo salió mal! Envíe un correo a <a href="mailto:mrosero@gmail.com">mrosero@gmail.com</a> con la siguiente información: <strong>' . $response['response']['code'] . $body->title . ':</strong> ' . $body->detail . '.</p>';
 		}
 
 	}
@@ -132,8 +132,6 @@ function mro_cit_subscribe_email($email, $merge_fields, $status = 'subscribed') 
 // adds an email to the mailchimp subscription list
 function mro_cit_unsubscribe_email($email) {
 
-	// write_log('mro_cit_unsubscribe_email(): Send info to mailchimp');
-
 	global $mc_options, $wpdb;
 
 	// check that the API option is set
@@ -142,13 +140,6 @@ function mro_cit_unsubscribe_email($email) {
 		$list_id = $mc_options['mailchimp_list'];
 		$api_key = $mc_options['mailchimp_api'];
 
-		// write_log('api key OK: '.$api_key);
-		// write_log('list: '.$list_id);
-		// write_log('subscribe this email: '.$email);
-
-
-		// $api_key = 'YOUR API KEY';
-		// $email = 'USER EMAIL';
 		$status = 'unsubscribed'; // subscribed, cleaned, pending, unsubscribed
 
 		$args = array(
@@ -165,9 +156,9 @@ function mro_cit_unsubscribe_email($email) {
 		$body = json_decode( $response['body'] );
 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
-			return '<p class="callout success">' . __('The email address '.$email.'  has been unsubscribed.', 'mro-cit-frontend') . '</p>';
+			return '<p class="callout success">La dirección de correo <strong>'.$email . '</strong> ha sido eliminada</p>';
 		} else {
-			return '<p class="callout success">' . __('Something went wrong! Please let us know at <a href="mailto:'.get_option( 'admin_email' ).'">'.get_option( 'admin_email' ).'</a>.', 'mro-cit-frontend') . '</p>';
+			return '<p class="callout alert">¡Algo salió mal! Envíe un correo a <a href="mailto:mrosero@gmail.com">mrosero@gmail.com</a> con la siguiente información: <strong>' . $response['response']['code'] . $body->title . ':</strong> ' . $body->detail . '.</p>';
 		}
 
 	}

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CIT Front End Registration and Login\n"
-"POT-Creation-Date: 2018-02-05 10:29-0600\n"
-"PO-Revision-Date: 2018-02-05 10:30-0600\n"
+"POT-Creation-Date: 2018-02-07 15:55-0600\n"
+"PO-Revision-Date: 2018-02-07 15:57-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_PE\n"
@@ -66,7 +66,7 @@ msgstr "Nombre"
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: includes/edit-profile.php:142 includes/mailchimp-manage-temp-users.php:98
+#: includes/edit-profile.php:142 includes/mailchimp-manage-temp-users.php:199
 #: includes/registration.php:105
 msgid "Email"
 msgstr "Correo electrónico"
@@ -131,8 +131,8 @@ msgstr "Repetir nueva contraseña"
 msgid "Edit profile"
 msgstr "Editar perfil"
 
-#: includes/edit-profile.php:296 includes/mailchimp-manage-temp-users.php:141
-#: includes/mailchimp-manage-temp-users.php:197 includes/registration.php:279
+#: includes/edit-profile.php:296 includes/mailchimp-manage-temp-users.php:146
+#: includes/mailchimp-manage-temp-users.php:242 includes/registration.php:279
 msgid "Invalid email"
 msgstr "Correo inválido"
 
@@ -395,19 +395,19 @@ msgstr "Revise su correo para encontrar el enlace de confirmación."
 msgid "Your account doesn't have permission to see this page."
 msgstr "Su cuenta no tiene permiso para ver esta página."
 
-#: includes/mailchimp-manage-temp-users.php:95
+#: includes/mailchimp-manage-temp-users.php:196
 msgid "Add temporary members"
 msgstr "Añadir suscriptores temporales"
 
-#: includes/mailchimp-manage-temp-users.php:102
+#: includes/mailchimp-manage-temp-users.php:203
 msgid "Name"
 msgstr "Nombre"
 
-#: includes/mailchimp-manage-temp-users.php:106
+#: includes/mailchimp-manage-temp-users.php:207
 msgid "Lastname"
 msgstr "Apellidos"
 
-#: includes/mailchimp-manage-temp-users.php:114
+#: includes/mailchimp-manage-temp-users.php:215
 msgid "Add member"
 msgstr "Añadir suscriptor"
 
@@ -433,10 +433,14 @@ msgstr "Correo inválido"
 
 #: includes/mailchimp-manage-users.php:112
 #: includes/mailchimp-manage-users.php:114
-#: includes/mailchimp-manage-users.php:116
 #: includes/mailchimp-manage-users.php:168
 msgid "The email address "
 msgstr "Correo electrónico "
+
+#: includes/mailchimp-manage-users.php:116
+#, php-format
+msgid "The email address %d has been unsubscribed."
+msgstr "La dirección de correo %d ha sido eliminada."
 
 #: includes/mailchimp-manage-users.php:170
 msgid "Something went wrong! Please let us know at <a href=\"mailto:"
