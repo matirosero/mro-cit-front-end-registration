@@ -94,7 +94,7 @@ function mro_cit_show_temp_members_table() {
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>¿Está seguro que quiere eliminar de la lista el correo <strong class="confirm-email-label"></strong>?
+				<p>¿Está seguro que quiere eliminar de la lista el correo <strong class="confirm-email-label"></strong>?</p>
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-unsubscribe" data-action="confirm-mc-unsubscribe" href="#">Si, eliminarlo</a></p>
 				</div>';
 		} 

@@ -28,17 +28,22 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>¿Está seguro que quiere eliminar el afiliado <strong class="user-name"></strong>?
+				<p>¿Está seguro que quiere eliminar el afiliado <strong class="user-name"></strong>?</p>
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
 				</div>';
 
-			$output .= '<div class="reveal text-center" id="manage-member-contacts" data-reveal>
+			$output .= '<div class="large reveal" id="edit-member" data-reveal>
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>Desde aquí puede administrar la cuenta del afiliado <strong class="confirm-username"></strong>?
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete" data-action="cit_aprove_member" href="#">Si, eliminarlo</a></p>
-				</div>';
+				<p>Desde aquí puede editar la cuenta del afiliado <strong class="user-name"></strong></p>
+
+				<form id="edit-member-form">
+
+					<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button save-member" data-action="cit_edit_member" href="#">Guardar</a></p>
+
+				</form>
+			</div>';
 		}
 
 		// $output .= mro_cit_add_temp_member_form();
@@ -96,18 +101,21 @@ function mro_cit_build_premium_members_list() {
 					<tr>
 						<th>Usuario</th>
 						<th>Compañía</th>
-						<th>Contactos</th>
 						<th>Tipo</th>
-						<th>Aprobado</th>
-						<th>Eliminar</th>
+						<th></th>
+						<th></th>
+						<th></th>
 					</tr>';
 
 		foreach ($users as $key => $user) {
 
 			// var_dump($user);
 
-			$aprove_nonce = wp_create_nonce('cit-aprove-member-nonce');
-			$aprove_link = admin_url('admin-ajax.php?action=cit_aprove_member&id='. $user->ID .'&nonce='.$aprove_nonce);
+			$edit_nonce = wp_create_nonce('cit-approve-member-nonce');
+			$edit_link = admin_url('admin-ajax.php?action=cit_edit_member&id='. $user->ID .'&nonce='.$edit_nonce);
+
+			$approve_nonce = wp_create_nonce('cit-approve-member-nonce');
+			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&id='. $user->ID .'&nonce='.$approve_nonce);
 
 			$delete_nonce = wp_create_nonce('cit-manage-nonce');
 			$delete_link = admin_url('admin-ajax.php?action=cit_remove_member&id='. $user->ID .'&nonce='.$delete_nonce);
@@ -122,15 +130,16 @@ function mro_cit_build_premium_members_list() {
 				// '<td>'.esc_html( $user->user_firstname ).'</td>
 				// <td>'.esc_html( $user->user_lastname ).'</td>';
 
-			$output .= '<td><a class="manage-members button secondary" data-nonce="' . $nonce . '" data-id="' . esc_html( $user->ID ) . '" href="#"  data-open="manage-member-contacts">Contactos</a></td>';
 
-			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>
-				<td>';
+
+			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
+
+			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-id="' . esc_html( $user->ID ) . '" href="#"  data-open="edit-member">Editar</a></td><td>';
 
 			if ( mro_cit_member_is_pending( $user->ID ) ) {
-				$output .= '<a href="#" class="button">Aprobar</a>';
+				$output .= '<input type="checkbox" name="user-is-approved" value="1"> Aprovado';
 			} else {
-				$output .= '<i class="approved icon-ok"></i>';
+				$output .= '<input type="checkbox" name="user-is-approved" value="1" checked> Aprovado';
 			}
 
 			$output .= '</td>
@@ -141,7 +150,7 @@ function mro_cit_build_premium_members_list() {
 		$output .= '</table>';
 
 	} else {
-		$output .= '<p class="callout alert">No hay suscriptores temporales.</p>';
+		$output .= '<p class="callout alert">No hay afiliados.</p>';
 	}
 
 	return $output;

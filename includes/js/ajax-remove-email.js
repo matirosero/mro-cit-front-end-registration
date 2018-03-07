@@ -1,7 +1,7 @@
 jQuery(function($){
 
 	var modal,
-	email,
+		email,
 		userID,
 		user,
 		nonce,
