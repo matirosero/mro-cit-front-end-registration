@@ -77,6 +77,7 @@ require_once( dirname( __FILE__ ) . '/includes/edit-profile.php' );
  *
  * @since 0.1.0
  */
+require_once( dirname( __FILE__ ) . '/includes/frontend-manage-members-helpers.php' );
 require_once( dirname( __FILE__ ) . '/includes/frontend-manage-members.php' );
 
 
