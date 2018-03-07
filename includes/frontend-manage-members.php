@@ -19,7 +19,27 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 			// write_log('frontend messages: '.mro_cit_frontend_messages());
 		}
 
-		$output .= mro_cit_show_premium_members_table();
+		if ( mro_cit_premium_members_table() ) {
+			$output .= '<div class="members-table" id="premium-members-table">';
+			$output .= mro_cit_premium_members_table();
+			$output .= '</div>';
+
+			$output .= '<div class="reveal text-center" id="confirm-delete-member" data-reveal>
+				<button class="close-button" data-close aria-label="Close modal" type="button">
+					<i class="icon-cancel"></i>
+				</button>
+				<p>¿Está seguro que quiere eliminar el afiliado <strong class="confirm-username"></strong>?
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
+				</div>';
+
+			$output .= '<div class="reveal text-center" id="manage-member-contacts" data-reveal>
+				<button class="close-button" data-close aria-label="Close modal" type="button">
+					<i class="icon-cancel"></i>
+				</button>
+				<p>¿Está seguro que quiere eliminar el afiliado <strong class="confirm-username"></strong>?
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete" data-action="cit_aprove_member" href="#">Si, eliminarlo</a></p>
+				</div>';
+		}
 
 		// $output .= mro_cit_add_temp_member_form();
 
@@ -31,8 +51,26 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 }
 add_shortcode('cit-manage-members', 'mro_cit_manage_members_shortcode');
 
+function mro_cit_premium_member_type( $user_id ) {
+	if ( members_user_has_role( $user_id, 'afiliado_empresarial' ) || members_user_has_role( $user_id, 'afiliado_empresarial_pendiente' ) ) {
+		$type = 'Empresarial';
+	} elseif ( members_user_has_role( $user_id, 'afiliado_institucional' ) || members_user_has_role( $user_id, 'afiliado_institucional_pendiente' ) ) {
+		$type = 'Institucional';
+	} else {
+		return false;
+	}
+	return $type;
+}
 
-function mro_cit_show_premium_members_table() {
+function mro_cit_member_is_pending( $user_id ) {
+	if ( members_user_has_role( $user_id, 'afiliado_institucional_pendiente' ) || members_user_has_role( $user_id, 'afiliado_empresarial_pendiente' ) ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function mro_cit_premium_members_table() {
 	$output = '';
 
 	$users = get_users( array( 
@@ -44,7 +82,7 @@ function mro_cit_show_premium_members_table() {
 		),
 	) );
 
-	var_dump($users);
+	// var_dump($users);
 
 	// foreach ( $members as $user ) {
 	// 	echo '<span>' . esc_html( $user->user_email ) . '</span>';
@@ -53,47 +91,48 @@ function mro_cit_show_premium_members_table() {
 	// $members = mro_cit_get_mailchimp_list_members();
 
 	if ( count( $users ) > 0 ) {
-		$output .= '<h3>Suscriptores temporales</h3>
+		$output .= '<h3>Suscriptores empresariales/institucionales</h3>
 				<table>
 					<tr>
 						<th>Usuario</th>
 						<th>Compañía</th>
-						<th>E-mail</th>
-						<th>Nombre</th>
-						<th>Apellidos</th>
-						<th>Estado</th>
-						<th></th>
+						<th>Contactos</th>
+						<th>Tipo</th>
+						<th>Aprobado</th>
+						<th>Eliminar</th>
 					</tr>';
 
 		foreach ($users as $key => $user) {
 
-			$nonce = wp_create_nonce('cit-manage-nonce');
-			$link = '#';
+			// var_dump($user);
 
-			$pending = false;
-			if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_institucional_pendiente' ) ) {
-				$pending = true;
-			}
-			// $link = admin_url('admin-ajax.php?action=mc_unsubscribe&email='.urlencode($member['email']).'&nonce='.$nonce);
+			$aprove_nonce = wp_create_nonce('cit-aprove-member-nonce');
+			$aprove_link = admin_url('admin-ajax.php?action=cit_aprove_member&id='. $user->ID .'&nonce='.$aprove_nonce);
+
+			$delete_nonce = wp_create_nonce('cit-manage-nonce');
+			$delete_link = admin_url('admin-ajax.php?action=cit_remove_member&id='. $user->ID .'&nonce='.$delete_nonce);
 
 			$output .= '<tr>
 				<td>'.esc_html( $user->user_login ).'</td>
-				<td>'.esc_html( $user->nickname ).'</td>
-				<td>'.esc_html( $user->user_email ).'</td>
-				<td>'.esc_html( $user->user_firstname ).'</td>
-				<td>'.esc_html( $user->user_lastname ).'</td>
+				<td>'.esc_html( $user->nickname ).'</td>';
+
+			// $output .= <td>'.esc_html( $user->user_email ).'</td>
+				// '<td>'.esc_html( $user->user_firstname ).'</td>
+				// <td>'.esc_html( $user->user_lastname ).'</td>';
+
+			$output .= '<td><a class="manage-members button secondary" data-nonce="' . $nonce . '" data-id="' . esc_html( $user->ID ) . '" href="#"  data-open="manage-member-contacts">Contactos</a></td>';
+
+			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>
 				<td>';
 
-			if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_institucional_pendiente' ) ) {
-				$output .= '<input type="radio" name="pending" value="pending" id="pending" checked><label for="pending">PPendiente</label>
-					<input type="radio" name="approved" value="approved" id="approved"><label for="approved">Aprobado</label>';
+			if ( mro_cit_member_is_pending( $user->ID ) ) {
+				$output .= '<a href="#" class="button">Aprobar</a>';
 			} else {
-				$output .= '<input type="radio" name="pending" value="pending" id="pending"><label for="pending">Pendiente</label>
-					<input type="radio" name="approved" value="approved" id="approved" checked><label for="approved">Aprobado</label>';
+				$output .= '<i class="approved icon-ok"></i>';
 			}
 
 			$output .= '</td>
-				<td><a class="delete" data-nonce="' . $nonce . '" data-email="' . esc_html( $user->user_email ) . '" href="#"  data-open="confirm-unsubscribe-email"><i class="icon-cancel"></i></a></td>
+				<td><a class="delete" data-nonce="' . $delete_nonce . '" data-id="' . $user->ID . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
 			</tr>';
 		}
 
