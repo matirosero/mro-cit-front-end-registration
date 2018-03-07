@@ -114,8 +114,6 @@ function mro_cit_build_premium_members_list() {
 				// '<td>'.esc_html( $user->user_firstname ).'</td>
 				// <td>'.esc_html( $user->user_lastname ).'</td>';
 
-
-
 			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
 
 			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-id="' . esc_html( $user->ID ) . '" href="#"  data-open="edit-member">Editar</a></td><td>';
