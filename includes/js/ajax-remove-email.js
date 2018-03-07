@@ -1,33 +1,53 @@
 jQuery(function($){
 
-	var mcUnsubscribeBtn = $('.unsubscribe'),
-		// modal = $('#confirm-unsubscribe-email'),
-		modal,
-		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
-		tableContainer = $('#temporary-subscribers'),
-		email,
+	var modal,
+	email,
+		userID,
+		user,
 		nonce,
-		link;
+		link,
+		deleteMemberBtn = $('.delete-member')
+		confirmDeleteMemberBtn = $('.button.confirm-delete-member'),
+		mcUnsubscribeBtn = $('.unsubscribe'),
+		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
+		tableContainer = $('#temporary-subscribers');
+
+
+	deleteMemberBtn.on('click', function(e) {
+
+		e.preventDefault();
+		console.log('click on open delete member modal');
+
+		userID = $(this).data('id');
+		nonce = $(this).data('nonce');
+
+		modal = $( '#' + $(this).data('open') );
+
+		modal.find('.user-name').html($(this).data('user'));
+
+		link = ajax_object.ajax_url + '?action=cit_delete_member&id=' + userID + '&nonce=' + nonce;
+
+		confirmDeleteMemberBtn.attr('href', link).attr('data-id', userID).attr('data-nonce', nonce);
+	});
+
 
 	mcUnsubscribeBtn.on('click', function(e) {
 
 		e.preventDefault();
+		console.log('click on unsubscribe temp modal');
 
 		email = $(this).data('email');
 		nonce = $(this).data('nonce');
 
 		modal = $( '#' + $(this).data('open') );
 
-		modal.find('.confirm-email').html(email);
+		modal.find('.confirm-email-label').html(email);
 
 		link = ajax_object.ajax_url + '?action=cit_mc_unsubscribe&email=' + encodeURIComponent(email) + '&nonce=' + nonce;
 
-		// link = admin_url('admin-ajax.php?action=mc_unsubscribe&email='.urlencode($member['email']).'&nonce='.$nonce);
-
 		modal.find('.button.confirm-unsubscribe').attr('href', link).attr('data-email', email).attr('data-nonce', nonce);
-
-		// alert(modal.find('.button.confirm-unsubscribe').data('action'));
 	});
+
 
 	confirmMcUnsubscribeBtn.on('click', function(e) {
 

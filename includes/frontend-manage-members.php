@@ -19,24 +19,24 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 			// write_log('frontend messages: '.mro_cit_frontend_messages());
 		}
 
-		if ( mro_cit_premium_members_table() ) {
+		if ( mro_cit_build_premium_members_list() ) {
 			$output .= '<div class="members-table" id="premium-members-table">';
-			$output .= mro_cit_premium_members_table();
+			$output .= mro_cit_build_premium_members_list();
 			$output .= '</div>';
 
 			$output .= '<div class="reveal text-center" id="confirm-delete-member" data-reveal>
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>¿Está seguro que quiere eliminar el afiliado <strong class="confirm-username"></strong>?
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
+				<p>¿Está seguro que quiere eliminar el afiliado <strong class="user-name"></strong>?
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
 				</div>';
 
 			$output .= '<div class="reveal text-center" id="manage-member-contacts" data-reveal>
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>¿Está seguro que quiere eliminar el afiliado <strong class="confirm-username"></strong>?
+				<p>Desde aquí puede administrar la cuenta del afiliado <strong class="confirm-username"></strong>?
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete" data-action="cit_aprove_member" href="#">Si, eliminarlo</a></p>
 				</div>';
 		}
@@ -70,7 +70,7 @@ function mro_cit_member_is_pending( $user_id ) {
 	}
 }
 
-function mro_cit_premium_members_table() {
+function mro_cit_build_premium_members_list() {
 	$output = '';
 
 	$users = get_users( array( 
@@ -134,7 +134,7 @@ function mro_cit_premium_members_table() {
 			}
 
 			$output .= '</td>
-				<td><a class="delete" data-nonce="' . $delete_nonce . '" data-id="' . $user->ID . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
+				<td><a class="delete-member" data-nonce="' . $delete_nonce . '" data-id="' . $user->ID . '" data-user="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
 			</tr>';
 		}
 
