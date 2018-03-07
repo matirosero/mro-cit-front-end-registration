@@ -57,7 +57,7 @@ function mro_cit_build_temp_subscribers_table() {
 				<td>'.$member['fname'].'</td>
 				<td>'.$member['lname'].'</td>
 				<td>'.$member['status'].'</td>
-				<td><a class="delete" data-nonce="' . $nonce . '" data-email="' . $member['email'] . '" href="#"  data-open="confirm-unsubscribe-email"><i class="icon-cancel"></i></a></td>
+				<td><a class="unsubscribe" data-nonce="' . $nonce . '" data-email="' . $member['email'] . '" href="#"  data-open="confirm-unsubscribe-email"><i class="icon-cancel"></i></a></td>
 			</tr>';
 		}
 
@@ -95,7 +95,7 @@ function mro_cit_show_temp_members_table() {
 					<i class="icon-cancel"></i>
 				</button>
 				<p>¿Está seguro que quiere eliminar de la lista el correo <strong class="confirm-email"></strong>?
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-unsubscribe" data-action="mc-unsubscribe" href="#">Si, eliminarlo</a></p>
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-unsubscribe" data-action="confirm-mc-unsubscribe" href="#">Si, eliminarlo</a></p>
 				</div>';
 		} 
 
@@ -115,7 +115,6 @@ function mro_cit_mc_temp_users_enqueue($hook) {
 	// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 	wp_localize_script( 'cit-remove-email', 'ajax_object',
             array( 
-            	 'ajax_remove_temp_nonce' => wp_create_nonce( 'cit-unsusbcribe-nonce' ), // Create nonce which we later will use to verify AJAX request
             	 'ajax_url' => admin_url( 'admin-ajax.php' ), 
             ) );
 }
@@ -128,12 +127,8 @@ add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
 
 function cit_mc_unsubscribe() {
 
-	$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
-	$slug = $uri_parts[0];
-
-	// if ( empty( $_GET ) ) {
- //        return false;
- //    }
+	// $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+	// $slug = $uri_parts[0];
 
     if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-unsusbcribe-nonce') ) {
 

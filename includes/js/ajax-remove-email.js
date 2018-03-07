@@ -1,14 +1,35 @@
 jQuery(function($){
 
-	var deleteBtn = $('.delete'),
-		modal = $('#confirm-unsubscribe-email'),
-		confirmDeleteBtn = $('.button[data-action="mc-unsubscribe"]'),
+	var mcUnsubscribeBtn = $('.unsubscribe'),
+		// modal = $('#confirm-unsubscribe-email'),
+		modal,
+		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
 		tableContainer = $('#temporary-subscribers'),
 		email,
 		nonce,
 		link;
 
-	confirmDeleteBtn.on('click', function(e) {
+	mcUnsubscribeBtn.on('click', function(e) {
+
+		e.preventDefault();
+
+		email = $(this).data('email');
+		nonce = $(this).data('nonce');
+
+		modal = $( '#' + $(this).data('open') );
+
+		modal.find('.confirm-email').html(email);
+
+		link = ajax_object.ajax_url + '?action=cit_mc_unsubscribe&email=' + encodeURIComponent(email) + '&nonce=' + nonce;
+
+		// link = admin_url('admin-ajax.php?action=mc_unsubscribe&email='.urlencode($member['email']).'&nonce='.$nonce);
+
+		modal.find('.button.confirm-unsubscribe').attr('href', link).attr('data-email', email).attr('data-nonce', nonce);
+
+		// alert(modal.find('.button.confirm-unsubscribe').data('action'));
+	});
+
+	confirmMcUnsubscribeBtn.on('click', function(e) {
 
 		e.preventDefault();
 
@@ -42,23 +63,7 @@ jQuery(function($){
         });
 	});
 
-	deleteBtn.on('click', function(e) {
-		
-		e.preventDefault();
-		
-		email = $(this).data('email');
-		nonce = $(this).data('nonce');
 
-		modal.find('.confirm-email').html(email);
-
-		link = ajax_object.ajax_url + '?action=cit_mc_unsubscribe&email=' + encodeURIComponent(email) + '&nonce=' + nonce;
-
-		// link = admin_url('admin-ajax.php?action=mc_unsubscribe&email='.urlencode($member['email']).'&nonce='.$nonce);
-
-		modal.find('.button.confirm-unsubscribe').attr('href', link).attr('data-email', email).attr('data-nonce', nonce);
-
-		// alert(modal.find('.button.confirm-unsubscribe').data('action'));
-	});
 
     //- Function to bind handlers to the relevant Foundation events
     function bindRevealEvents() {
@@ -80,8 +85,5 @@ jQuery(function($){
             }
         );
     }
-
-
 	bindRevealEvents();
-
 });
