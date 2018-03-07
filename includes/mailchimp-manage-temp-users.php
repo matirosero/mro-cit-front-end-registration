@@ -107,17 +107,7 @@ function mro_cit_show_temp_members_table() {
 }
 
 
-add_action( 'wp_enqueue_scripts', 'mro_cit_mc_temp_users_enqueue', 100 );
-function mro_cit_mc_temp_users_enqueue($hook) {
 
-	wp_enqueue_script( 'cit-remove-email', plugin_dir_url( __FILE__ ) . 'js/ajax-remove-email.js', array('jquery'), '', true );
-
-	// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
-	wp_localize_script( 'cit-remove-email', 'ajax_object',
-            array( 
-            	 'ajax_url' => admin_url( 'admin-ajax.php' ), 
-            ) );
-}
 
 
 add_action("wp_ajax_cit_mc_unsubscribe", "cit_mc_unsubscribe");

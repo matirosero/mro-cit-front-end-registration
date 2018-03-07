@@ -1,5 +1,19 @@
 <?php
 
+
+add_action( 'wp_enqueue_scripts', 'mro_cit_mc_temp_users_enqueue', 100 );
+function mro_cit_mc_temp_users_enqueue($hook) {
+
+	wp_enqueue_script( 'cit-manage-members', plugin_dir_url( __FILE__ ) . 'js/ajax-manage-members.js', array('jquery'), '', true );
+
+	// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
+	wp_localize_script( 'cit-manage-members', 'ajax_object',
+            array( 
+            	 'ajax_url' => admin_url( 'admin-ajax.php' ), 
+            ) );
+}
+
+
 function mro_cit_edit_member_form( $user_ID) {
 
 }
