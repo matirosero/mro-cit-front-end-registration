@@ -112,6 +112,8 @@ function mro_cit_premium_members_table() {
 			$delete_nonce = wp_create_nonce('cit-manage-nonce');
 			$delete_link = admin_url('admin-ajax.php?action=cit_remove_member&id='. $user->ID .'&nonce='.$delete_nonce);
 
+			$nonce = '';
+
 			$output .= '<tr>
 				<td>'.esc_html( $user->user_login ).'</td>
 				<td>'.esc_html( $user->nickname ).'</td>';
