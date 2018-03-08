@@ -51,6 +51,58 @@ jQuery(function($){
 	});
 
 
+	confirmApproveBtn.on('click', function(e) {
+
+		e.preventDefault();
+
+		console.log('Clicked on confirm approve');
+
+		nonce = $(this).attr("data-nonce");
+		username = $(this).attr("data-username");
+		approve = $(this).attr("data-approve");
+
+		//convert to boolean
+		approve = (approve == 'true');
+
+		console.log('1. approve is type '+jQuery.type( approve ));
+
+		tableContainer = $('#premium-members-table');
+
+		modal.foundation('close');
+
+		jQuery.ajax({
+			type : "post",
+			dataType : "json",
+			url : ajax_object.ajax_url,
+			data : {
+				action: "cit_approve_member",
+				username : username,
+				approve : approve,
+				nonce: nonce
+			},
+			beforeSend : function(){
+				console.log('APPROVE MEMBER: About to send: nonce = '+nonce+'; username = '+username+ ' approve = '+approve);
+				console.log('2. approve is type '+jQuery.type( approve ));
+			},
+			success: function(response) {
+	            console.log('GO TO SUCCESS');
+	            console.log('3. approve is type '+jQuery.type( approve ));
+	            if(response.type == "success") {
+	            	tableContainer.prepend(response.message);
+               		// tableContainer.html(response.message+response.replace);
+            	} else {
+            		alert("No se pudo eliminar el afiliado.");
+            	}
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            	console.log('GO TO ERROR');
+            	alert(jqXHR + " :: " + textStatus + " :: " + errorThrown);
+            }
+        });
+	});
+
+
+
 	/*
 	 * Delete members
 	 */

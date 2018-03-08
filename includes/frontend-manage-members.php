@@ -158,6 +158,16 @@ function cit_approve_member() {
     		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
     	}
 
+    	$approve = ($_REQUEST['approve'] === 'true');
+
+		if ( $approve === true && !mro_cit_member_is_pending( $user->ID ) ) {
+			pippin_errors()->add('user is already approved', __('Member is already approved', 'mro-cit-frontend'));
+			// write_log('mismatch between request and state');
+		} elseif ( $approve === false && mro_cit_member_is_pending( $user->ID ) ) {
+			pippin_errors()->add('user is not approved', __('Member is not approved (can\'t unapprove)', 'mro-cit-frontend'));
+			// write_log('mismatch between request and state');
+		}
+
     	$errors = pippin_errors()->get_error_messages();
 
 		// only create the user in if there are no errors
@@ -165,9 +175,60 @@ function cit_approve_member() {
 
 			$nickname = $user->nickname;
 
-			write_log('Approve '.$nickname.' (username: '.$username.')');
+			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
-    		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+			if ( $approve === true ) {
+				write_log('Approve it!');
+
+				$mc_merge_fields  = array();
+
+				$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+				$mc_merge_fields['PAIS'] = $mro_cit_user_country;
+				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+				// $mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+				// $mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
+				$mc_merge_fields['FNAME'] = $user_first;
+				$mc_merge_fields['LNAME'] = $user_last;
+				$mc_merge_fields['EMPRESA'] = $user_nickname;
+				
+				// unset($mc_merge_fields_cc['FNAME']);
+				// unset($mc_merge_fields_cc['LNAME']);
+
+				//Check which role
+				if ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
+
+					write_log('Is institucional pendiente');
+
+					$mc_merge_fields['AFILIADO'] = 'Institucional';
+
+				} elseif ( members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) ) {
+
+					write_log('Is empresarial pendiente');
+
+					$mc_merge_fields['AFILIADO'] = 'Empresarial';
+
+				}
+
+				//Change role
+
+				//Get mail email and send to mailchimp
+
+				//Get additionals and send to mailchimp
+			} else {
+				write_log('Unapprove it!');
+
+				//Check which role
+
+				//Change role
+
+				//Get mail email and unsubscribe from mailchimp
+
+				//Get additionals and unsubscribe from mailchimp
+			}
+
+
+
+    		
 
 			if (is_array($additional_contacts)) {
 
