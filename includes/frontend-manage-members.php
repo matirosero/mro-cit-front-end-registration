@@ -37,7 +37,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 					<i class="icon-cancel"></i>
 				</button>
 				<p class="confirm-ask"></p>
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" href="#"></a></p>
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#"></a></p>
 				</div>';
 
 			$output .= '<div class="large reveal" id="edit-member" data-reveal>
@@ -143,6 +143,66 @@ function mro_cit_build_premium_members_list() {
 
 	return $output;
 }
+
+
+add_action("wp_ajax_cit_approve_member", "cit_approve_member");
+function cit_approve_member() {
+
+    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-approve-member-nonce') ) {
+
+    	$username = sanitize_user( $_REQUEST['username'] );
+
+    	if ( username_exists( $username ) ) {
+    		$user = get_user_by('login',$username);
+    	} else {
+    		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
+    	}
+
+    	$errors = pippin_errors()->get_error_messages();
+
+		// only create the user in if there are no errors
+		if(empty($errors)) {
+
+			$nickname = $user->nickname;
+
+			write_log('Approve '.$nickname.' (username: '.$username.')');
+
+    		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+
+			if (is_array($additional_contacts)) {
+
+				foreach ($additional_contacts as $contact) {
+
+
+				}
+			}
+
+
+
+		} else {
+			$result['type'] = 'error';
+			$result['message'] = $errors;
+		}
+
+		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+	      	// $result['re place'] = mro_cit_build_temp_subscribers_table();
+	      	$result = json_encode($result);
+	      	echo $result;
+	      	// write_log($result);
+	      	// var_dump($result);
+		} else {
+		    header("Location: ".$_SERVER["HTTP_REFERER"]);
+		}
+
+
+    } else {
+    	// write_log('NOT LOGGED IN');
+    	exit("No naughty business please");
+    }
+
+    die();
+}
+
 
 
 add_action("wp_ajax_cit_mc_delete_member", "cit_mc_delete_member");
