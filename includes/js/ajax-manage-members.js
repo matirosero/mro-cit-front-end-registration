@@ -34,14 +34,14 @@ jQuery(function($){
 	    	// alert('checked ' + $(this).val());
 	    	modal.find('.confirm-ask').html('¿Está seguro que quiere aprobar <strong>'+$(this).data('nickname')+'</strong>?');
 
-	    	confirmApproveBtn.attr('data-state', 'approve').html('Sí, aprobarlo');
+	    	confirmApproveBtn.attr('data-approve', true).html('Sí, aprobarlo');
 
 	    // UNCHECK
 	    } else {
 	    	// alert('UNchecked ' + $(this).val());
 	    	modal.find('.confirm-ask').html('¿Está seguro que quiere revocar aprobación de <strong>'+$(this).data('nickname')+'</strong>?');
 
-	    	confirmApproveBtn.attr('data-state', 'unapprove').html('Sí, revocar');
+	    	confirmApproveBtn.attr('data-approve', false).html('Sí, revocar');
 	    }
 
 	    link = ajax_object.ajax_url + '?action=cit_approve_member&username=' + username + '&nonce=' + nonce;

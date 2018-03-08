@@ -183,7 +183,7 @@ function cit_approve_member() {
 			$result['type'] = 'error';
 			$result['message'] = $errors;
 		}
-
+/*
 		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	      	// $result['re place'] = mro_cit_build_temp_subscribers_table();
 	      	$result = json_encode($result);
@@ -193,7 +193,7 @@ function cit_approve_member() {
 		} else {
 		    header("Location: ".$_SERVER["HTTP_REFERER"]);
 		}
-
+*/
 
     } else {
     	// write_log('NOT LOGGED IN');
