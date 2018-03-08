@@ -182,17 +182,24 @@ function cit_approve_member() {
 
 				$mc_merge_fields  = array();
 
-				$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
-				$mc_merge_fields['PAIS'] = $mro_cit_user_country;
-				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+				$mc_merge_fields['PHONE'] = $user->mro_cit_user_phone;
+				$mc_merge_fields['PAIS'] = $user->mro_cit_user_country;
+				$mc_merge_fields['SECTOR'] = $user->mro_cit_user_sector;
 				// $mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
 				// $mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
-				$mc_merge_fields['FNAME'] = $user_first;
-				$mc_merge_fields['LNAME'] = $user_last;
-				$mc_merge_fields['EMPRESA'] = $user_nickname;
+				$mc_merge_fields['FNAME'] = $user->user_firstname;
+				$mc_merge_fields['LNAME'] = $user->user_lastname;
+				$mc_merge_fields['EMPRESA'] = $user->nickname;
 				
 				// unset($mc_merge_fields_cc['FNAME']);
 				// unset($mc_merge_fields_cc['LNAME']);
+
+				// write_log('Phone '.$user->mro_cit_user_phone);
+				// write_log('Country '.$user->mro_cit_user_country);
+				// write_log('Sector '.$user->mro_cit_user_sector);
+				// write_log('First name '.$user->user_firstname);
+				// write_log('Last name '.$user->user_lastname);
+				// write_log('Empresa '.$user->nickname);
 
 				//Check which role
 				if ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
@@ -209,6 +216,8 @@ function cit_approve_member() {
 
 				}
 
+				// write_log(implode($mc_merge_fields));
+				
 				//Change role
 
 				//Get mail email and send to mailchimp
