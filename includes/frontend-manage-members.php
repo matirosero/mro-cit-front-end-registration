@@ -187,14 +187,9 @@ function cit_approve_member() {
 				$mc_merge_fields['PHONE'] = $user->mro_cit_user_phone;
 				$mc_merge_fields['PAIS'] = $user->mro_cit_user_country;
 				$mc_merge_fields['SECTOR'] = $user->mro_cit_user_sector;
-				// $mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
-				// $mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 				$mc_merge_fields['FNAME'] = $user->user_firstname;
 				$mc_merge_fields['LNAME'] = $user->user_lastname;
 				$mc_merge_fields['EMPRESA'] = $user->nickname;
-				
-				// unset($mc_merge_fields_cc['FNAME']);
-				// unset($mc_merge_fields_cc['LNAME']);
 
 				// write_log('Phone '.$user->mro_cit_user_phone);
 				// write_log('Country '.$user->mro_cit_user_country);
@@ -206,7 +201,7 @@ function cit_approve_member() {
 				//Check which role
 				if ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
 
-					write_log('Is institucional pendiente');
+					// write_log('Is institucional pendiente');
 
 					$mc_merge_fields['AFILIADO'] = 'Institucional';
 
@@ -215,7 +210,7 @@ function cit_approve_member() {
 
 				} elseif ( members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) ) {
 
-					write_log('Is empresarial pendiente');
+					// write_log('Is empresarial pendiente');
 
 					$mc_merge_fields['AFILIADO'] = 'Empresarial';
 
@@ -230,17 +225,13 @@ function cit_approve_member() {
 				$user->remove_role( $old_role );
 				$user->add_role( $new_role );
 
-
-
 				// Send to mailchimp function
 				write_log('Subscribing '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
 				mro_cit_subscribe_email($user->user_email, $mc_merge_fields, $status);
 
-
 				//Get additionals and send to mailchimp
 				if (is_array($additional_contacts)) {
-					// unset($mc_merge_fields['FNAME']);
-					// unset($mc_merge_fields['LNAME']);
+
 					foreach ($additional_contacts as $contact) {
 						write_log('Subscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
 						$mc_merge_fields['FNAME'] = $contact['name'];
