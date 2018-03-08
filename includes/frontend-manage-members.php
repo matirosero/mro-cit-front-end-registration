@@ -115,10 +115,12 @@ function mro_cit_build_premium_members_list() {
 			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" href="#" data-open="edit-member">Editar</a></td><td>';
 
 			if ( mro_cit_member_is_pending( $user->ID ) ) {
-				$output .= '<input type="checkbox" name="user-is-approved" value="1"> Aprovado';
+				$checked_status = '';
 			} else {
-				$output .= '<input type="checkbox" name="user-is-approved" value="1" checked> Aprovado';
+				$checked_status = ' checked';
 			}
+			$output .= '<input type="checkbox" name="user-is-approved" value="1" data-nonce="' . $approve_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '"' . $checked_status . '> Aprovado';
+
 
 			$output .= '</td>
 				<td><a class="delete-member" data-nonce="' . $delete_nonce . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
@@ -195,7 +197,7 @@ function cit_mc_delete_member() {
 		}
 
 		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-	      	// $result['replace'] = mro_cit_build_temp_subscribers_table();
+	      	// $result['re place'] = mro_cit_build_temp_subscribers_table();
 	      	$result = json_encode($result);
 	      	echo $result;
 	      	// write_log($result);

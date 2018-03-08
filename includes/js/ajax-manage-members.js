@@ -8,9 +8,27 @@ jQuery(function($){
 		link,
 		deleteMemberBtn = $('.delete-member')
 		confirmDeleteMemberBtn = $('.button.confirm-delete-member'),
+		approveTicky = $( 'input[name="user-is-approved"]' ),
 		mcUnsubscribeBtn = $('.unsubscribe'),
 		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
 		tableContainer = $('#temporary-subscribers');
+
+
+	/*
+	 * Approve/unapprove members
+	 */
+	approveTicky.change(function() {
+
+	    // CHECK
+	    if($(this).is(':checked')) {
+	    	alert('checked ' + $(this).val());
+
+	    // UNCHECK
+	    } else {
+	    	alert('UNchecked ' + $(this).val());
+	    }
+
+	});
 
 
 	/*
