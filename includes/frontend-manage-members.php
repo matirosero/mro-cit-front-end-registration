@@ -180,7 +180,7 @@ function cit_mc_delete_member() {
     		$unsubscribe = mro_cit_unsubscribe_email( $user->user_email );
     		$result['message'] = $unsubscribe;
 
-    		write_log($unsubscribe);
+    		// write_log($unsubscribe);
 
     		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
@@ -192,11 +192,12 @@ function cit_mc_delete_member() {
 					//Unsubscribe each additional email
 					$unsubscribe = mro_cit_unsubscribe_email( $contact['email'] );
 		    		$result['message'] .= $unsubscribe;
-		    		write_log($unsubscribe);
+		    		// write_log($unsubscribe);
 				}
 			}
 
-			// write_log($unsubscribe);
+			write_log($result['message']);
+
 			// mro_cit_frontend_messages( $unsubscribe );
 			// //Message disappears
 			// wp_redirect( $slug ); exit;
@@ -205,6 +206,16 @@ function cit_mc_delete_member() {
 		} else {
 			$result['type'] = 'error';
 			$result['message'] = $errors;
+		}
+
+		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+	      	// $result['replace'] = mro_cit_build_temp_subscribers_table();
+	      	$result = json_encode($result);
+	      	echo $result;
+	      	// write_log($result);
+	      	// var_dump($result);
+		} else {
+		    header("Location: ".$_SERVER["HTTP_REFERER"]);
 		}
 
 

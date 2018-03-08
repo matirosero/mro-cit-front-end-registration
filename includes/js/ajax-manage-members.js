@@ -63,7 +63,7 @@ jQuery(function($){
 	            	tableContainer.prepend(response.message);
                		// tableContainer.html(response.message+response.replace);
             	} else {
-            		alert("No se pudo eliminar el suscriptor.");
+            		alert("No se pudo eliminar el afiliado.");
             	}
             },
             error: function(jqXHR, textStatus, errorThrown) {
