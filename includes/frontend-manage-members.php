@@ -46,11 +46,11 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				</button>
 				<p>Desde aquí puede editar la cuenta del afiliado <strong class="user-name"></strong></p>
 
-				<form id="edit-member-form">
+				<div id="edit-member-container">
 
-					<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button save-member" data-action="cit_edit_member" href="#">Guardar</a></p>
+					
 
-				</form>
+				</div>
 			</div>';
 		}
 
@@ -142,6 +142,52 @@ function mro_cit_build_premium_members_list() {
 	}
 
 	return $output;
+}
+
+
+add_action("wp_ajax_cit_ajax_get_edit_member_form", "cit_ajax_get_edit_member_form");
+function cit_ajax_get_edit_member_form() {
+
+	if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-edit-member-nonce') ) {
+
+		$username = sanitize_user( $_REQUEST['username'] );
+
+    	if ( username_exists( $username ) ) {
+    		$user = get_user_by('login',$username);
+    	} else {
+    		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
+    	}
+
+    	$errors = pippin_errors()->get_error_messages();
+
+		// only create the user in if there are no errors
+		if(empty($errors)) {
+			$result['type'] = 'success';
+			$result['message'] = '';
+			$result['content'] = 'Get info for user ID'.$user->ID.', '.$user->nickname;
+		} else {
+			$result['type'] = 'error';
+			$result['message'] = $errors;
+		}
+
+		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+	      	// $result['re place'] = mro_cit_build_temp_subscribers_table();
+	      	$result = json_encode($result);
+	      	echo $result;
+	      	// write_log($result);
+	      	// var_dump($result);
+		} else {
+		    header("Location: ".$_SERVER["HTTP_REFERER"]);
+		}
+
+	} else {
+    	// write_log('NOT LOGGED IN');
+    	exit("No naughty business please");
+    }
+
+
+
+    die();
 }
 
 
