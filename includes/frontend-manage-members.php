@@ -165,22 +165,47 @@ function cit_mc_delete_member() {
     	if ( username_exists( $username ) ) {
 
     		$user = get_user_by('login',$username);
-
-    		write_log('User ID '.$user->ID.' email '.$user->user_email);
-
-    		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
-
-			if (is_array($additional_contacts)) {
-				// write_log('There are '.count($additional_contacts).' additional contacts');
-
-				foreach ($additional_contacts as $contact) {
-					write_log('Email is '.$contact['email']);
-				}
-			}
+    		// write_log('User ID '.$user->ID.' email '.$user->user_email);
 
     	} else {
     		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
     	}
+
+    	$errors = pippin_errors()->get_error_messages();
+
+		// only create the user in if there are no errors
+		if(empty($errors)) {
+
+    		//Unsubscribe mail email
+    		$unsubscribe = mro_cit_unsubscribe_email( $user->user_email );
+    		$result['message'] = $unsubscribe;
+
+    		write_log($unsubscribe);
+
+    		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+
+			if (is_array($additional_contacts)) {
+
+				foreach ($additional_contacts as $contact) {
+					write_log('Email is '.$contact['email']);
+
+					//Unsubscribe each additional email
+					$unsubscribe = mro_cit_unsubscribe_email( $contact['email'] );
+		    		$result['message'] .= $unsubscribe;
+		    		write_log($unsubscribe);
+				}
+			}
+
+			// write_log($unsubscribe);
+			// mro_cit_frontend_messages( $unsubscribe );
+			// //Message disappears
+			// wp_redirect( $slug ); exit;
+			$result['type'] = 'success';
+			// $result['message'] = $unsubscribe;
+		} else {
+			$result['type'] = 'error';
+			$result['message'] = $errors;
+		}
 
 
     } else {

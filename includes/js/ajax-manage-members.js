@@ -41,6 +41,8 @@ jQuery(function($){
 		nonce = $(this).attr("data-nonce");
 		username = $(this).attr("data-username");
 
+		tableContainer = $('#premium-members-table');
+
 		modal.foundation('close');
 
 		jQuery.ajax({
@@ -58,7 +60,8 @@ jQuery(function($){
 			success: function(response) {
 	            console.log('GO TO SUCCESS');
 	            if(response.type == "success") {
-               		tableContainer.html(response.message+response.replace);
+	            	tableContainer.prepend(response.message);
+               		// tableContainer.html(response.message+response.replace);
             	} else {
             		alert("No se pudo eliminar el suscriptor.");
             	}
