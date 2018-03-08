@@ -145,16 +145,10 @@ function cit_mc_delete_member() {
 
     if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-delete-member-nonce') ) {
 
-    	// write_log($_REQUEST['username']);
-
     	$username = sanitize_user( $_REQUEST['username'] );
-    	// write_log('User is '.$username);
 
     	if ( username_exists( $username ) ) {
-
     		$user = get_user_by('login',$username);
-    		// write_log('User ID '.$user->ID.' email '.$user->user_email);
-
     	} else {
     		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
     	}
@@ -168,14 +162,11 @@ function cit_mc_delete_member() {
     		$unsubscribe = mro_cit_unsubscribe_email( $user->user_email );
     		$result['message'] = $unsubscribe;
 
-    		// write_log($unsubscribe);
-
     		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
 			if (is_array($additional_contacts)) {
 
 				foreach ($additional_contacts as $contact) {
-					write_log('Email is '.$contact['email']);
 
 					//Unsubscribe each additional email
 					$unsubscribe = mro_cit_unsubscribe_email( $contact['email'] );
@@ -183,9 +174,6 @@ function cit_mc_delete_member() {
 		    		// write_log($unsubscribe);
 				}
 			}
-
-			write_log($result['message']);
-
 
 			//dete meta
 			delete_user_meta($user->ID, 'mro_cit_user_additional_contacts');
