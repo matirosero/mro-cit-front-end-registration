@@ -216,7 +216,7 @@ function cit_approve_member() {
 
 				//Change role
 				$user->remove_role( $old_role );
-				$user->add_role( $new_role );
+				$user->set_role( $new_role );
 
 				// Send to mailchimp function
 				write_log('Subscribing '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
