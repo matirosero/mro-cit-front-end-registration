@@ -9,6 +9,7 @@ jQuery(function($){
 		deleteMemberBtn = $('.delete-member')
 		confirmDeleteMemberBtn = $('.button.confirm-delete-member'),
 		approveTicky = $( 'input[name="user-is-approved"]' ),
+		confirmApproveBtn =  $('.button.confirm-approve-member'),
 		mcUnsubscribeBtn = $('.unsubscribe'),
 		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
 		tableContainer = $('#temporary-subscribers');
@@ -37,6 +38,10 @@ jQuery(function($){
 	    	modal.find('.confirm-ask').html('¿Está seguro que quiere revocar aprobación de <strong>'+$(this).data('nickname')+'</strong>?');
 	    }
 
+	    link = ajax_object.ajax_url + '?action=cit_approve_member&username=' + username + '&nonce=' + nonce;
+
+		confirmApproveBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce);
+
 	});
 
 
@@ -56,7 +61,7 @@ jQuery(function($){
 
 		modal.find('.nickname').html($(this).data('nickname'));
 
-		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&id=' + username + '&nonce=' + nonce;
+		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&username=' + username + '&nonce=' + nonce;
 
 		confirmDeleteMemberBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce);
 	});
