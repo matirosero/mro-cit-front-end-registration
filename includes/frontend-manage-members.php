@@ -91,18 +91,6 @@ function mro_cit_build_premium_members_list() {
 
 		foreach ($users as $key => $user) {
 
-			// var_dump($user);
-			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
-			if (is_array($additional_contacts)) {
-				foreach ($additional_contacts as $contact) {
-					var_dump($contact);
-					var_dump($contact['email']);
-				}
-			}
-
-
-			
-
 			$edit_nonce = wp_create_nonce('cit-edit-member-nonce');
 			$edit_link = admin_url('admin-ajax.php?action=cit_edit_member&username='. $user->user_login .'&nonce='.$edit_nonce);
 
@@ -198,11 +186,21 @@ function cit_mc_delete_member() {
 
 			write_log($result['message']);
 
-			// mro_cit_frontend_messages( $unsubscribe );
-			// //Message disappears
-			// wp_redirect( $slug ); exit;
-			$result['type'] = 'success';
-			// $result['message'] = $unsubscribe;
+
+			//dete meta
+			delete_user_meta($user->ID, 'mro_cit_user_additional_contacts');
+
+			$nickname = $user->nickname;
+
+			//delete user
+			if ( wp_delete_user( $user->ID ) ) {
+				$result['type'] = 'success';
+				$result['message'] .= '<p class="callout success">El afiliado <strong>'.$nickname.'</strong> fue eliminado.</p>';
+			} else {
+				$result['type'] = 'error';
+				$result['message'] = '<p class="callout alert">El afiliado no pudo ser eliminado.</p>';
+			}
+
 		} else {
 			$result['type'] = 'error';
 			$result['message'] = $errors;
