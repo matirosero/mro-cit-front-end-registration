@@ -19,13 +19,22 @@ jQuery(function($){
 	 */
 	approveTicky.change(function() {
 
+		username = $(this).data('username');
+		nonce = $(this).data('nonce');
+
+		modal = $( '#' + $(this).data('open') );
+		modal.foundation('open');
+
+
 	    // CHECK
 	    if($(this).is(':checked')) {
-	    	alert('checked ' + $(this).val());
+	    	// alert('checked ' + $(this).val());
+	    	modal.find('.confirm-ask').html('¿Está seguro que quiere aprobar <strong>'+$(this).data('nickname')+'</strong>?');
 
 	    // UNCHECK
 	    } else {
-	    	alert('UNchecked ' + $(this).val());
+	    	// alert('UNchecked ' + $(this).val());
+	    	modal.find('.confirm-ask').html('¿Está seguro que quiere revocar aprobación de <strong>'+$(this).data('nickname')+'</strong>?');
 	    }
 
 	});

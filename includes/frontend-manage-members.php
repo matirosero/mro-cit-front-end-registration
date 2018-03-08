@@ -29,7 +29,15 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 					<i class="icon-cancel"></i>
 				</button>
 				<p>¿Está seguro que quiere eliminar el afiliado <strong class="nickname"></strong>?</p>
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Sí, eliminarlo</a></p>
+				</div>';
+
+			$output .= '<div class="reveal text-center" id="confirm-approve-member" data-reveal>
+				<button class="close-button" data-close aria-label="Close modal" type="button">
+					<i class="icon-cancel"></i>
+				</button>
+				<p class="confirm-ask"></p>
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#">Sí, aprobarlo</a></p>
 				</div>';
 
 			$output .= '<div class="large reveal" id="edit-member" data-reveal>
@@ -119,7 +127,7 @@ function mro_cit_build_premium_members_list() {
 			} else {
 				$checked_status = ' checked';
 			}
-			$output .= '<input type="checkbox" name="user-is-approved" value="1" data-nonce="' . $approve_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '"' . $checked_status . '> Aprovado';
+			$output .= '<input type="checkbox" name="user-is-approved" value="1" data-nonce="' . $approve_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" data-open="confirm-approve-member"' . $checked_status . '> Aprovado';
 
 
 			$output .= '</td>
