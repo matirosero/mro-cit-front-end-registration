@@ -8,8 +8,8 @@ function mro_cit_mc_temp_users_enqueue($hook) {
 
 	// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 	wp_localize_script( 'cit-manage-members', 'ajax_object',
-            array( 
-            	 'ajax_url' => admin_url( 'admin-ajax.php' ), 
+            array(
+            	 'ajax_url' => admin_url( 'admin-ajax.php' ),
             ) );
 }
 
@@ -35,5 +35,16 @@ function mro_cit_member_is_pending( $user_id ) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+
+function mro_cit_user_id_exists( $user_id ) {
+	$user = get_userdata( $user_id );
+	write_log('USER IS'.$user->user_login);
+	if ( $user === false ) {
+	    return false;
+	} else {
+	    return true;
 	}
 }

@@ -113,8 +113,6 @@ function mro_cit_show_temp_members_table() {
 add_action("wp_ajax_cit_mc_unsubscribe", "cit_mc_unsubscribe");
 add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
 
-
-
 function cit_mc_unsubscribe() {
 
 	// $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);

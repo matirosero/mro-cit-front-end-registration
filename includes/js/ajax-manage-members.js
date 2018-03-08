@@ -2,7 +2,7 @@ jQuery(function($){
 
 	var modal,
 		email,
-		userID,
+		username,
 		user,
 		nonce,
 		link,
@@ -13,23 +13,67 @@ jQuery(function($){
 		tableContainer = $('#temporary-subscribers');
 
 
+	/*
+	 * Delete members
+	 */
+
 	deleteMemberBtn.on('click', function(e) {
 
 		e.preventDefault();
 		console.log('click on open delete member modal');
 
-		userID = $(this).data('id');
+		username = $(this).data('username');
 		nonce = $(this).data('nonce');
 
 		modal = $( '#' + $(this).data('open') );
 
-		modal.find('.user-name').html($(this).data('user'));
+		modal.find('.nickname').html($(this).data('nickname'));
 
-		link = ajax_object.ajax_url + '?action=cit_delete_member&id=' + userID + '&nonce=' + nonce;
+		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&id=' + username + '&nonce=' + nonce;
 
-		confirmDeleteMemberBtn.attr('href', link).attr('data-id', userID).attr('data-nonce', nonce);
+		confirmDeleteMemberBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce);
 	});
 
+	confirmDeleteMemberBtn.on('click', function(e) {
+
+		e.preventDefault();
+
+		nonce = $(this).attr("data-nonce");
+		username = $(this).attr("data-username");
+
+		modal.foundation('close');
+
+		jQuery.ajax({
+			type : "post",
+			dataType : "json",
+			url : ajax_object.ajax_url,
+			data : {
+				action: "cit_mc_delete_member",
+				username : username,
+				nonce: nonce
+			},
+			beforeSend : function(){
+				console.log('DELETE MEMBER: About to send: nonce = '+nonce+'; username = '+username);
+			},
+			success: function(response) {
+	            console.log('GO TO SUCCESS');
+	            if(response.type == "success") {
+               		tableContainer.html(response.message+response.replace);
+            	} else {
+            		alert("No se pudo eliminar el suscriptor.");
+            	}
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            	console.log('GO TO ERROR');
+            	alert(jqXHR + " :: " + textStatus + " :: " + errorThrown);
+            }
+        });
+	});
+
+
+	/*
+	 * Unsubscribe temp members
+	 */
 
 	mcUnsubscribeBtn.on('click', function(e) {
 

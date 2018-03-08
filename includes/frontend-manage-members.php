@@ -28,7 +28,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
-				<p>¿Está seguro que quiere eliminar el afiliado <strong class="user-name"></strong>?</p>
+				<p>¿Está seguro que quiere eliminar el afiliado <strong class="nickname"></strong>?</p>
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Si, eliminarlo</a></p>
 				</div>';
 
@@ -57,12 +57,10 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 add_shortcode('cit-manage-members', 'mro_cit_manage_members_shortcode');
 
 
-
-
 function mro_cit_build_premium_members_list() {
 	$output = '';
 
-	$users = get_users( array( 
+	$users = get_users( array(
 		'role__in' => array(
 			'afiliado_empresarial',
 			'afiliado_empresarial_pendiente',
@@ -94,15 +92,25 @@ function mro_cit_build_premium_members_list() {
 		foreach ($users as $key => $user) {
 
 			// var_dump($user);
+			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+			if (is_array($additional_contacts)) {
+				foreach ($additional_contacts as $contact) {
+					var_dump($contact);
+					var_dump($contact['email']);
+				}
+			}
 
-			$edit_nonce = wp_create_nonce('cit-approve-member-nonce');
-			$edit_link = admin_url('admin-ajax.php?action=cit_edit_member&id='. $user->ID .'&nonce='.$edit_nonce);
+
+			
+
+			$edit_nonce = wp_create_nonce('cit-edit-member-nonce');
+			$edit_link = admin_url('admin-ajax.php?action=cit_edit_member&username='. $user->user_login .'&nonce='.$edit_nonce);
 
 			$approve_nonce = wp_create_nonce('cit-approve-member-nonce');
-			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&id='. $user->ID .'&nonce='.$approve_nonce);
+			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&username='. $user->user_login .'&nonce='.$approve_nonce);
 
-			$delete_nonce = wp_create_nonce('cit-manage-nonce');
-			$delete_link = admin_url('admin-ajax.php?action=cit_remove_member&id='. $user->ID .'&nonce='.$delete_nonce);
+			$delete_nonce = wp_create_nonce('cit-delete-member-nonce');
+			$delete_link = admin_url('admin-ajax.php?action=cit_remove_member&username='. $user->user_login .'&nonce='.$delete_nonce);
 
 			$nonce = '';
 
@@ -116,7 +124,7 @@ function mro_cit_build_premium_members_list() {
 
 			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
 
-			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-id="' . esc_html( $user->ID ) . '" href="#"  data-open="edit-member">Editar</a></td><td>';
+			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" href="#" data-open="edit-member">Editar</a></td><td>';
 
 			if ( mro_cit_member_is_pending( $user->ID ) ) {
 				$output .= '<input type="checkbox" name="user-is-approved" value="1"> Aprovado';
@@ -125,7 +133,7 @@ function mro_cit_build_premium_members_list() {
 			}
 
 			$output .= '</td>
-				<td><a class="delete-member" data-nonce="' . $delete_nonce . '" data-id="' . $user->ID . '" data-user="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
+				<td><a class="delete-member" data-nonce="' . $delete_nonce . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
 			</tr>';
 		}
 
@@ -136,4 +144,49 @@ function mro_cit_build_premium_members_list() {
 	}
 
 	return $output;
+}
+
+
+add_action("wp_ajax_cit_mc_delete_member", "cit_mc_delete_member");
+// add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
+
+function cit_mc_delete_member() {
+
+	// $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+	// $slug = $uri_parts[0];
+
+    if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-delete-member-nonce') ) {
+
+    	// write_log($_REQUEST['username']);
+
+    	$username = sanitize_user( $_REQUEST['username'] );
+    	// write_log('User is '.$username);
+
+    	if ( username_exists( $username ) ) {
+
+    		$user = get_user_by('login',$username);
+
+    		write_log('User ID '.$user->ID.' email '.$user->user_email);
+
+    		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+
+			if (is_array($additional_contacts)) {
+				// write_log('There are '.count($additional_contacts).' additional contacts');
+
+				foreach ($additional_contacts as $contact) {
+					write_log('Email is '.$contact['email']);
+				}
+			}
+
+    	} else {
+    		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
+    	}
+
+
+    } else {
+    	// write_log('NOT LOGGED IN');
+    	exit("No naughty business please");
+    }
+
+    die();
 }
