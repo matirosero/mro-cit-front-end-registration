@@ -26,21 +26,27 @@ jQuery(function($){
 		modal = $( '#' + $(this).data('open') );
 		modal.foundation('open');
 
+		link = ajax_object.ajax_url + '?action=cit_approve_member&username=' + username + '&nonce=' + nonce;
+
 
 	    // CHECK
 	    if($(this).is(':checked')) {
 	    	// alert('checked ' + $(this).val());
 	    	modal.find('.confirm-ask').html('¿Está seguro que quiere aprobar <strong>'+$(this).data('nickname')+'</strong>?');
 
+	    	link = ajax_object.ajax_url + '?action=cit_approve_member&username=' + username + '&nonce=' + nonce;
+
+	    	confirmApproveBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce).attr('data-action', 'cit_approve_member').html('Sí, aprobarlo');
+
 	    // UNCHECK
 	    } else {
 	    	// alert('UNchecked ' + $(this).val());
 	    	modal.find('.confirm-ask').html('¿Está seguro que quiere revocar aprobación de <strong>'+$(this).data('nickname')+'</strong>?');
+
+	    	link = ajax_object.ajax_url + '?action=cit_unapprove_member&username=' + username + '&nonce=' + nonce;
+
+	    	confirmApproveBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce).attr('data-action', 'cit_unapprove_member').html('Sí, revocar');
 	    }
-
-	    link = ajax_object.ajax_url + '?action=cit_approve_member&username=' + username + '&nonce=' + nonce;
-
-		confirmApproveBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce);
 
 	});
 

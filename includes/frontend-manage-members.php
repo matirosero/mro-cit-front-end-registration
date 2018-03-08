@@ -37,7 +37,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 					<i class="icon-cancel"></i>
 				</button>
 				<p class="confirm-ask"></p>
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#">Sí, aprobarlo</a></p>
+				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" href="#"></a></p>
 				</div>';
 
 			$output .= '<div class="large reveal" id="edit-member" data-reveal>
