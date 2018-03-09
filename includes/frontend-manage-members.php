@@ -40,15 +40,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#"></a></p>
 				</div>';
 
-			$output .= '<div class="large reveal" id="edit-member" data-reveal>
-				<button class="close-button" data-close aria-label="Close modal" type="button">
-					<i class="icon-cancel"></i>
-				</button>
-				<p>Desde aquí puede editar la cuenta del afiliado <strong class="user-name"></strong></p>
-
-				<div id="edit-member-container">
-				</div>
-			</div>';
+			
 		}
 
 		// $output .= mro_cit_add_temp_member_form();
@@ -96,8 +88,8 @@ function mro_cit_build_premium_members_list() {
 
 		foreach ($users as $key => $user) {
 
-			$edit_nonce = wp_create_nonce('cit-edit-member-nonce');
-			$edit_link = admin_url('admin-ajax.php?action=cit_edit_member&username='. $user->user_login .'&nonce='.$edit_nonce);
+			// $edit_nonce = wp_create_nonce('cit-edit-member-nonce');
+			$edit_link = get_permalink( get_page_by_title( 'Añadir contactos adicionales' ) ).'?username='. $user->user_login;
 
 			$approve_nonce = wp_create_nonce('cit-approve-member-nonce');
 			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&username='. $user->user_login .'&nonce='.$approve_nonce);
@@ -117,7 +109,7 @@ function mro_cit_build_premium_members_list() {
 
 			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
 
-			$output .= '<td><a class="edit-member button" data-nonce="' . $edit_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" href="#" data-open="edit-member">Editar</a></td><td>';
+			$output .= '<td><a class="edit-member button" href="'.$edit_link.'" data-open="edit-member">Editar</a></td><td>';
 
 			if ( mro_cit_member_is_pending( $user->ID ) ) {
 				$checked_status = '';

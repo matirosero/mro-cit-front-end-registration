@@ -16,60 +16,7 @@ jQuery(function($){
 		tableContainer = $('#temporary-subscribers');
 
 
-	/*
-	 * Edit members
-	 */
 
-	editMemberBtn.on('click', function(e) {
-
-		e.preventDefault();
-		console.log('click on edit modal');
-
-		username = $(this).data('username');
-		nonce = $(this).data('nonce');
-
-		modal = $( '#' + $(this).data('open') );
-
-
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : ajax_object.ajax_url,
-			data : {
-				action: "cit_ajax_get_edit_member_form",
-				username : username,
-				nonce: nonce
-			},
-			beforeSend : function(){
-				console.log('Requesting form with info: nonce = '+nonce+'; username = '+username);
-				modal.find('#edit-member-container').html('');
-			},
-			success: function(response) {
-	            console.log('GO TO SUCCESS');
-	            if(response.type == "success") {
-	            	modal.find('#edit-member-container').html(response.content);
-	            	// modal.find('#edit-member-container').html(response.message);
-               		// tableContainer.html(response.message+response.replace);
-            	} else {
-            		alert("Error.");
-            	}
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-            	console.log('GO TO ERROR');
-            	alert(jqXHR + " :: " + textStatus + " :: " + errorThrown);
-            }
-        });
-		// email = $(this).data('email');
-		// nonce = $(this).data('nonce');
-
-		// modal = $( '#' + $(this).data('open') );
-
-		// modal.find('.confirm-email-label').html(email);
-
-		// link = ajax_object.ajax_url + '?action=cit_mc_unsubscribe&email=' + encodeURIComponent(email) + '&nonce=' + nonce;
-
-		// modal.find('.button.confirm-unsubscribe').attr('href', link).attr('data-email', email).attr('data-nonce', nonce);
-	});
 
 
 	/*
