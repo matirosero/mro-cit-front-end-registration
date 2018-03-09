@@ -162,9 +162,46 @@ function cit_ajax_get_edit_member_form() {
 
 		// only create the user in if there are no errors
 		if(empty($errors)) {
+
+	        // Use ID of metabox in mro_cit_frontend_contacts_form
+	        $metabox_id = 'mro_cit_user_frontend_additional_contacts';
+
+	        // since post ID will not exist yet, just need to pass it something
+	        $object_id = $user->ID;
+
+	        // Get CMB2 metabox object
+	        $cmb = cmb2_get_metabox( $metabox_id, $object_id );
+
+	        // Get $cmb object_types
+	        $post_types = $cmb->prop( 'object_types' );
+
+	        $role = '';
+	        if ( members_user_has_role( $user->ID, 'afiliado_empresarial' ) || members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) ) {
+	        	$role = 'Empresarial';
+	        } elseif ( members_user_has_role( $user->ID, 'afiliado_institucional' ) || members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
+	        	$role = 'Institucional';
+	        }
+
+	        // // Parse attributes. These shortcode attributes can be optionally overridden.
+	        $atts = shortcode_atts( array(
+	            'user_id'       => $user->ID,
+	            // 'user_id'       => $user_id ? $user_id : 1, // Current user, or admin
+	            // 'post_status' => 'pending',
+	            'post_type'     => reset( $post_types ), // Only use first object_type in array
+	            'membership'    => $role,
+	            'company'       => $user->nickname,
+	            'country'       => $user->mro_cit_user_country,
+	            'sector'        => $user->mro_cit_user_sector,
+	        ), $atts, 'cmb-frontend-form' );
+
+
+			// Get our form
+			$output = cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Save contacts', 'mro-cit-frontend' ) ) );
+
+
 			$result['type'] = 'success';
 			$result['message'] = '';
-			$result['content'] = 'Get info for user ID'.$user->ID.', '.$user->nickname;
+			$result['content'] = $output;
 		} else {
 			$result['type'] = 'error';
 			$result['message'] = $errors;
