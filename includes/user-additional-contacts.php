@@ -62,8 +62,10 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
     // Current user
     $user_id = get_current_user_id();
-    $name = $current_user->display_name;
+    
 
+
+    //if is_user_logged_in() && (current_user_can( 'add_contacts' ) || (IS LEDA AND THERE IS USERNAME VARIABLE) )
 
     // User is logged in and can add contacts
     if ( is_user_logged_in() && current_user_can( 'add_contacts' ) ) {
@@ -71,13 +73,50 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         // Use ID of metabox in mro_cit_frontend_contacts_form
         $metabox_id = 'mro_cit_user_frontend_additional_contacts';
 
-        // since post ID will not exist yet, just need to pass it something
-        $object_id  = $user_id;
-        // var_dump($current_user);
+
+        $role = '';
+
+        //If editing someone else's profile
+        if ( isset($_REQUEST['username']) ) {
+
+            if ( username_exists( $_REQUEST['username'] ) ) {
+                $user = get_user_by('login',$_REQUEST['username']);
+                $object_id  = $user->ID;
+
+                if ( members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_empresarial') ) {
+                    $role = 'Empresarial';
+                } elseif ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_institucional' ) ) {
+                    $role = 'Institucional';
+                }
+
+                $country =$user->mro_cit_user_country;
+                $sector = $user->mro_cit_user_sector;
+                $name = $user->display_name;
+
+            } else {
+                //invalid username
+            }
+        
+        //If editing one's own profile
+        } else {
+            $object_id  = $user_id;
+
+            if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ) {
+                $role = 'Empresarial';
+            } elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
+                $role = 'Institucional';
+            }
+
+            $country = $current_user->mro_cit_user_country;
+            $sector = $current_user->mro_cit_user_sector;
+            $name = $current_user->display_name;
+        }
+
+
 
 
         // Get CMB2 metabox object
-        $cmb = cmb2_get_metabox( $metabox_id, $user_id );
+        $cmb = cmb2_get_metabox( $metabox_id, $object_id );
         // var_dump($cmb);
 
         // Get $cmb object_types
@@ -86,22 +125,17 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         // Get role
         // $role = $current_user->roles[0];
-        $role = '';
-        if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ) {
-            $role = 'Empresarial';
-        } elseif ( members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) {
-            $role = 'Institucional';
-        }
+
 
         // // Parse attributes. These shortcode attributes can be optionally overridden.
         $atts = shortcode_atts( array(
-            'user_id'       => $user_id ? $user_id : 1, // Current user, or admin
+            'user_id'       => $object_id ? $object_id : 1, // Current user, or admin
             // 'post_status' => 'pending',
             'post_type'     => reset( $post_types ), // Only use first object_type in array
             'membership'    => $role,
             'company'       => $name,
-            'country'       => $current_user->mro_cit_user_country,
-            'sector'        => $current_user->mro_cit_user_sector,
+            'country'       => $country,
+            'sector'        => $sector,
         ), $atts, 'cmb-frontend-form' );
 
         // Initiate our output variable
@@ -150,9 +184,8 @@ add_shortcode( 'cit-manage-contacts', 'mro_cit_frontend_manage_contacts_form_sho
  * @return mixed            New post ID if successful
  */
 function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array() ) {
-
     // write_log('handle running');
-
+var_dump($post_data);
     // If no form submission, bail
     if ( empty( $_POST ) ) {
         return false;
@@ -218,17 +251,28 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
             // Send to mailchimp function
             mro_cit_subscribe_email( $contact['email'], $mc_merge_fields );
 
+            // $tempuser = get_userdata($post_data['user_id']);
+
+            // write_log('user id '.$post_data['user_id'].', name is '.$tempuser->user_login);
+
             $old_contact = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
 
-            $old_email = $old_contact[$key]['email'];
 
-            // write_log('Old email is '.$old_email);
-            // write_log('New email is '.$email);
+            // write_log('key is '.$key);
 
-            if ( $email != $old_email ) {
-                // write_log( 'Emails don\'t match, trigger unsubscribe');
-                mro_cit_unsubscribe_email( $old_email );
+            if ( $key < count($old_contact) ) {
+                $old_email = $old_contact[$key]['email'];
+
+                // write_log('Old email is '.$old_email);
+                // write_log('New email is '.$email);
+
+                if ( $email != $old_email ) {
+                    // write_log( 'Emails don\'t match, trigger unsubscribe');
+                    mro_cit_unsubscribe_email( $old_email );
+                }
             }
+
+
 
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );

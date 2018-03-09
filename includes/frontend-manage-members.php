@@ -47,9 +47,6 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<p>Desde aquí puede editar la cuenta del afiliado <strong class="user-name"></strong></p>
 
 				<div id="edit-member-container">
-
-					
-
 				</div>
 			</div>';
 		}
@@ -163,40 +160,36 @@ function cit_ajax_get_edit_member_form() {
 		// only create the user in if there are no errors
 		if(empty($errors)) {
 
-	        // Use ID of metabox in mro_cit_frontend_contacts_form
-	        $metabox_id = 'mro_cit_user_frontend_additional_contacts';
+	 		$output = '<form class="edit-member-contacts">';
 
-	        // since post ID will not exist yet, just need to pass it something
-	        $object_id = $user->ID;
+	 		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
-	        // Get CMB2 metabox object
-	        $cmb = cmb2_get_metabox( $metabox_id, $object_id );
+	 		foreach ($additional_contacts as $contact) {
 
-	        // Get $cmb object_types
-	        $post_types = $cmb->prop( 'object_types' );
+		        $output .= '<div class="additional-contact">
+						<div class="additional-contact-child">
+							<label for="">Nombre</label>
+		        			<input class="regular-text" name="mro_cit_user_additional_contacts[0][name]" id="mro_cit_user_additional_contacts_0_name" value="'.$contact['name'].'" type="text" />
+						</div>
+						<div class="additional-contact-child">
+							<label for="">Apellidos</label>
+		        			<input class="regular-text" name="mro_cit_user_additional_contacts[0][lastname]" id="mro_cit_user_additional_contacts_0_lastname" value="'.$contact['lastname'].'" type="text" />
 
-	        $role = '';
-	        if ( members_user_has_role( $user->ID, 'afiliado_empresarial' ) || members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) ) {
-	        	$role = 'Empresarial';
-	        } elseif ( members_user_has_role( $user->ID, 'afiliado_institucional' ) || members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
-	        	$role = 'Institucional';
-	        }
+						</div>
+						<div class="additional-contact-child">
+							<label for="">Email</label>
+							<input class="regular-text" name="mro_cit_user_additional_contacts[0][email]" id="mro_cit_user_additional_contacts_0_email" value="'.$contact['email'].'" type="email" />
+						</div>
+						<div class="additional-contact-child additional-contact-delete">
+							<a class="delete-member" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a>
+						</div>
+		            </div>';
 
-	        // // Parse attributes. These shortcode attributes can be optionally overridden.
-	        $atts = shortcode_atts( array(
-	            'user_id'       => $user->ID,
-	            // 'user_id'       => $user_id ? $user_id : 1, // Current user, or admin
-	            // 'post_status' => 'pending',
-	            'post_type'     => reset( $post_types ), // Only use first object_type in array
-	            'membership'    => $role,
-	            'company'       => $user->nickname,
-	            'country'       => $user->mro_cit_user_country,
-	            'sector'        => $user->mro_cit_user_sector,
-	        ), $atts, 'cmb-frontend-form' );
+			}
 
 
-			// Get our form
-			$output = cmb2_get_metabox_form( $cmb, $object_id, array( 'save_button' => __( 'Save contacts', 'mro-cit-frontend' ) ) );
+
+	        $output .= '</form>';
 
 
 			$result['type'] = 'success';
