@@ -80,27 +80,25 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         $output = '';
 
         //If editing someone else's profile
-        if ( current_user_can( 'manage_temp_subscribers' ) && isset($_REQUEST['username']) ) {
+        if ( current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['username'] ) && username_exists( $_REQUEST['username'] ) ) {
+
+            $user = get_user_by('login',$_REQUEST['username']);
+            $object_id  = $user->ID;
+
+            if ( members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_empresarial') ) {
+                $role = 'Empresarial';
+            } elseif ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_institucional' ) ) {
+                $role = 'Institucional';
+            }
+
+            $country =$user->mro_cit_user_country;
+            $sector = $user->mro_cit_user_sector;
+            $name = $user->display_name;
 
             $output .= '<a class="button secondary" href="'.get_permalink( get_page_by_title( 'Administrar afiliados' ) ).'"><i class="icon-angle-double-left"></i> Regresar a la lista de afiliados</a>';
+            $output .= '<h3>'.$name.'</h3>';
 
-            if ( username_exists( $_REQUEST['username'] ) ) {
-                $user = get_user_by('login',$_REQUEST['username']);
-                $object_id  = $user->ID;
 
-                if ( members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_empresarial') ) {
-                    $role = 'Empresarial';
-                } elseif ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) || members_user_has_role( $user->ID, 'afiliado_institucional' ) ) {
-                    $role = 'Institucional';
-                }
-
-                $country =$user->mro_cit_user_country;
-                $sector = $user->mro_cit_user_sector;
-                $name = $user->display_name;
-
-            } else {
-                //invalid username
-            }
 
         //If editing one's own profile
         } else {
