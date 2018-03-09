@@ -15,7 +15,7 @@ function mro_cit_frontend_contacts_form() {
     $group_contacts = $cmb->add_field( array(
         'id'          => $prefix . 'additional_contacts',
         'type'        => 'group',
-        'description' => __( 'Agregue los contactos de personas en su organización a quienes quiere suscribir al boletín informativo. A estos contactos no les llegan las notificaciones administrativas (cambios de contraseña, etc).', 'mro-cit-frontend' ),
+        'description' => __( 'Agregue los contactos de personas en la organización a quienes quiere suscribir al boletín informativo. A estos contactos no les llegan las notificaciones administrativas (cambios de contraseña, etc).', 'mro-cit-frontend' ),
         'repeatable'  => true, // use false if you want non-repeatable group
         'options'     => array(
             'group_title'   => __( 'Contact {#}', 'mro-cit-frontend' ), // since version 1.1.4, {#} gets replaced by row number
@@ -62,13 +62,13 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
     // Current user
     $user_id = get_current_user_id();
-    
+
 
 
     //if is_user_logged_in() && (current_user_can( 'add_contacts' ) || (IS LEDA AND THERE IS USERNAME VARIABLE) )
 
     // User is logged in and can add contacts
-    if ( is_user_logged_in() && current_user_can( 'add_contacts' ) ) {
+    if ( is_user_logged_in() && ( current_user_can( 'add_contacts' ) || current_user_can( 'manage_temp_subscribers' ) ) ) {
 
         // Use ID of metabox in mro_cit_frontend_contacts_form
         $metabox_id = 'mro_cit_user_frontend_additional_contacts';
@@ -76,8 +76,13 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         $role = '';
 
+        // Initiate our output variable
+        $output = '';
+
         //If editing someone else's profile
-        if ( isset($_REQUEST['username']) ) {
+        if ( current_user_can( 'manage_temp_subscribers' ) && isset($_REQUEST['username']) ) {
+
+            $output .= '<a class="button secondary" href="'.get_permalink( get_page_by_title( 'Administrar afiliados' ) ).'"><i class="icon-angle-double-left"></i> Regresar a la lista de afiliados</a>';
 
             if ( username_exists( $_REQUEST['username'] ) ) {
                 $user = get_user_by('login',$_REQUEST['username']);
@@ -96,7 +101,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
             } else {
                 //invalid username
             }
-        
+
         //If editing one's own profile
         } else {
             $object_id  = $user_id;
@@ -117,15 +122,9 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         // Get CMB2 metabox object
         $cmb = cmb2_get_metabox( $metabox_id, $object_id );
-        // var_dump($cmb);
 
         // Get $cmb object_types
         $post_types = $cmb->prop( 'object_types' );
-        // var_dump($cmb->prop( 'object_types' ));
-
-        // Get role
-        // $role = $current_user->roles[0];
-
 
         // // Parse attributes. These shortcode attributes can be optionally overridden.
         $atts = shortcode_atts( array(
@@ -137,9 +136,6 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
             'country'       => $country,
             'sector'        => $sector,
         ), $atts, 'cmb-frontend-form' );
-
-        // Initiate our output variable
-        $output = '';
 
         // Handle form saving (if form has been submitted)
         $new_id = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
@@ -185,7 +181,7 @@ add_shortcode( 'cit-manage-contacts', 'mro_cit_frontend_manage_contacts_form_sho
  */
 function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array() ) {
     // write_log('handle running');
-var_dump($post_data);
+    // var_dump($post_data);
     // If no form submission, bail
     if ( empty( $_POST ) ) {
         return false;
