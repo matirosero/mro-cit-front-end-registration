@@ -74,14 +74,6 @@ function mro_cit_build_premium_members_list() {
 		),
 	) );
 
-	// var_dump($users);
-
-	// foreach ( $members as $user ) {
-	// 	echo '<span>' . esc_html( $user->user_email ) . '</span>';
-	// }
-
-	// $members = mro_cit_get_mailchimp_list_members();
-
 	if ( count( $users ) > 0 ) {
 		$output .= '<h3>Empresariales/Institucionales</h3>
 				<table>
