@@ -32,6 +32,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<form id="edit-contact" action="" method="POST">
 					<input type="hidden" name="nonce" value="">
 					<input type="hidden" name="id" value="">
+					<input type="hidden" name="username" value="">
 					<input type="hidden" name="nickname" value="">
 					<p><label for="firstname">Nombre</label><input type="text" name="firstname" value=""></p>
 					<p><label for="lastname">Apellidos</label><input type="text" name="lastname" value=""></p>
@@ -102,6 +103,7 @@ function mro_cit_build_premium_members_list() {
 			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&username='. $user->user_login .'&nonce='.$approve_nonce);
 
 			$edit_contact_nonce = wp_create_nonce('cit-edit-contact-nonce');
+
 			$edit_contact_link = admin_url('admin-ajax.php?action=cit_edit_contact&username='. $user->user_login .'&nonce='.$edit_contact_nonce);
 
 			$delete_nonce = wp_create_nonce('cit-delete-member-nonce');
@@ -313,6 +315,40 @@ function cit_approve_member() {
     die();
 }
 
+
+add_action("wp_ajax_cit_edit_main_contact", "cit_edit_main_contact");
+// add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
+
+function cit_edit_main_contact() {
+	
+	write_log('edit main contact function triggered');
+	write_log('username '.$_REQUEST['username']);
+	write_log('nonce '.$_REQUEST['nonce']);
+	write_log('firstname '.$_REQUEST['firstname']);
+	write_log('lastname '.$_REQUEST['lastname']);
+
+	if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-edit-contact-nonce') ) {
+
+		write_log('check passed');
+
+		$username = sanitize_user( $_REQUEST['username'] );
+
+    	if ( username_exists( $username ) ) {
+    		$user = get_user_by('login',$username);
+    	} else {
+    		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
+    	}
+
+
+
+	} else {
+    	// write_log('NOT LOGGED IN');
+    	write_log('check did not pass');
+    	exit("No naughty business please");
+    }
+
+    die();
+}
 
 
 add_action("wp_ajax_cit_mc_delete_member", "cit_mc_delete_member");

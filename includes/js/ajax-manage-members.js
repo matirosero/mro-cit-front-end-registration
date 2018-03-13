@@ -44,12 +44,13 @@ jQuery(function($){
 
 		editContactForm.find($('input[name="nonce"]')).val(nonce);
 		editContactForm.find($('input[name="nickname"]')).val(nickname);
-		editContactForm.find($('input[name="id"]')).val(userID);
+		editContactForm.find($('input[name="username"]')).val(username);
+		// editContactForm.find($('input[name="id"]')).val(userID);
 		editContactForm.find($('input[name="firstname"]')).val(firstname);
 		editContactForm.find($('input[name="lastname"]')).val(lastname);
 		editContactForm.find($('input[name="email"]')).val(email);
 
-		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&username=' + username + '&nonce=' + nonce;
+		link = ajax_object.ajax_url + '?action=cit_edit_main_contact&username=' + username + '&nonce=' + nonce;
 
 	});
 
@@ -64,7 +65,8 @@ jQuery(function($){
 		var formData = {
             'nonce' : $('input[name=nonce]').val(),
             'nickname' : $('input[name=nickname]').val(),
-            'id' : $('input[name=id]').val(),
+            'username' : $('input[name=username]').val(),
+            // 'id' : $('input[name=id]').val(),
             'firstname' : $('input[name=firstname]').val(),
             'lastname' : $('input[name=lastname]').val(),
             'email' : $('input[name=email]').val(),
@@ -79,12 +81,17 @@ jQuery(function($){
 			dataType : "json",
 			url : ajax_object.ajax_url,
 			data : {
-				action: "cit_mc_edit_main_contact",
-				username : username,
-				nonce: nonce
+				action: "cit_edit_main_contact",
+				username : formData.username,
+				//id : id,
+				firstname : formData.firstname,
+				lastname : formData.lastname,
+				email : formData.email,
+				nonce: formData.nonce
+				// data : formData
 			},
 			beforeSend : function(){
-				console.log('SAVE MAIN CONTACT: About to send: nonce = '+formData.nonce+'; username = '+formData.username);
+				console.log('SAVE MAIN CONTACT: About to send: nonce = '+formData.nonce+'; username = '+formData.username+' | name = '+formData.firstname+' | lastname = '+formData.lastname+' | email = '+formData.email);
 			},
 			success: function(response) {
 	            console.log('GO TO SUCCESS');
