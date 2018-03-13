@@ -320,7 +320,7 @@ add_action("wp_ajax_cit_edit_main_contact", "cit_edit_main_contact");
 // add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
 
 function cit_edit_main_contact() {
-	
+
 	write_log('edit main contact function triggered');
 	write_log('username '.$_REQUEST['username']);
 	write_log('nonce '.$_REQUEST['nonce']);
@@ -339,7 +339,76 @@ function cit_edit_main_contact() {
     		pippin_errors()->add('username_invalid', __('Invalid username', 'mro-cit-frontend'));
     	}
 
+    	$email = sanitize_email( $_REQUEST['email'] );
 
+    	if ( !is_email( $email ) ) {
+	    	//Invalid email
+	    	pippin_errors()->add('email_invalid', __('Invalid email', 'mro-cit-frontend'));
+	    } elseif ( email_exists( $email ) && ( email_exists( $email ) != $user->ID ) ) {
+	    	//Email address already registered
+			pippin_errors()->add('email_used', __('Email already registered', 'mro-cit-frontend'));
+	    }
+
+    	$errors = pippin_errors()->get_error_messages();
+
+		// only create the user in if there are no errors
+		if(empty($errors)) {
+
+			$nickname = $user->nickname;
+
+			$updated_info = array(
+	  			'ID' => $user->ID,
+	  			'user_email' => $email,
+	  			'last_name' => sanitize_text_field( $_REQUEST["lastname"] ),
+	  			'firsr_name' => sanitize_text_field( $_REQUEST["firstname"] ),
+	  		);
+
+	  		$old_user_email = $user->user_email;
+			// write_log('Old user email is '.$old_user_email);
+
+			$user_data = wp_update_user( $updated_info );
+
+
+			// TODO: check if only need merge fields I'm updating
+			//Send to mailchimp only if not pending
+			if ( ! members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) && ! members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) :
+
+				$status = 'subscribed';
+
+				$mc_merge_fields = array(
+					'EMPRESA'] => $nickname;
+					'LNAME'] => $lastname;
+					'FNAME'] => $firstname;
+				);
+
+				// Send to mailchimp function
+				mro_cit_subscribe_email($email, $mc_merge_fields, $status);
+
+				if ( $email != $old_user_email ) {
+					// write_log('New user email is '.$user_email);
+					// write_log('Email is different, so trigger unsubscribe function');
+					mro_cit_unsubscribe_email( $old_user_email );
+				}
+
+
+
+			endif;
+
+
+		} else {
+			$result['type'] = 'error';
+			$result['message'] = $errors;
+		}
+
+		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+	      	// $result['re place'] = mro_cit_build_temp_subscribers_table();
+	      	$result = json_encode($result);
+	      	echo $result;
+	      	// write_log($result);
+	      	// var_dump($result);
+		} else {
+		    header("Location: ".$_SERVER["HTTP_REFERER"]);
+		}
 
 	} else {
     	// write_log('NOT LOGGED IN');
