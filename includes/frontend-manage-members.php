@@ -111,14 +111,14 @@ function mro_cit_build_premium_members_list() {
 
 			$nonce = '';
 
-			$output .= '<tr>
+			$output .= '<tr id="member-information-'.$user->user_login.'">
 				<td>'.esc_html( $user->nickname ).'</td>';
 
 			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
 
-			$output .= '<td>';
+			$output .= '<td class="member-main-contact">';
 
-			$output .= '<div class="main-contact-info">'.esc_html( $user->user_firstname ).' '.esc_html( $user->user_lastname ).'<br />'.esc_html( $user->user_email );
+			$output .= esc_html( $user->user_firstname ).' '.esc_html( $user->user_lastname ).'<br />'.esc_html( $user->user_email );
 
 			$output .= '<a class="edit-contact" data-nonce="' . $edit_contact_nonce . '" data-id="' . esc_html( $user->ID ) . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" data-firstname="' . esc_html( $user->user_firstname ) . '" data-lastname="' . esc_html( $user->user_lastname ) . '" data-email="' . esc_html( $user->user_email ) . '" href="#" data-open="edit-contact"><i class="icon-pencil"></i></a>';
 
@@ -376,6 +376,19 @@ function cit_edit_main_contact() {
 
 			if ( $user_data == $id ) {
 				write_log('User updated');
+
+				$updated_user = get_user_by('login',$username);
+
+
+
+				$edit_contact_nonce = wp_create_nonce('cit-edit-contact-nonce');
+
+				$result['replace'] = esc_html( $updated_user->user_firstname ).' '.esc_html( $updated_user->user_lastname ).'<br />'.esc_html( $updated_user->user_email );
+
+				$result['replace'] .= '<a class="edit-contact" data-nonce="' . $edit_contact_nonce . '" data-id="' . esc_html( $updated_user->ID ) . '" data-username="' . $updated_user->user_login . '" data-nickname="' . esc_html( $updated_user->nickname ) . '" data-firstname="' . esc_html( $updated_user->user_firstname ) . '" data-lastname="' . esc_html( $updated_user->user_lastname ) . '" data-email="' . esc_html( $updated_user->user_email ) . '" href="#" data-open="edit-contact"><i class="icon-pencil"></i></a>';
+
+
+
 
 				$result['message'] = '<p class="callout success">Se actualizó el usuario.</p>';
 				$result['type'] = 'success';

@@ -16,7 +16,8 @@ jQuery(function($){
 		confirmApproveBtn =  $('.button.confirm-approve-member'),
 		mcUnsubscribeBtn = $('.unsubscribe'),
 		confirmMcUnsubscribeBtn = $('.button[data-action="confirm-mc-unsubscribe"]'),
-		tableContainer = $('#temporary-subscribers');
+		tableContainer = $('#temporary-subscribers'),
+		spinner = '<p class="text-center"><i class="icon-spin1 animate-spin"></i></p>';
 
 
 	/*
@@ -74,6 +75,8 @@ jQuery(function($){
 
 		tableContainer = $('#premium-members-table');
 
+		replaceThis = tableContainer.find( '#member-information-'+$('input[name=username]').val()+' .member-main-contact' );
+
 		modal.foundation('close');
 
 		jQuery.ajax({
@@ -92,11 +95,15 @@ jQuery(function($){
 			},
 			beforeSend : function(){
 				console.log('SAVE MAIN CONTACT: About to send: nonce = '+formData.nonce+'; username = '+formData.username+' | name = '+formData.firstname+' | lastname = '+formData.lastname+' | email = '+formData.email);
+
+				// TODO: spinner
+				replaceThis.html(spinner);
 			},
 			success: function(response) {
 	            console.log('GO TO SUCCESS');
 	            if(response.type == "success") {
 	            	tableContainer.prepend(response.message);
+	            	replaceThis.html(response.replace);
                		// tableContainer.html(response.message+response.replace);
             	} else {
             		alert("No se pudo guardar el contacto.");
@@ -217,7 +224,9 @@ jQuery(function($){
 		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&username=' + username + '&nonce=' + nonce;
 
 		confirmDeleteMemberBtn.attr('href', link).attr('data-username', username).attr('data-nonce', nonce);
+
 	});
+
 
 	confirmDeleteMemberBtn.on('click', function(e) {
 
@@ -227,6 +236,10 @@ jQuery(function($){
 		username = $(this).attr("data-username");
 
 		tableContainer = $('#premium-members-table');
+
+		deleteThis = tableContainer.find('#member-information-'+username );
+
+		// deleteThis.hide();
 
 		modal.foundation('close');
 
@@ -246,7 +259,7 @@ jQuery(function($){
 	            console.log('GO TO SUCCESS');
 	            if(response.type == "success") {
 	            	tableContainer.prepend(response.message);
-               		// tableContainer.html(response.message+response.replace);
+	            	deleteThis.remove();
             	} else {
             		alert("No se pudo eliminar el afiliado.");
             	}
