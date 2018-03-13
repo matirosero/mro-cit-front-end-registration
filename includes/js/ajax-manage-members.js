@@ -6,8 +6,11 @@ jQuery(function($){
 		user,
 		nonce,
 		link,
-		editMemberBtn = $('.edit-member'),
-		deleteMemberBtn = $('.delete-member'),
+		editContactBtn = $('a.edit-contact'),
+		editContactForm = $('#edit-contact'),
+		contactInfoContainer = $('.main-contact-info'),
+		editMemberBtn = $('.button.edit-member'),
+		deleteMemberBtn = $('a.delete-member'),
 		confirmDeleteMemberBtn = $('.button.confirm-delete-member'),
 		approveTicky = $( 'input[name="user-is-approved"]' ),
 		confirmApproveBtn =  $('.button.confirm-approve-member'),
@@ -16,7 +19,88 @@ jQuery(function($){
 		tableContainer = $('#temporary-subscribers');
 
 
+	/*
+	 * Edit main contact
+	 */
+	editContactBtn.on('click', function(e) {
 
+		e.preventDefault();
+
+		console.log('Clicked on edit main contact');
+
+		nonce = $(this).attr("data-nonce");
+		userID = $(this).attr("data-id");
+		username = $(this).attr("data-username");
+		nickname = $(this).attr("data-nickname");
+		firstname = $(this).attr("data-firstname");
+		lastname = $(this).attr("data-lastname");
+		email = $(this).attr("data-email");
+
+		console.log('nonce = '+nonce+' username = '+username);
+
+		modal = $( '#' + $(this).data('open') );
+
+		modal.find('.nickname').html(nickname);
+
+		editContactForm.find($('input[name="nonce"]')).val(nonce);
+		editContactForm.find($('input[name="nickname"]')).val(nickname);
+		editContactForm.find($('input[name="id"]')).val(userID);
+		editContactForm.find($('input[name="firstname"]')).val(firstname);
+		editContactForm.find($('input[name="lastname"]')).val(lastname);
+		editContactForm.find($('input[name="email"]')).val(email);
+
+		link = ajax_object.ajax_url + '?action=cit_mc_delete_member&username=' + username + '&nonce=' + nonce;
+
+	});
+
+
+	/*
+	 * Submit approve form
+	 */
+	editContactForm.on('submit', function(e) {
+
+		e.preventDefault();
+
+		var formData = {
+            'nonce' : $('input[name=nonce]').val(),
+            'nickname' : $('input[name=nickname]').val(),
+            'id' : $('input[name=id]').val(),
+            'firstname' : $('input[name=firstname]').val(),
+            'lastname' : $('input[name=lastname]').val(),
+            'email' : $('input[name=email]').val(),
+        };
+
+		tableContainer = $('#premium-members-table');
+
+		modal.foundation('close');
+
+		jQuery.ajax({
+			type : "post",
+			dataType : "json",
+			url : ajax_object.ajax_url,
+			data : {
+				action: "cit_mc_edit_main_contact",
+				username : username,
+				nonce: nonce
+			},
+			beforeSend : function(){
+				console.log('SAVE MAIN CONTACT: About to send: nonce = '+formData.nonce+'; username = '+formData.username);
+			},
+			success: function(response) {
+	            console.log('GO TO SUCCESS');
+	            if(response.type == "success") {
+	            	tableContainer.prepend(response.message);
+               		// tableContainer.html(response.message+response.replace);
+            	} else {
+            		alert("No se pudo guardar el contacto.");
+            	}
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            	console.log('GO TO ERROR');
+            	alert(jqXHR + " :: " + textStatus + " :: " + errorThrown);
+            }
+        });
+	});
 
 
 	/*

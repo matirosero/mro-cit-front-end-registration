@@ -24,12 +24,20 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 			$output .= mro_cit_build_premium_members_list();
 			$output .= '</div>';
 
-			$output .= '<div class="reveal text-center" id="edit-contact" data-reveal>
+			$output .= '<div class="reveal" id="edit-contact" data-reveal>
 				<button class="close-button" data-close aria-label="Close modal" type="button">
 					<i class="icon-cancel"></i>
 				</button>
 				<p>Editar información del contacto principal de <strong class="nickname"></strong></p>
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button save-contact" data-action="cit_save_contact" href="#">Guardar</a></p>
+				<form id="edit-contact" action="" method="POST">
+					<input type="hidden" name="nonce" value="">
+					<input type="hidden" name="id" value="">
+					<input type="hidden" name="nickname" value="">
+					<p><label for="firstname">Nombre</label><input type="text" name="firstname" value=""></p>
+					<p><label for="lastname">Apellidos</label><input type="text" name="lastname" value=""></p>
+					<p><label for="email">Email</label><input type="email" name="email" value=""></p>
+					<p><a href="#" class="button secondary" data-close>Cancelar</a> <input type="submit" class="button save-contact" data-action="cit_save_contact" value="Guardar" /></p>
+				</form>
 				</div>';
 
 			$output .= '<div class="reveal text-center" id="confirm-delete-member" data-reveal>
@@ -48,7 +56,6 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#"></a></p>
 				</div>';
 
-			
 		}
 
 		// $output .= mro_cit_add_temp_member_form();
@@ -107,7 +114,13 @@ function mro_cit_build_premium_members_list() {
 
 			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
 
-			$output .= '<td>'.esc_html( $user->user_firstname ).' '.esc_html( $user->user_lastname ).'<br />'.esc_html( $user->user_email ).'<a class="edit-contact" data-nonce="' . $edit_contact_nonce . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" href="#" data-open="edit-contact"><i class="icon-pencil"></i></a></td>';
+			$output .= '<td>';
+
+			$output .= '<div class="main-contact-info">'.esc_html( $user->user_firstname ).' '.esc_html( $user->user_lastname ).'<br />'.esc_html( $user->user_email );
+
+			$output .= '<a class="edit-contact" data-nonce="' . $edit_contact_nonce . '" data-id="' . esc_html( $user->ID ) . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" data-firstname="' . esc_html( $user->user_firstname ) . '" data-lastname="' . esc_html( $user->user_lastname ) . '" data-email="' . esc_html( $user->user_email ) . '" href="#" data-open="edit-contact"><i class="icon-pencil"></i></a>';
+
+			$output .= '</td>';
 
 			$output .= '<td align="center"><a class="edit-member button" href="'.$edit_link.'" data-open="edit-member">Editar</a></td><td nowrap align="center">';
 
