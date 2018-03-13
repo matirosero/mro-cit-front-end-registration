@@ -355,12 +355,18 @@ function cit_edit_main_contact() {
 		if(empty($errors)) {
 
 			$nickname = $user->nickname;
+			$id = $user->ID;
+			$lastname = sanitize_text_field( $_REQUEST["lastname"] );
+			$firstname = sanitize_text_field( $_REQUEST["firstname"] );
+			$phone = $user->mro_cit_user_phone;
+			$country = $user->mro_cit_user_country;
+			$sector = $user->mro_cit_user_sector;
 
 			$updated_info = array(
 	  			'ID' => $user->ID,
 	  			'user_email' => $email,
-	  			'last_name' => sanitize_text_field( $_REQUEST["lastname"] ),
-	  			'firsr_name' => sanitize_text_field( $_REQUEST["firstname"] ),
+	  			'last_name' => $lastname,
+	  			'first_name' => $firstname,
 	  		);
 
 	  		$old_user_email = $user->user_email;
@@ -368,31 +374,63 @@ function cit_edit_main_contact() {
 
 			$user_data = wp_update_user( $updated_info );
 
+			if ( $user_data == $id ) {
+				write_log('User updated');
 
-			// TODO: check if only need merge fields I'm updating
-			//Send to mailchimp only if not pending
-			if ( ! members_user_has_role( $user->ID, 'afiliado_empresarial_pendiente' ) && ! members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) :
+				$result['message'] = '<p class="callout success">Se actualizó el usuario.</p>';
+				$result['type'] = 'success';
 
-				$status = 'subscribed';
+				// TODO: check if only need merge fields I'm updating
+				//Send to mailchimp only if not pending
+				if ( members_user_has_role( $id, 'afiliado_empresarial' ) || members_user_has_role( $id, 'afiliado_institucional' ) ) :
 
-				$mc_merge_fields = array(
-					'EMPRESA'] => $nickname;
-					'LNAME'] => $lastname;
-					'FNAME'] => $firstname;
-				);
+					write_log('Update Mailchimp');
 
-				// Send to mailchimp function
-				mro_cit_subscribe_email($email, $mc_merge_fields, $status);
+					$status = 'subscribed';
 
-				if ( $email != $old_user_email ) {
-					// write_log('New user email is '.$user_email);
-					// write_log('Email is different, so trigger unsubscribe function');
-					mro_cit_unsubscribe_email( $old_user_email );
-				}
+					if ( members_user_has_role( $id, 'afiliado_empresarial' ) ) {
+						$type = 'Empresarial';
+					} elseif ( members_user_has_role( $id, 'afiliado_institucional' ) ) {
+						$type = 'Institucional';
+					}
+
+					$mc_merge_fields = array(
+						'EMPRESA' => $nickname,
+						'LNAME' => $lastname,
+						'FNAME' => $firstname,
+						'PHONE' => $phone,
+						'PAIS' => $country,
+						'SECTOR' => $sector,
+						'AFILIADO' => $type,
+					);
+
+					// Send to mailchimp function
+					$subscribe = mro_cit_subscribe_email($email, $mc_merge_fields, $status);
+
+					$result['message'] .= $subscribe;
+
+					if ( $email != $old_user_email ) {
+						// write_log('New user email is '.$user_email);
+						// write_log('Email is different, so trigger unsubscribe function');
+						mro_cit_unsubscribe_email( $old_user_email );
+						// $result['message'] .= $unsubscribe;
+					}
+
+				endif;
+
+
+			} else {
+				write_log('User NOT updated');
+
+				$result['type'] = 'error';
+				$result['message'] = '<p class="callout alert">No se actualizó el usuario.</p>';
+			}
 
 
 
-			endif;
+
+			/* Let plugins hook in, like ACF who is handling the profile picture all by itself. Got to love the Elliot */
+		    do_action('edit_user_profile_update', $id);
 
 
 		} else {
