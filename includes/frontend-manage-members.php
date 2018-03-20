@@ -1,6 +1,5 @@
 <?php
 
-
 function mro_cit_manage_members_shortcode($atts, $content = null ) {
 
 	global $current_user, $wp_roles;
@@ -182,7 +181,7 @@ function cit_approve_member() {
 			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
 			if ( $approve === true ) {
-				// write_log('Approve it!');
+				write_log('Approve it!');
 
 				$status = 'subscribed';
 
@@ -216,28 +215,39 @@ function cit_approve_member() {
 
 				}
 
-				// write_log(implode($mc_merge_fields));
+				// write_log('Ready to approve '.implode($mc_merge_fields));
 
 				//Change role
 				$user->remove_role( $old_role );
 				$user->set_role( $new_role );
 
 				// Send to mailchimp function
-				write_log('Subscribing '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
+				write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
+				write_log(implode($mc_merge_fields));
 
 				$subscribe = mro_cit_subscribe_email($user->user_email, $mc_merge_fields, $status);
 				$result['message'] = $subscribe;
 
+				write_log('Result '.$subscribe);
+
 				//Get additionals and send to mailchimp
 				if (is_array($additional_contacts)) {
 
+					write_log('There are '.count($additional_contacts).' additional contacts.');
+
+					write_log(implode($additional_contacts));
+
 					foreach ($additional_contacts as $contact) {
-						write_log('Subscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
+						// write_log('Subscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
 						$mc_merge_fields['FNAME'] = $contact['name'];
 						$mc_merge_fields['LNAME'] = $contact['lastname'];
 
+						write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
+						write_log(implode($mc_merge_fields));
+
 						$subscribe = mro_cit_subscribe_email($contact['email'], $mc_merge_fields, $status);
 						$result['message'] .= $subscribe;
+						write_log('Result '.$subscribe);
 
 					}
 				}
