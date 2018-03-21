@@ -247,6 +247,7 @@ function cit_approve_member() {
 
 						$subscribe = mro_cit_subscribe_email($contact['email'], $mc_merge_fields, $status);
 						$result['message'] .= $subscribe;
+						
 						write_log('Result '.$subscribe);
 
 					}

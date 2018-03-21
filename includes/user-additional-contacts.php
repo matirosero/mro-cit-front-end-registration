@@ -73,7 +73,6 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         // Use ID of metabox in mro_cit_frontend_contacts_form
         $metabox_id = 'mro_cit_user_frontend_additional_contacts';
 
-
         $role = '';
 
         // Initiate our output variable
@@ -94,6 +93,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
             $country =$user->mro_cit_user_country;
             $sector = $user->mro_cit_user_sector;
             $name = $user->display_name;
+            $phone = $user->mro_cit_user_phone;
 
             $output .= '<a class="button secondary" href="'.get_permalink( get_page_by_title( 'Administrar afiliados' ) ).'"><i class="icon-angle-double-left"></i> Regresar a la lista de afiliados</a>';
             $output .= '<h3>'.$name.'</h3>';
@@ -112,7 +112,9 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
             $country = $current_user->mro_cit_user_country;
             $sector = $current_user->mro_cit_user_sector;
+            $phone = $current_user->mro_cit_user_phone;
             $name = $current_user->display_name;
+
         }
 
 
@@ -133,6 +135,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
             'company'       => $name,
             'country'       => $country,
             'sector'        => $sector,
+            'phone'         => $phone,
         ), $atts, 'cmb-frontend-form' );
 
         // Handle form saving (if form has been submitted)
@@ -214,10 +217,13 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     $additional_contacts   = $sanitized_values['mro_cit_user_additional_contacts'];
     unset( $sanitized_values['mro_cit_user_additional_contacts'] );
 
-    // var_dump( $additional_contacts);
+    write_log('There are '.count($additional_contacts).' additional contacts.');
+    // write_log(implode($additional_contacts));
+
+    $status = 'subscribed';
 
     foreach ($additional_contacts as $key => $contact) {
-        // var_dump($contact);
+
 
         if ( isset( $contact['email'] ) ) {
             $email = sanitize_email( $contact['email'] );
@@ -234,6 +240,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
             $mc_merge_fields['PAIS'] = $post_data['country'];
             $mc_merge_fields['SECTOR'] = $post_data['sector'];
             $mc_merge_fields['EMPRESA'] = $post_data['company'];
+            $mc_merge_fields['PHONE'] = $post_data['phone'];
 
             if ( !empty( $contact['name'] ) ) {
                 $mc_merge_fields['FNAME'] = $contact['name'];
@@ -242,8 +249,13 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 $mc_merge_fields['LNAME'] = $contact['lastname'];
             }
 
+            write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
+            write_log(implode($mc_merge_fields));
+
             // Send to mailchimp function
-            mro_cit_subscribe_email( $contact['email'], $mc_merge_fields );
+            $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
+
+            write_log('Result '.$subscribe);
 
             // $tempuser = get_userdata($post_data['user_id']);
 
@@ -255,6 +267,9 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
             // write_log('key is '.$key);
 
             if ( $key < count($old_contact) ) {
+                
+                //Unsubscribe old email
+
                 $old_email = $old_contact[$key]['email'];
 
                 // write_log('Old email is '.$old_email);
@@ -265,8 +280,6 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                     mro_cit_unsubscribe_email( $old_email );
                 }
             }
-
-
 
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );
