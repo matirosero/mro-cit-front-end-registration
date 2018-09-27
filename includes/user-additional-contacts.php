@@ -1,4 +1,14 @@
 <?php
+
+function stringify_array($array) {
+    $return = '';
+    foreach ($array as $key => $value) {
+        $new_value = implode(' - ', $value);
+        $return .= ' | NEW ITEM: '.$new_value;
+    }
+    return $return;
+}
+
 /*
  * Register the form and fields for our front-end submission form
  */
@@ -206,6 +216,12 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     }
 
 
+
+    // Array with original contacts to check against
+    $original_contacts = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
+
+
+
     // Do WordPress insert_post stuff
     // Fetch sanitized values
     $sanitized_values = $cmb->get_sanitized_values( $_POST );
@@ -217,7 +233,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     $additional_contacts   = $sanitized_values['mro_cit_user_additional_contacts'];
     unset( $sanitized_values['mro_cit_user_additional_contacts'] );
 
-    write_log('There are '.count($additional_contacts).' additional contacts.');
+    // write_log('There are '.count($additional_contacts).' additional contacts.');
     // write_log(implode($additional_contacts));
 
     $status = 'subscribed';
@@ -249,35 +265,17 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 $mc_merge_fields['LNAME'] = $contact['lastname'];
             }
 
-            write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
-            write_log(implode($mc_merge_fields));
 
             // Send to mailchimp function
             $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
 
-            write_log('Result '.$subscribe);
 
-            // $tempuser = get_userdata($post_data['user_id']);
+            // // New code:
+            // Compare this email to the original contacts and remove if it matches
+            foreach ($original_contacts as $old_key => $old_contact) {
 
-            // write_log('user id '.$post_data['user_id'].', name is '.$tempuser->user_login);
-
-            $old_contact = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
-
-
-            // write_log('key is '.$key);
-
-            if ( $key < count($old_contact) ) {
-                
-                //Unsubscribe old email
-
-                $old_email = $old_contact[$key]['email'];
-
-                // write_log('Old email is '.$old_email);
-                // write_log('New email is '.$email);
-
-                if ( $email != $old_email ) {
-                    // write_log( 'Emails don\'t match, trigger unsubscribe');
-                    mro_cit_unsubscribe_email( $old_email );
+                if ( $old_contact['email'] == $email ) {
+                    unset( $original_contacts[$old_key] );
                 }
             }
 
@@ -287,6 +285,15 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
         }
 
     }
+
+    //Now unsubscrive the leftovers from Mailchimp
+    foreach ($original_contacts as $key => $remove_contact) {
+
+        $remove_email = $remove_contact['email'];
+        mro_cit_unsubscribe_email( $remove_email );
+    }
+
+
 
     $post_data['additional_contacts'] = $additional_contacts;
 
