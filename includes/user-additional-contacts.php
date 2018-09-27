@@ -242,32 +242,38 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 // write_log('Not a valid email.');
             }
 
-            $mc_merge_fields  = array();
-            $mc_merge_fields['AFILIADO'] = $post_data['membership'];
-            $mc_merge_fields['PAIS'] = $post_data['country'];
-            $mc_merge_fields['SECTOR'] = $post_data['sector'];
-            $mc_merge_fields['EMPRESA'] = $post_data['company'];
-            $mc_merge_fields['PHONE'] = $post_data['phone'];
 
-            if ( !empty( $contact['name'] ) ) {
-                $mc_merge_fields['FNAME'] = $contact['name'];
-            }
-            if ( !empty( $contact['lastname'] ) ) {
-                $mc_merge_fields['LNAME'] = $contact['lastname'];
-            }
+            //Check if current user is pending
+            if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
 
+                $mc_merge_fields  = array();
+                $mc_merge_fields['AFILIADO'] = $post_data['membership'];
+                $mc_merge_fields['PAIS'] = $post_data['country'];
+                $mc_merge_fields['SECTOR'] = $post_data['sector'];
+                $mc_merge_fields['EMPRESA'] = $post_data['company'];
+                $mc_merge_fields['PHONE'] = $post_data['phone'];
 
-            // Send to mailchimp function
-            $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
-
-
-            // // New code:
-            // Compare this email to the original contacts and remove if it matches
-            foreach ($original_contacts as $old_key => $old_contact) {
-
-                if ( $old_contact['email'] == $email ) {
-                    unset( $original_contacts[$old_key] );
+                if ( !empty( $contact['name'] ) ) {
+                    $mc_merge_fields['FNAME'] = $contact['name'];
                 }
+                if ( !empty( $contact['lastname'] ) ) {
+                    $mc_merge_fields['LNAME'] = $contact['lastname'];
+                }
+
+
+                // Send to mailchimp function
+                $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
+
+
+                // // New code:
+                // Compare this email to the original contacts and remove if it matches
+                foreach ($original_contacts as $old_key => $old_contact) {
+
+                    if ( $old_contact['email'] == $email ) {
+                        unset( $original_contacts[$old_key] );
+                    }
+                }
+
             }
 
         } else {
@@ -277,11 +283,13 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
     }
 
-    //Now unsubscrive the leftovers from Mailchimp
-    foreach ($original_contacts as $key => $remove_contact) {
+    if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
+        //Now unsubscrive the leftovers from Mailchimp
+        foreach ($original_contacts as $key => $remove_contact) {
 
-        $remove_email = $remove_contact['email'];
-        mro_cit_unsubscribe_email( $remove_email );
+            $remove_email = $remove_contact['email'];
+            mro_cit_unsubscribe_email( $remove_email );
+        }
     }
 
 

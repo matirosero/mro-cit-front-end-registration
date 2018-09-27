@@ -8,9 +8,9 @@ Description of the various functions by partial
 
 ### user-additional-contacts
 
-For admins. Creates and processes the form form that handles a user's additional contacts.
+For admins. Creates (via CMB2) and processes the form form that handles a user's additional contacts. 
 
-TODO: only subscribe/unsubscribe when member is not pending
+Only subscribes/unsubscribes from Mailchimp when member is not pending.
 
 ### registration
 
