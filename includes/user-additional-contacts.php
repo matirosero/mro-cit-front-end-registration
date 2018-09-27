@@ -16,7 +16,7 @@ function mro_cit_frontend_contacts_form() {
     $group_contacts = $cmb->add_field( array(
         'id'          => $prefix . 'additional_contacts',
         'type'        => 'group',
-        'description' => __( 'Agregue los contactos de personas en la organización a quienes quiere suscribir al boletín informativo. A estos contactos no les llegan las notificaciones administrativas (cambios de contraseña, etc).', 'mro-cit-frontend' ),
+        'description' => __( 'Agregue los contactos de personas en la organización a quienes quiere suscribir al boletín informativo. A estos contactos les llegarán invitaciones a eventos, pero no les llegarán las notificaciones administrativas (cambios de contraseña, etc).', 'mro-cit-frontend' ),
         'repeatable'  => true, // use false if you want non-repeatable group
         'options'     => array(
             'group_title'   => __( 'Contact {#}', 'mro-cit-frontend' ), // since version 1.1.4, {#} gets replaced by row number
