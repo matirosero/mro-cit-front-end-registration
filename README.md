@@ -6,19 +6,7 @@ This plugin handles front-end registration and editing for uses
 
 Description of the various functions by partial
 
-### user-additional-contacts
 
-For admins. Creates (via CMB2) and processes the form form that handles a user's additional contacts.
-
-Only subscribes/unsubscribes from Mailchimp when member is not pending.
-
-### registration
-
-For logged out users. Creates and processes the form form that handles a a new registration.
-
-Only subscribes personal accounts to MailChimp.
-
-Does not include listing additional contacts for enterprise members.
 
 ### frontend-manage-members
 
@@ -32,3 +20,18 @@ Activates when "Activate" is checked/unchecked. Toggles from pending to full mem
 
 Activates when "X" is clicked. Deletes user from wordpress and unsubscribes all emails from Mailchimp.
 
+
+### registration
+
+For logged out users. Creates and processes the form form that handles a a new registration.
+
+Only subscribes personal accounts to MailChimp.
+
+Does not include listing additional contacts for enterprise members.
+
+
+### user-additional-contacts
+
+For admins. Creates (via CMB2) and processes the form form that handles a user's additional contacts.
+
+Only subscribes/unsubscribes from Mailchimp when member is not pending.
