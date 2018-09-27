@@ -91,8 +91,8 @@ function mro_cit_build_premium_members_list() {
 		$output .= '<h3>Empresariales/Institucionales</h3>
 				<table>
 					<tr>
-						<th>Nombre</th>
 						<th>Tipo</th>
+						<th>Nombre</th>
 						<th>Contacto</th>
 						<th>Emails adicionales</th>
 						<th>Estado</th>
@@ -116,10 +116,11 @@ function mro_cit_build_premium_members_list() {
 
 			$nonce = '';
 
-			$output .= '<tr id="member-information-'.$user->user_login.'">
-				<td>'.esc_html( $user->nickname ).'</td>';
+			$output .= '<tr id="member-information-'.$user->user_login.'">';
 
-			$output .= '<td>'.mro_cit_premium_member_type( $user->ID ).'</td>';
+			$output .= '<td>'.substr(mro_cit_premium_member_type( $user->ID ), 0, 1).'</td>';
+
+			$output .= '<td>'.esc_html( $user->nickname ).'</td>';
 
 			$output .= '<td class="member-main-contact">';
 
