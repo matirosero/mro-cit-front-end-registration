@@ -203,29 +203,23 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     }
 
     if ( !current_user_can( 'add_contacts' ) ) {
+        // write_log('User can not add contacts!!');
         return new WP_Error( 'no_permission', __( 'Your account doesn\'t have permission to do this.', 'mro-cit-frontend' ) );
     }
 
-
+    // write_log('User passed checks');
 
     // Array with original contacts to check against
     $original_contacts = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
 
-
-
-    // Do WordPress insert_post stuff
     // Fetch sanitized values
     $sanitized_values = $cmb->get_sanitized_values( $_POST );
-
-    // write_log('passed');
 
 
     // Set our post data arguments
     $additional_contacts   = $sanitized_values['mro_cit_user_additional_contacts'];
     unset( $sanitized_values['mro_cit_user_additional_contacts'] );
 
-    // write_log('There are '.count($additional_contacts).' additional contacts.');
-    // write_log(implode($additional_contacts));
 
     $status = 'subscribed';
 
@@ -233,8 +227,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
 
         if ( isset( $contact['email'] ) ) {
+            
             $email = sanitize_email( $contact['email'] );
 
+            //why this?
+            
             $contact['email'] = $email;
 
             if(!is_email($email)) {
@@ -245,6 +242,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
             //Check if current user is pending
             if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
+
+                // write_log('user is not pending, prepare data to add '.$contact['email'].' to mailchimp');
 
                 $mc_merge_fields  = array();
                 $mc_merge_fields['AFILIADO'] = $post_data['membership'];
@@ -285,6 +284,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
     if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
         //Now unsubscrive the leftovers from Mailchimp
+        // write_log('user is not pending, get ready to UNsubscribe contacts to MC');
+
         foreach ($original_contacts as $key => $remove_contact) {
 
             $remove_email = $remove_contact['email'];
