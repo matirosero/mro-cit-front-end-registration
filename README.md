@@ -32,5 +32,5 @@ Activates when "Activate" is checked/unchecked. Toggles from pending to full mem
 
 #### cit_mc_delete_member()
 
-Activates when "X" is clicked. Unsubscribes from Mailchimp and deletes user from wordpress.
+Activates when "X" is clicked. Deletes user from wordpress and unsubscribes all emails from Mailchimp.
 

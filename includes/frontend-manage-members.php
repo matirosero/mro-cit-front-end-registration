@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Manage premium members from frontend
+ * For club admins
+ */
+
 function mro_cit_manage_members_shortcode($atts, $content = null ) {
 
 	global $current_user, $wp_roles;
@@ -69,6 +74,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 add_shortcode('cit-manage-members', 'mro_cit_manage_members_shortcode');
 
 
+// Build the actual list (table format)
 function mro_cit_build_premium_members_list() {
 	$output = '';
 
@@ -247,7 +253,7 @@ function cit_approve_member() {
 
 						$subscribe = mro_cit_subscribe_email($contact['email'], $mc_merge_fields, $status);
 						$result['message'] .= $subscribe;
-						
+
 						write_log('Result '.$subscribe);
 
 					}
@@ -329,7 +335,6 @@ function cit_approve_member() {
 
 add_action("wp_ajax_cit_edit_main_contact", "cit_edit_main_contact");
 // add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
-
 function cit_edit_main_contact() {
 
 	write_log('edit main contact function triggered');
@@ -505,15 +510,25 @@ function cit_mc_delete_member() {
 		// only create the user in if there are no errors
 		if(empty($errors)) {
 
+			// write_log('1. No errors, can unsubscribe');
+
     		//Unsubscribe mail email
     		$unsubscribe = mro_cit_unsubscribe_email( $user->user_email );
     		$result['message'] = $unsubscribe;
 
+			// write_log('2. Unsubscribe main user, result: '.$result['message']);
+
     		$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
+
+    		// write_log('3. Additional contacts:');
+    		// write_log('<pre>'.$additional_contacts.'</pre>');
+
 
 			if (is_array($additional_contacts)) {
 
 				foreach ($additional_contacts as $contact) {
+
+					// write_log('4. Unsubscribe '.$contact['email']);
 
 					//Unsubscribe each additional email
 					$unsubscribe = mro_cit_unsubscribe_email( $contact['email'] );
