@@ -1,14 +1,5 @@
 <?php
 
-function stringify_array($array) {
-    $return = '';
-    foreach ($array as $key => $value) {
-        $new_value = implode(' - ', $value);
-        $return .= ' | NEW ITEM: '.$new_value;
-    }
-    return $return;
-}
-
 /*
  * Register the form and fields for our front-end submission form
  */
