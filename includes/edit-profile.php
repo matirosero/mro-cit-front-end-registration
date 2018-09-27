@@ -166,25 +166,7 @@ function mro_cit_edit_profile_form_fields() {
 					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 
 						</fieldset>
-						<fieldset class="edit-secondary-contact">
-							<p><strong><?php _e( 'Secondary Contact (cc:)', 'mro-cit-frontend' ); ?></strong></p>
 
-							<p class="help-text"><?php _e( 'Fill this in if you\'d like someone copied on all website account management emails.', 'mro-cit-frontend' ); ?></p>
-
-							<p>
-								<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email" value="<?php echo $current_user->mro_cit_user_secondary_email; ?>" />
-							</p>
-
-							<p>
-								<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text" value="<?php echo $current_user->mro_cit_user_secondary_first; ?>" />
-							</p>
-							<p>
-								<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
-								<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text" value="<?php echo $current_user->mro_cit_user_secondary_last; ?>" />
-							</p>
-						</fieldset>
 						<fieldset class="edit-business-information">
 
 						<?php } ?>

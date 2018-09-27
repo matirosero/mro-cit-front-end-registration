@@ -130,25 +130,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 				if ( $membership == 'empresarial' || $membership == 'institucional'  ) { ?>
 
 					</fieldset>
-					<fieldset class="register-secondary-contact">
-						<p><strong><?php _e( 'Secondary Contact (cc:)', 'mro-cit-frontend' ); ?></strong></p>
 
-						<p class="help-text"><?php _e( 'Fill this in if you\'d like someone copied on all website account management emails.', 'mro-cit-frontend' ); ?></p>
-
-						<p>
-							<label for="mro_cit_user_secondary_email"><?php _e( 'Secondary Contact Email', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_email" id="mro_cit_user_secondary_email" type="email"/>
-						</p>
-
-						<p>
-							<label for="mro_cit_user_secondary_first"><?php _e( 'Secondary Contact: First Name', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_first" id="mro_cit_user_secondary_first" type="text"/>
-						</p>
-						<p>
-							<label for="mro_cit_user_secondary_last"><?php _e( 'Secondary Contact: Last Name', 'mro-cit-frontend' ); ?></label>
-							<input name="mro_cit_user_secondary_last" id="mro_cit_user_secondary_last" type="text"/>
-						</p>
-					</fieldset>
 					<fieldset class="register-business-information">
 
 

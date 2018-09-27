@@ -8,15 +8,13 @@ Description of the various functions by partial
 
 ### user-additional-contacts
 
-For admins. Creates (via CMB2) and processes the form form that handles a user's additional contacts. 
+For admins. Creates (via CMB2) and processes the form form that handles a user's additional contacts.
 
 Only subscribes/unsubscribes from Mailchimp when member is not pending.
 
 ### registration
 
-For logged out users. Creates and processes the form form that handles a a new registration. 
-
-TODO: remove "Contacto secundario (cc:)"
+For logged out users. Creates and processes the form form that handles a a new registration.
 
 Only subscribes personal accounts to MailChimp.
 
