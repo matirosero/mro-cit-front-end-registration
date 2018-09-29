@@ -6,7 +6,21 @@ This plugin handles front-end registration and editing for uses
 
 Description of the various functions by partial
 
+### registration
 
+Register new members. For admins or new (logged out) users.
+
+#### mro_cit_register_link( $link )
+
+Filter for 'register', changes registration URL.
+
+#### mro_cit_registration_form()
+
+Checks user can access registration form, prints form and/or any warnings/notices.
+
+#### mro_cit_registration_form_fields()
+
+The actual registration form.
 
 ### frontend-manage-members
 

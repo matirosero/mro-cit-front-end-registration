@@ -1,6 +1,8 @@
 <?php
 
-// Replace registration link
+/*
+ * Replace registration link
+ */
 add_filter( 'register', 'mro_cit_register_link' );
 function mro_cit_register_link( $link ) {
 	/*Required: Replace Register_URL with the URL of registration*/
@@ -11,15 +13,18 @@ function mro_cit_register_link( $link ) {
     return $link;
 }
 
-// user registration login form
-function pippin_registration_form($atts) {
+
+/*
+ * Registration form
+ */
+function mro_cit_registration_form($atts) {
 
 	extract(shortcode_atts(array(
         'membership' => 'personal',
     ), $atts));
 
-	// only show the registration form to non-logged-in members
-	if(!is_user_logged_in()) {
+	// only show the registration form to non-logged-in members, or to admins
+	if( !is_user_logged_in() || current_user_can( 'manage_temp_subscribers' ) ) {
 
 		global $pippin_load_css;
 
@@ -31,7 +36,7 @@ function pippin_registration_form($atts) {
 
 		// only show the registration form if allowed
 		if($registration_enabled) {
-			$output = pippin_registration_form_fields($membership);
+			$output = mro_cit_registration_form_fields($membership);
 		} else {
 			$output = __('User registration is not enabled', 'mro-cit-frontend');
 		}
@@ -41,30 +46,35 @@ function pippin_registration_form($atts) {
 	}
 	return $output;
 }
-add_shortcode('register_form', 'pippin_registration_form');
+add_shortcode('register_form', 'mro_cit_registration_form');
 
 
-// registration form fields
-function pippin_registration_form_fields($membership = 'personal' ) {
+/*
+ * registration form fields
+ */
+function mro_cit_registration_form_fields($membership = 'personal' ) {
 
+	// If not logged in, check if
 	if ( $membership == 'empresarial' ) {
 		$entity = 'empresa';
 	} elseif ( $membership == 'institucional' ) {
 		$entity = 'institución';
 	}
 
+
+
 	ob_start();
 	?>
 
 		<?php
-		if ( $membership != 'empresarial' && $membership != 'institucional' ) { ?>
+		if ( $membership == 'personal' ) { ?>
 
 			<p><?php _e('Use this form if you wish to sign up for a Personal membership.', 'mro-cit-frontend'); ?>
 			</p>
 
-		<?php } else { ?>
+		<?php } elseif ( $membership == 'empresarial' || $membership == 'institucional' ) { ?>
 
-			<p>Utilice este formulario si desea inscribirse como Afiliado <?php echo ucfirst( $membership ); ?>. <strong>Estaremos en contacto para coordinar el pago y finalizar la afiliación.</strong>
+			<p>dUtilice este formulario si desea inscribirse como Afiliado <?php echo ucfirst( $membership ); ?>. <strong>Estaremos en contacto para coordinar el pago y finalizar la afiliación.</strong>
 			</p>
 
 		<?php } ?>
@@ -74,7 +84,7 @@ function pippin_registration_form_fields($membership = 'personal' ) {
 		pippin_show_error_messages();
 		?>
 
-		<form id="pippin_registration_form" class="pippin_form" action="" method="POST">
+		<form id="mro_cit_registration_form" class="pippin_form" action="" method="POST">
 			<fieldset class="register-main-info">
 				<p>
 					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
