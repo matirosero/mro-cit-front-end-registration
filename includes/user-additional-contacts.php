@@ -65,9 +65,6 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
     $user_id = get_current_user_id();
 
 
-
-    //if is_user_logged_in() && (current_user_can( 'add_contacts' ) || (IS LEDA AND THERE IS USERNAME VARIABLE) )
-
     // User is logged in and can add contacts
     if ( is_user_logged_in() && ( current_user_can( 'add_contacts' ) || current_user_can( 'manage_temp_subscribers' ) ) ) {
 
@@ -140,19 +137,20 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         ), $atts, 'cmb-frontend-form' );
 
         // Handle form saving (if form has been submitted)
-        $new_id = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
+        $previous_result = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
 
-        if ( $new_id ) {
+        if ( $previous_result ) {
 
-            if ( is_wp_error( $new_id ) ) {
+            if ( is_wp_error( $previous_result ) ) {
 
                 // If there was an error with the submission, add it to our ouput.
-                $output .= '<p class="callout alert error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' .  $new_id->get_error_message() . '</p>';
+                $output .= '<p class="callout alert error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' .  $previous_result->get_error_message() . '</p>';
 
             } else {
 
                 // Add notice of submission
-                $output .= '<p class="callout success">' . sprintf( __( 'Your contacts have been updated, %s.', 'mro-cit-frontend' ), esc_html( $name ) ) . '</p>';
+                $output .= '<p class="callout success">' . sprintf( __( 'Your contacts have been updated, %s.', 'mro-cit-frontend' ), esc_html( $name ) ) . '</p>'.
+                $previous_result;
             }
 
         }
@@ -182,8 +180,10 @@ add_shortcode( 'cit-manage-contacts', 'mro_cit_frontend_manage_contacts_form_sho
  * @return mixed            New post ID if successful
  */
 function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array() ) {
-    // write_log('handle running');
-    // var_dump($post_data);
+
+    $result = '';
+
+
     // If no form submission, bail
     if ( empty( $_POST ) ) {
         return false;
@@ -227,11 +227,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
 
         if ( isset( $contact['email'] ) ) {
-            
+
             $email = sanitize_email( $contact['email'] );
 
             //why this?
-            
+
             $contact['email'] = $email;
 
             if(!is_email($email)) {
@@ -263,6 +263,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 // Send to mailchimp function
                 $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
 
+                $result .= $subscribe;
+
 
                 // // New code:
                 // Compare this email to the original contacts and remove if it matches
@@ -289,7 +291,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
         foreach ($original_contacts as $key => $remove_contact) {
 
             $remove_email = $remove_contact['email'];
-            mro_cit_unsubscribe_email( $remove_email );
+            $result .= mro_cit_unsubscribe_email( $remove_email );
         }
     }
 
@@ -301,11 +303,15 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
     // write_log('additonal contacts form submitted');
 
-    $new_submission_id = update_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', $post_data['additional_contacts'] );
+    write_log('RESULT '.$result);
+
+    if ( update_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', $post_data['additional_contacts'] ) ) {
+        return $result;
+    }
 
 
 
-    return $new_submission_id;
+    
 
 
 }

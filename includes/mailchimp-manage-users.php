@@ -109,7 +109,7 @@ function mro_cit_subscribe_email($email, $merge_fields, $status = 'subscribed') 
 		if ( $response['response']['code'] == 200 && $body->status == $status ) {
 
 			if ( $status == 'subscribed' ) {
-				return '<p class="callout success">El correo '.$email.' ha sido suscrito.</p>';
+				return '<p class="callout success">El correo '.$email.' ha sido suscrito/actualizado.</p>';
 			} elseif ( $status == 'pending' ) {
 				return '<p class="callout success">El correo '.$email.'  ha sido añadido, y el sistema está a la espera de su confirmación.</p>';
 			} elseif ( $status == 'unsubscribed' ) {

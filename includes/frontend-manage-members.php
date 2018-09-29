@@ -338,11 +338,11 @@ add_action("wp_ajax_cit_edit_main_contact", "cit_edit_main_contact");
 // add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
 function cit_edit_main_contact() {
 
-	write_log('edit main contact function triggered');
-	write_log('username '.$_REQUEST['username']);
-	write_log('nonce '.$_REQUEST['nonce']);
-	write_log('firstname '.$_REQUEST['firstname']);
-	write_log('lastname '.$_REQUEST['lastname']);
+	// write_log('edit main contact function triggered');
+	// write_log('username '.$_REQUEST['username']);
+	// write_log('nonce '.$_REQUEST['nonce']);
+	// write_log('firstname '.$_REQUEST['firstname']);
+	// write_log('lastname '.$_REQUEST['lastname']);
 
 	if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-edit-contact-nonce') ) {
 
