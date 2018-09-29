@@ -17,13 +17,12 @@ function mro_cit_frontend_contacts_form() {
         'id'          => $prefix . 'additional_contacts',
         'type'        => 'group',
         'description' => __( 'Agregue los contactos de personas en la organización a quienes quiere suscribir al boletín informativo. A estos contactos les llegarán invitaciones a eventos, pero no les llegarán las notificaciones administrativas (cambios de contraseña, etc).', 'mro-cit-frontend' ),
-        'repeatable'  => true, // use false if you want non-repeatable group
+        'repeatable'  => true, 
         'options'     => array(
-            'group_title'   => __( 'Contact {#}', 'mro-cit-frontend' ), // since version 1.1.4, {#} gets replaced by row number
+            'group_title'   => __( 'Contact {#}', 'mro-cit-frontend' ), 
             'add_button'    => __( 'Add Another Contact', 'mro-cit-frontend' ),
             'remove_button' => __( 'Remove Contact', 'mro-cit-frontend' ),
             'sortable'      => true, // beta
-            // 'closed'     => true, // true to have the groups closed by default
         ),
     ) );
 
@@ -32,19 +31,16 @@ function mro_cit_frontend_contacts_form() {
         'name' => __( 'Contact name', 'mro-cit-frontend' ),
         'id'   => 'name',
         'type' => 'text',
-        // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
     ) );
     $cmb->add_group_field( $group_contacts, array(
         'name' => __( 'Contact last name', 'mro-cit-frontend' ),
         'id'   => 'lastname',
         'type' => 'text',
-        // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
     ) );
     $cmb->add_group_field( $group_contacts, array(
         'name' => __( 'Contact email', 'mro-cit-frontend' ),
         'id'   => 'email',
         'type' => 'text_email',
-        // 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
     ) );
 
 }
@@ -115,9 +111,6 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
         }
 
-
-
-
         // Get CMB2 metabox object
         $cmb = cmb2_get_metabox( $metabox_id, $object_id );
 
@@ -139,6 +132,8 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
         // Handle form saving (if form has been submitted)
         $previous_result = wds_handle_frontend_new_post_form_submission( $cmb, $atts );
 
+
+        // If there is a previous submission
         if ( $previous_result ) {
 
             if ( is_wp_error( $previous_result ) ) {
@@ -148,11 +143,10 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
             } else {
 
-                // Add notice of submission
+                // Add results of previous submisseion
                 $output .= '<p class="callout success">' . sprintf( __( 'Your contacts have been updated, %s.', 'mro-cit-frontend' ), esc_html( $name ) ) . '</p>'.
                 $previous_result;
             }
-
         }
 
         // Get our form
@@ -160,9 +154,7 @@ function mro_cit_frontend_manage_contacts_form_shortcode( $atts = array() ) {
 
     // User is not logged in or can't add contacts
     } else {
-
         $output = '<p class="callout warning">' . __('Your account doesn\'t have permission to see this page.', 'mro-cit-frontend') . '</p>';
-
     }
 
     return $output;
@@ -180,9 +172,6 @@ add_shortcode( 'cit-manage-contacts', 'mro_cit_frontend_manage_contacts_form_sho
  * @return mixed            New post ID if successful
  */
 function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array() ) {
-
-    $result = '';
-
 
     // If no form submission, bail
     if ( empty( $_POST ) ) {
@@ -207,7 +196,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
         return new WP_Error( 'no_permission', __( 'Your account doesn\'t have permission to do this.', 'mro-cit-frontend' ) );
     }
 
-    // write_log('User passed checks');
+    // Variable to store results
+    $result = '';
 
     // Array with original contacts to check against
     $original_contacts = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
@@ -236,14 +226,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
             if(!is_email($email)) {
                 return new WP_Error( 'invalid_email', __( 'Invalid email.' ) );
-                // write_log('Not a valid email.');
             }
 
 
-            //Check if current user is pending
+            // If member is not pending, prepare array to send email to Mailchimp
             if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
-
-                // write_log('user is not pending, prepare data to add '.$contact['email'].' to mailchimp');
 
                 $mc_merge_fields  = array();
                 $mc_merge_fields['AFILIADO'] = $post_data['membership'];
@@ -260,33 +247,25 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 }
 
 
-                // Send to mailchimp function
-                $subscribe = mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
+                // Subscribe email to mailchimp
+                $result .= mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
 
-                $result .= $subscribe;
-
-
-                // // New code:
-                // Compare this email to the original contacts and remove if it matches
+                // Compare this email to the original contacts array and remove if it matches
                 foreach ($original_contacts as $old_key => $old_contact) {
 
                     if ( $old_contact['email'] == $email ) {
                         unset( $original_contacts[$old_key] );
                     }
                 }
-
             }
 
         } else {
             return new WP_Error( 'missing_email', __( 'All contacts must have an email.' ) );
-            // write_log('No email :(');
         }
-
     }
 
+    // If member is not pending, unsubscribe the leftovers from Mailchimp
     if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
-        //Now unsubscrive the leftovers from Mailchimp
-        // write_log('user is not pending, get ready to UNsubscribe contacts to MC');
 
         foreach ($original_contacts as $key => $remove_contact) {
 
@@ -296,22 +275,11 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     }
 
 
-
     $post_data['additional_contacts'] = $additional_contacts;
 
-    // var_dump($post_data); //*
 
-    // write_log('additonal contacts form submitted');
-
-    write_log('RESULT '.$result);
-
+    // Update meta with additional members, if true, return results
     if ( update_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', $post_data['additional_contacts'] ) ) {
         return $result;
     }
-
-
-
-    
-
-
 }
