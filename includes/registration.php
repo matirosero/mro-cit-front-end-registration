@@ -87,7 +87,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 		pippin_show_error_messages();
 		?>
 
-		<form id="mro_cit_registration_form" class="pippin_form" action="" method="POST">
+		<form id="mro_cit_registration_form" class="pippin_form<?php if ( $membership == 'choose' ) { echo ' form-toggle-field-visibility'; } ?>" action="" method="POST">
 
 
 			<?php
@@ -217,6 +217,10 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<span id="password-strength"></span>
 
+
+			</fieldset>
+
+			<fieldset class="submit-button">
 				<p>
 					<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
@@ -229,10 +233,16 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } ?>
 
-					<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>" />
+					<?php
+					if ( current_user_can( 'manage_temp_subscribers' ) ) { ?>
+						<input type="submit" class="button button-primary" value="<?php _e('Add member', 'mro-cit-frontend'); ?>" />
+					<?php } else { ?>
+						<input type="submit" class="button button-primary" value="<?php _e('Become a member', 'mro-cit-frontend'); ?>" />
+					<?php } ?>
 
 				</p>
 			</fieldset>
+
 		</form>
 	<?php
 	return ob_get_clean();
