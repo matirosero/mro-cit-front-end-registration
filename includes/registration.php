@@ -87,7 +87,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 		pippin_show_error_messages();
 		?>
 
-		<form id="mro_cit_registration_form" class="pippin_form<?php if ( $membership == 'choose' ) { echo ' form-toggle-field-visibility'; } ?>" action="" method="POST">
+		<form id="mro_cit_registration_form" class="pippin_form" action="" method="POST">
 
 
 			<?php
@@ -122,7 +122,13 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				if ( $membership != 'personal' ) { ?>
-					<p class="form-show-for-enterprise">
+
+					<?php if ( $membership == 'choose' ) { ?>
+						<p data-showfor="enterprise" aria-hidden="true">
+					<?php } else { ?>
+						<p>
+					<?php } ?>
+
 						<label for="mro_cit_user_nickname"><?php echo ucfirst ( $entity ); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 						<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
 					</p>
@@ -165,7 +171,13 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				if ( $membership != 'personal' ) { ?>
-					<p class="form-show-for-enterprise">
+					
+					<?php if ( $membership == 'choose' ) { ?>
+						<p data-showfor="enterprise" aria-hidden="true">
+					<?php } else { ?>
+						<p>
+					<?php } ?>
+
 			            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="" size="25" />
 			        </p>
@@ -175,11 +187,22 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 				// If personal, occupation and company info
 				if ( $membership != 'empresarial' && $membership != 'institucional' ) { ?>
 
-					<p class="form-show-for-personal">
+					<?php if ( $membership == 'choose' ) { ?>
+						<p data-showfor="personal" aria-hidden="true">
+					<?php } else { ?>
+						<p>
+					<?php } ?>
+
 			            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
 			        </p>
-			    	<p class="form-show-for-personal">
+
+					<?php if ( $membership == 'choose' ) { ?>
+						<p data-showfor="personal" aria-hidden="true">
+					<?php } else { ?>
+						<p>
+					<?php } ?>
+
 			            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
 			                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
 			        </p>
@@ -512,7 +535,7 @@ function pippin_add_new_member() {
 				}
 
 				//If new user (not logged in), log in and redirect
-				if( !is_user_logged_in() {
+				if( !is_user_logged_in() ) {
 					// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
 					wp_set_auth_cookie( $new_user_id, true);
 
