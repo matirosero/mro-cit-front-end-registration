@@ -97,13 +97,13 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 					<legend><?php _e('Choose Membership type', 'mro-cit-frontend'); ?><span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></legend>
 
 
-					<input type="radio" name="mro_cit_user_membership" value="afiliado_personal" id="choose_personal" checked required><label for="choose_personal" checked>Personal</label>
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_personal" id="choose_personal" data-toggle="personal" checked required><label for="choose_personal" checked>Personal</label>
 
-					<input type="radio" name="mro_cit_user_membership" value="afiliado_empresarial" id="choose_empresarial"><label for="formBlue">Empresarial</label>
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_empresarial" id="choose_empresarial" data-toggle="enterprise"><label for="formBlue">Empresarial</label>
 
-					<input type="radio" name="mro_cit_user_membership" value="afiliado_institucional" id="choose_institucional"><label for="choose_institucional">Institucional</label>
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_institucional" id="choose_institucional" data-toggle="enterprise"><label for="choose_institucional">Institucional</label>
 
-					<input type="radio" name="mro_cit_user_membership" value="junta_directiva" id="choose_junta"><label for="choose_junta">Junta directiva</label>
+					<input type="radio" name="mro_cit_user_membership" value="junta_directiva" id="choose_junta" data-toggle="junta"><label for="choose_junta">Junta directiva</label>
 				</fieldset>
 
 			<?php } ?>
@@ -136,7 +136,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				// Set labels for email and name according to type of membership
-				if ( $membership != 'personal' ) {
+				if ( $membership == 'empresarial' || $membership == 'institucional' ) {
 					$first_label = __('Representative\'s First Name', 'mro-cit-frontend');
 					$last_label = __('Representative\'s  Last Name', 'mro-cit-frontend');
 					$email_label = __('Representative\'s  Email', 'mro-cit-frontend');
@@ -188,7 +188,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 				if ( $membership != 'empresarial' && $membership != 'institucional' ) { ?>
 
 					<?php if ( $membership == 'choose' ) { ?>
-						<p data-showfor="personal" aria-hidden="true">
+						<p data-showfor="personal" aria-hidden="false">
 					<?php } else { ?>
 						<p>
 					<?php } ?>
@@ -198,7 +198,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 			        </p>
 
 					<?php if ( $membership == 'choose' ) { ?>
-						<p data-showfor="personal" aria-hidden="true">
+						<p data-showfor="personal" aria-hidden="false">
 					<?php } else { ?>
 						<p>
 					<?php } ?>
