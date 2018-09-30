@@ -59,6 +59,8 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 		$entity = 'empresa';
 	} elseif ( $membership == 'institucional' ) {
 		$entity = 'institución';
+	} elseif ( $membership == 'choose' ) {
+		$entity = 'empresa o institución';
 	}
 
 
@@ -67,6 +69,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 	?>
 
 		<?php
+		// Show messages to new users to make sure they are on the correct form
 		if ( $membership == 'personal' ) { ?>
 
 			<p><?php _e('Use this form if you wish to sign up for a Personal membership.', 'mro-cit-frontend'); ?>
@@ -74,7 +77,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 		<?php } elseif ( $membership == 'empresarial' || $membership == 'institucional' ) { ?>
 
-			<p>dUtilice este formulario si desea inscribirse como Afiliado <?php echo ucfirst( $membership ); ?>. <strong>Estaremos en contacto para coordinar el pago y finalizar la afiliación.</strong>
+			<p>Utilice este formulario si desea inscribirse como Afiliado <?php echo ucfirst( $membership ); ?>. <strong>Estaremos en contacto para coordinar el pago y finalizar la afiliación.</strong>
 			</p>
 
 		<?php } ?>
@@ -85,6 +88,28 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 		?>
 
 		<form id="mro_cit_registration_form" class="pippin_form" action="" method="POST">
+
+
+			<?php
+			if ( $membership == 'choose' ) { ?>
+
+				<fieldset class="choose_membership">
+					<legend><?php _e('Choose Membership type', 'mro-cit-frontend'); ?><span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></legend>
+
+
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_personal" id="choose_personal" checked required><label for="choose_personal" checked>Personal</label>
+
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_empresarial" id="choose_empresarial"><label for="formBlue">Empresarial</label>
+
+					<input type="radio" name="mro_cit_user_membership" value="afiliado_institucional" id="choose_institucional"><label for="choose_institucional">Institucional</label>
+
+					<input type="radio" name="mro_cit_user_membership" value="junta_directiva" id="choose_junta"><label for="choose_junta">Junta directiva</label>
+				</fieldset>
+
+			<?php } ?>
+
+
+
 			<fieldset class="register-main-info">
 				<p>
 					<label for="pippin_user_Login"><?php _e('Username', 'mro-cit-frontend'); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
@@ -96,8 +121,8 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 				</p>
 
 				<?php
-				if ( $membership == 'empresarial' || $membership == 'institucional' ) { ?>
-					<p>
+				if ( $membership != 'personal' ) { ?>
+					<p class="form-show-for-enterprise">
 						<label for="mro_cit_user_nickname"><?php echo ucfirst ( $entity ); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
 						<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
 					</p>
@@ -105,7 +130,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				// Set labels for email and name according to type of membership
-				if ( $membership == 'empresarial' || $membership == 'institucional' ) {
+				if ( $membership != 'personal' ) {
 					$first_label = __('Representative\'s First Name', 'mro-cit-frontend');
 					$last_label = __('Representative\'s  Last Name', 'mro-cit-frontend');
 					$email_label = __('Representative\'s  Email', 'mro-cit-frontend');
@@ -120,7 +145,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_email" id="pippin_user_email" class="required" type="email"/>
 				</p>
 				<?php
-				if ( $membership == 'empresarial' || $membership == 'institucional' ) { ?>
+				if ( $membership != 'personal' ) { ?>
 					<p class="help-text">Este email será el utilizado para administrar la cuenta en el sitio (al que se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
 				<?php } ?>
 
@@ -133,30 +158,14 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 					<input name="pippin_user_last" id="pippin_user_last" type="text"/>
 				</p>
 
-
-
-				<?php
-				// If empresarial, secondary contact details
-				if ( $membership == 'empresarial' || $membership == 'institucional'  ) { ?>
-
-					</fieldset>
-
-					<fieldset class="register-business-information">
-
-
-				<?php } ?>
-
-
-
-
 				<p>
 		            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 	                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
 		        </p>
 
 				<?php
-				if ( $membership == 'empresarial' || $membership == 'institucional' ) { ?>
-					<p>
+				if ( $membership != 'personal' ) { ?>
+					<p class="form-show-for-enterprise">
 			            <label for="mro_cit_user_sector"><?php _e( 'Business sector', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_sector" id="mro_cit_user_sector" class="input" value="" size="25" />
 			        </p>
@@ -166,11 +175,11 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 				// If personal, occupation and company info
 				if ( $membership != 'empresarial' && $membership != 'institucional' ) { ?>
 
-					<p>
+					<p class="form-show-for-personal">
 			            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
 			        </p>
-			    	<p>
+			    	<p class="form-show-for-personal">
 			            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
 			                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
 			        </p>
@@ -216,7 +225,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_empresarial_pendiente"/>
 					<?php } elseif ( $membership == 'institucional' ) { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_institucional_pendiente"/>
-					<?php } else { ?>
+					<?php } elseif ( $membership == 'personal' )  { ?>
 						<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
 					<?php } ?>
 
