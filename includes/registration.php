@@ -340,7 +340,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
-			
+
 			if ( $subscribe_mailchimp == true ) {
 				$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
 			}
@@ -351,7 +351,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
 			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
 			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
-			
+
 			if ( $subscribe_mailchimp == true ) {
 				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
 			}
@@ -361,7 +361,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
 			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
-			
+
 			if ( $subscribe_mailchimp == true ) {
 				$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
 			}
@@ -371,7 +371,7 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
-			
+
 			if ( $subscribe_mailchimp == true ) {
 				$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 			}
@@ -447,7 +447,7 @@ function pippin_add_new_member() {
 					// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from nickname)');
 				}
 				// write_log('Sanitized company nick is'.$user_display_name);
-				
+
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
 
@@ -516,15 +516,19 @@ function pippin_add_new_member() {
 
 				}
 
+				//If new user (not logged in), log in and redirect
+				if( !is_user_logged_in() {
+					// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
+					wp_set_auth_cookie( $new_user_id, true);
 
-				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
-				wp_set_auth_cookie( $new_user_id, true);
+					wp_set_current_user($new_user_id, $user_login);
+					do_action('wp_login', $user_login);
 
-				wp_set_current_user($new_user_id, $user_login);
-				do_action('wp_login', $user_login);
+				}
 
 				// send the newly created user to the home page after logging them in
 				wp_redirect( get_edit_user_link() . "?registration=complete" ); exit;
+
 			}
 
 		}
