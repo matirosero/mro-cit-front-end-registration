@@ -250,7 +250,9 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 
 
-// register a new user
+/*
+ * Handle register form
+ */
 function pippin_add_new_member() {
   	if (isset( $_POST["pippin_user_login"] ) && isset( $_POST['pippin_register_nonce'] ) && wp_verify_nonce($_POST['pippin_register_nonce'], 'pippin-register-nonce')) {
 
@@ -258,6 +260,7 @@ function pippin_add_new_member() {
   		//Array to hold meta values
   		$updated_meta = array();
   		$mc_merge_fields  = array();
+  		$subscribe_mailchimp = false;
 
 
 		// Process username
@@ -308,24 +311,28 @@ function pippin_add_new_member() {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
 	    	// write_log('Sanitized membership type: '.$mro_cit_user_membership );
 
-	    	if ( $mro_cit_user_membership == 'afiliado_empresarial') {
-	    		$mro_cit_user_membership = 'afiliado_empresarial_pendiente';
-	    		// write_log('Had to change membership to pending');
+
+	    	// Set subscribe variable true according to membership (if not pending)
+	    	if ( $mro_cit_user_membership == 'afiliado_personal' || $mro_cit_user_membership == 'afiliado_empresarial' || $mro_cit_user_membership == 'afiliado_institucional' || $mro_cit_user_membership == 'junta_directiva' ) {
+
+	    		$subscribe_mailchimp = true;
+	    		write_log('Change subscribe variable to TRUE');
 	    	}
 
-	    	if ( $mro_cit_user_membership == 'afiliado_institucional') {
-	    		$mro_cit_user_membership = 'afiliado_institucional_pendiente';
-	    		// write_log('Had to change membership to pending');
+	    	// Add appropriate merge fields for membership type
+	    	// Pending enterprise are NOT subscribed
+	    	if ( $subscribe_mailchimp == true ) {
+		    	if ( $mro_cit_user_membership == 'afiliado_personal' ) {
+		    		$mc_merge_fields['AFILIADO'] = 'Personal';
+		    	} elseif ( $mro_cit_user_membership == 'afiliado_empresarial' ) {
+		    		$mc_merge_fields['AFILIADO'] = 'Empresarial';
+		    	} elseif ( $mro_cit_user_membership == 'afiliado_institucional' ) {
+		    		$mc_merge_fields['AFILIADO'] = 'Institucional';
+		    	} elseif ( $mro_cit_user_membership == 'junta_directiva' ) {
+		    		$mc_merge_fields['AFILIADO'] = 'CIT';
+		    	}
+		    	// write_log('MERGE FIELD: afiliado: '.$mc_merge_fields['AFILIADO']);
 	    	}
-
-	    	if ( $mro_cit_user_membership == 'afiliado_personal' ) {
-	    		$mc_merge_fields['AFILIADO'] = 'Personal';
-	    	} elseif ( $mro_cit_user_membership == 'afiliado_empresarial_pendiente' ) {
-	    		$mc_merge_fields['AFILIADO'] = 'Empresarial';
-	    	} elseif ( $mro_cit_user_membership == 'afiliado_institucional_pendiente' ) {
-	    		$mc_merge_fields['AFILIADO'] = 'Institucional';
-	    	}
-	    	// write_log('MERGE FIELD: afiliado: '.$mc_merge_fields['AFILIADO']);
 	    }
 
 
@@ -333,7 +340,10 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
 			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
-			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+			
+			if ( $subscribe_mailchimp == true ) {
+				$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+			}
 			// write_log('4. Phone is '.$mro_cit_user_phone);
 			// write_log('MERGE FIELD: phone: '.$mc_merge_fields['PHONE']);
 		}
@@ -341,21 +351,30 @@ function pippin_add_new_member() {
 		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
 			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
 			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
-			$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+			
+			if ( $subscribe_mailchimp == true ) {
+				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+			}
 			// write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
 		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
 			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
 			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
-			$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+			
+			if ( $subscribe_mailchimp == true ) {
+				$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+			}
 			// write_log('5. Occupation is '.$mro_cit_user_occupation);
 		}
 
 		if ( isset( $_POST["mro_cit_user_company"] ) ) {
 			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
 			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
-			$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
+			
+			if ( $subscribe_mailchimp == true ) {
+				$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
+			}
 			// write_log('6. COmpany is '.$mro_cit_user_company);
 			// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from custom field)');
 		}
@@ -371,7 +390,10 @@ function pippin_add_new_member() {
 	    } else {
 	    	$mro_cit_user_country = sanitize_meta( 'mro_cit_user_country', $mro_cit_user_country, 'user' );
 	    	$updated_meta['mro_cit_user_country'] = $mro_cit_user_country;
-	    	$mc_merge_fields['PAIS'] = $mro_cit_user_country;
+
+	    	if ( $subscribe_mailchimp == true ) {
+		    	$mc_merge_fields['PAIS'] = $mro_cit_user_country;
+		    }
 	    	// write_log('Sanitized country is '.$mro_cit_user_country);
 	    	// write_log('MERGE FIELD: country: '.$mc_merge_fields['PAIS']);
 	    }
@@ -396,14 +418,18 @@ function pippin_add_new_member() {
 
 
 		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
-		$mc_merge_fields['FNAME'] = $user_first;
 		// write_log('10. First name is '.$user_first);
-		// write_log('MERGE FIELD: FNAME: '.$mc_merge_fields['FNAME']);
 
 		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
-		$mc_merge_fields['LNAME'] = $user_last;
 		// write_log('11. Last name is '.$user_last);
-		// write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
+
+		if ( $subscribe_mailchimp == true ) {
+			$mc_merge_fields['FNAME'] = $user_first;
+			// write_log('MERGE FIELD: FNAME: '.$mc_merge_fields['FNAME']);
+
+			$mc_merge_fields['LNAME'] = $user_last;
+			// write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
+		}
 
 
 		if ( $mro_cit_user_membership != 'afiliado_personal' ) {
@@ -415,9 +441,13 @@ function pippin_add_new_member() {
 			} else {
 				$user_nickname 	= sanitize_text_field( $_POST["mro_cit_user_nickname"] );
 				$user_display_name 	= $user_nickname;
-				$mc_merge_fields['EMPRESA'] = $user_nickname;
+
+				if ( $subscribe_mailchimp == true ) {
+					$mc_merge_fields['EMPRESA'] = $user_nickname;
+					// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from nickname)');
+				}
 				// write_log('Sanitized company nick is'.$user_display_name);
-				// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from nickname)');
+				
 			}
 		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
 
@@ -438,41 +468,9 @@ function pippin_add_new_member() {
 			}
 		}
 
-		// CC email
-		if ( isset( $_POST["mro_cit_user_secondary_email"] ) ) {
-			$mro_cit_user_secondary_email = sanitize_email( $_POST["mro_cit_user_secondary_email"] );
-			if(!is_email($user_email)) {
-				//invalid email
-				pippin_errors()->add('email_invalid', __('Invalid secondary email', 'mro-cit-frontend'));
-				// write_log('Email error: Invalid secondary email');
-			} else {
-				$updated_meta['mro_cit_user_secondary_email'] = $mro_cit_user_secondary_email;
-				// write_log('12. Secondary email is '.$mro_cit_user_secondary_email);
 
-				$mc_merge_fields_cc = $mc_merge_fields;
-				unset($mc_merge_fields_cc['FNAME']);
-				unset($mc_merge_fields_cc['LNAME']);
-			}
-		}
 
-		if ( isset( $_POST["mro_cit_user_secondary_first"] ) ) {
-			$mro_cit_user_secondary_first = sanitize_text_field( $_POST["mro_cit_user_secondary_first"] );
-			$updated_meta['mro_cit_user_secondary_first'] = $mro_cit_user_secondary_first;
 
-			if ( $mc_merge_fields_cc ) {
-				$mc_merge_fields_cc['FNAME'] = $mro_cit_user_secondary_first;
-			}
-			// write_log('13. Secondary name is '.$mro_cit_user_secondary_first);
-		}
-		if ( isset( $_POST["mro_cit_user_secondary_last"] ) ) {
-			$mro_cit_user_secondary_last = sanitize_text_field( $_POST["mro_cit_user_secondary_last"] );
-			$updated_meta['mro_cit_user_secondary_last'] = $mro_cit_user_secondary_last;
-			// write_log('14. Secondary lastname is '.$mro_cit_user_secondary_last);
-
-			if ( $mc_merge_fields_cc ) {
-				$mc_merge_fields_cc['LNAME'] = $mro_cit_user_secondary_last;
-			}
-		}
 
 
 
@@ -508,7 +506,7 @@ function pippin_add_new_member() {
 
 
 				//Subscribe to mailchimp if it's a personal account
-				if ( $mro_cit_user_membership == 'afiliado_personal') :
+				if ( $subscribe_mailchimp == true ) {
 
 					$status = 'subscribed';
 
@@ -516,11 +514,7 @@ function pippin_add_new_member() {
 					// write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
 					mro_cit_subscribe_email($user_email, $mc_merge_fields, $status);
 
-					//CC to mailchimp
-					if ( $mc_merge_fields_cc ) {
-						mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc, $status);
-					}
-				endif;
+				}
 
 
 				// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
