@@ -472,11 +472,6 @@ function pippin_add_new_member() {
 
 
 
-
-
-
-
-
 		$errors = pippin_errors()->get_error_messages();
 
 		// only create the user in if there are no errors
@@ -530,9 +525,7 @@ function pippin_add_new_member() {
 				wp_redirect( get_edit_user_link() . "?registration=complete" ); exit;
 
 			}
-
 		}
-
 	}
 }
 add_action('init', 'pippin_add_new_member');
