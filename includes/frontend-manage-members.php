@@ -188,7 +188,7 @@ function cit_approve_member() {
 			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
 			if ( $approve === true ) {
-				write_log('Approve it!');
+				// write_log('Approve it!');
 
 				$status = 'subscribed';
 
@@ -229,33 +229,33 @@ function cit_approve_member() {
 				$user->set_role( $new_role );
 
 				// Send to mailchimp function
-				write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
-				write_log(implode($mc_merge_fields));
+				// write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$user->user_email);
+				// write_log(implode($mc_merge_fields));
 
 				$subscribe = mro_cit_subscribe_email($user->user_email, $mc_merge_fields, $status);
 				$result['message'] = $subscribe;
 
-				write_log('Result '.$subscribe);
+				// write_log('Result '.$subscribe);
 
 				//Get additionals and send to mailchimp
 				if (is_array($additional_contacts)) {
 
-					write_log('There are '.count($additional_contacts).' additional contacts.');
+					// write_log('There are '.count($additional_contacts).' additional contacts.');
 
-					write_log(implode($additional_contacts));
+					// write_log(implode($additional_contacts));
 
 					foreach ($additional_contacts as $contact) {
 						// write_log('Subscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
 						$mc_merge_fields['FNAME'] = $contact['name'];
 						$mc_merge_fields['LNAME'] = $contact['lastname'];
 
-						write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
-						write_log(implode($mc_merge_fields));
+						// write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
+						// write_log(implode($mc_merge_fields));
 
 						$subscribe = mro_cit_subscribe_email($contact['email'], $mc_merge_fields, $status);
 						$result['message'] .= $subscribe;
 
-						write_log('Result '.$subscribe);
+						// write_log('Result '.$subscribe);
 
 					}
 				}
@@ -297,7 +297,7 @@ function cit_approve_member() {
 				if (is_array($additional_contacts)) {
 
 					foreach ($additional_contacts as $contact) {
-						write_log('Unsubscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
+						// write_log('Unsubscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
 
 						$unsubscribe = mro_cit_unsubscribe_email( $contact['email'] );
 						$result['message'] .= $unsubscribe;
@@ -346,7 +346,7 @@ function cit_edit_main_contact() {
 
 	if ( is_user_logged_in() && current_user_can( 'manage_temp_subscribers' ) && isset( $_REQUEST['nonce'] ) && wp_verify_nonce($_REQUEST['nonce'], 'cit-edit-contact-nonce') ) {
 
-		write_log('check passed');
+		// write_log('check passed');
 
 		$username = sanitize_user( $_REQUEST['username'] );
 
@@ -392,7 +392,7 @@ function cit_edit_main_contact() {
 			$user_data = wp_update_user( $updated_info );
 
 			if ( $user_data == $id ) {
-				write_log('User updated');
+				// write_log('User updated');
 
 				$updated_user = get_user_by('login',$username);
 
@@ -414,7 +414,7 @@ function cit_edit_main_contact() {
 				//Send to mailchimp only if not pending
 				if ( members_user_has_role( $id, 'afiliado_empresarial' ) || members_user_has_role( $id, 'afiliado_institucional' ) ) :
 
-					write_log('Update Mailchimp');
+					// write_log('Update Mailchimp');
 
 					$status = 'subscribed';
 
@@ -450,7 +450,7 @@ function cit_edit_main_contact() {
 
 
 			} else {
-				write_log('User NOT updated');
+				// write_log('User NOT updated');
 
 				$result['type'] = 'error';
 				$result['message'] = '<p class="callout alert">No se actualizó el usuario.</p>';

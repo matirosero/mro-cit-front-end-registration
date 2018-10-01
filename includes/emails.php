@@ -177,10 +177,10 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
 
-		if (  in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
+		if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
 
-			$message .= sprintf(__('Pronto nos pondremos en contacto para finalizar el proceso de afiliación. Mientras tanto, está cuenta está en estado "Pendiente": puede ingresar al sitio y descargar informes de investigación. En cuanto finalice la afiliación, también será posible tramitar sus reservas a nuestros eventos. ')) . "\r\n\r\n";
+			$message .= sprintf(__('Pronto nos pondremos en contacto para finalizar el proceso de afiliación. Mientras tanto, esta cuenta está en estado "Pendiente": puede ingresar al sitio, descargar informes de investigación y añadir contactos adicionales. En cuanto finalice la afiliación, también será posible tramitar sus reservas a nuestros eventos. ')) . "\r\n\r\n";
 
 			$message .= sprintf(__('Puede usar estas credenciales para ingresar al sitio:')) . "\r\n";
 			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
@@ -291,9 +291,27 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 /*
  * Email user on role change
  */
-function mro_cit_user_role_update( $user_id, $role ) {
-    write_log('role changed');
-    write_log('new '.$role);
+function mro_cit_user_role_update( $user_id, $role, $old_roles ) {
+    // write_log('role changed');
+    // write_log('new '.$role);
+
+    // if ($old_roles) {
+    // 	write_log('there are old roles');
+    // } else {
+    // 	write_log('no old roles');
+    // }
+
+    // foreach ($old_roles as $old) {
+    //     if ( is_array($old) ) {
+    //     	write_log('$old_roles as $old = ARRAY');
+    //     	foreach ($old as $value) {
+    //     		write_log('old role: '.$value);
+    //     	}
+    //     } else {
+    //     	write_log('old role (string): '.$old);
+    //     }
+    // }
+
 
     // write_log('old '.$old_roles);
     if ( $role == 'afiliado_empresarial' || $role == 'afiliado_institucional' ) {
@@ -312,8 +330,7 @@ function mro_cit_user_role_update( $user_id, $role ) {
         wp_mail($to, $subject, $message);
     }
 }
-add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 2);
-
+add_action( 'set_user_role', 'mro_cit_user_role_update', 10, 3);
 
 
 
