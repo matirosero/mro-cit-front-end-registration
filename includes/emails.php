@@ -39,6 +39,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		if ( 'user' !== $notify ) {
 			$switched_locale = switch_to_locale( get_locale() );
 
+
 			// Admin email is Afiliado Empresarial
 			if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 
@@ -75,8 +76,81 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 				//Fix
 				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->first_name, $user->last_name ) . "\r\n\r\n";
 
-				
 
+
+
+				$recipient = array(
+					get_option( 'admin_email' ),
+					'gekidasa+admincit@gmail.com',
+				);
+
+
+			// Admin email is Afiliado Personal
+			} elseif ( in_array( 'afiliado_empresarial', $user_roles) || in_array( 'afiliado_institucional', $user_roles) ) {
+
+				if ( in_array( 'afiliado_empresarial', $user_roles) ) {
+					$membership = 'afiliación empresarial';
+					$member_type = 'Afiliado Empresarial';
+					$entity = 'Empresa';
+				} elseif ( in_array( 'afiliado_institucional', $user_roles) ) {
+					$membership = 'afiliación institucional';
+					$member_type = 'Afiliado Institucional';
+					$entity = 'Institución';
+				}
+
+
+				$subject = 'Nuevo ' . $membership . ' al Club de Investigación Tecnológica';
+
+				$message  = sprintf( __( 'Se ha registrado un nuevo %s al Club.' ), $member_type ) . "\r\n\r\n";
+
+				/* translators: %s: user login */
+				$message .= sprintf( __( 'Usuario: %s' ), $user->user_login ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'Empresa/Institución: %s' ), $user->nickname ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'Industria: %s' ), $user->mro_cit_user_sector ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'País: %s' ), $user->mro_cit_user_country ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'Teléfono: %s' ), $user->mro_cit_user_phone ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'CONTACTO PRINCIPAL' ) ) . "\r\n";
+
+				$message .= sprintf( __( 'Email: %s' ), $user->user_email ) . "\r\n";
+
+				//Fix
+				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->first_name, $user->last_name ) . "\r\n\r\n";
+
+
+
+
+				$recipient = array(
+					get_option( 'admin_email' ),
+					'gekidasa+admincit@gmail.com',
+				);
+
+
+			// Admin email is Afiliado Personal
+			} elseif ( in_array( 'afiliado_personal', $user_roles) ) {
+
+				$subject = 'Nuevo afiliado personal al  Club de Investigación Tecnológica';
+
+				/* translators: %s: site title */
+				$message  = sprintf( __( 'Se ha registrado un nuevo afiliado en %s:' ), $blogname ) . "\r\n\r\n";
+
+				/* translators: %s: user login */
+				$message .= sprintf( __( 'Usuario: %s' ), $user->user_login ) . "\r\n\r\n";
+				/* translators: %s: user email address */
+				$message .= sprintf( __( 'Email: %s' ), $user->user_email ) . "\r\n";
+				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->first_name, $user->last_name ) . "\r\n\r\n";
+
+				$message .= sprintf( __( 'Teléfono: %s' ), $user->mro_cit_user_phone ) . "\r\n";
+
+				$message .= sprintf( __( 'País: %s' ), $user->mro_cit_user_country ) . "\r\n";
+
+				$message .= sprintf( __( 'Ocupación: %s' ), $user->mro_cit_user_occupation ) . "\r\n";
+
+				$message .= sprintf( __( 'Empresa: %s' ), $user->mro_cit_user_company ) . "\r\n";
 
 				$recipient = array(
 					get_option( 'admin_email' ),
@@ -85,7 +159,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 			// Admin email is Afiliado Personal
 			} else {
-				$subject = 'Nuevo afiliado personal al  Club de Investigación Tecnológica';
+
+				$subject = 'Nuevo afiliado al Club de Investigación Tecnológica';
 
 				/* translators: %s: site title */
 				$message  = sprintf( __( 'Se ha registrado un nuevo afiliado en %s:' ), $blogname ) . "\r\n\r\n";
@@ -174,6 +249,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
 
+		// Email to PENDING
 		if ( in_array( 'afiliado_empresarial_pendiente', $user_roles) || in_array( 'afiliado_institucional_pendiente', $user_roles) ) {
 			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
 
@@ -191,6 +267,47 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 				$user->mro_cit_user_secondary_email
 			);
 
+
+		// Email to ENTERPRISE
+		} elseif ( in_array( 'afiliado_empresarial', $user_roles) || in_array( 'afiliado_institucional', $user_roles) ) {
+
+			$message = sprintf(__('¡Nos da gran placer dar la bienvenida a %s al Club de Investigación Tecnológica!'), $user->nickname) . "\r\n\r\n";
+
+			$message .= sprintf(__('A partir de ahora, usted recibirá las invitaciones a los eventos del Club en esta dirección. Puede confirmar su asistencia a los eventos del Club en nuestro sitio web usando sus credenciales. Para evitar que nuestros correos caigan en spam, favor de añadir nuestro correo, info@clubdeinvestigacion.com, a su lista de contactos. ')) . "\r\n\r\n";
+
+			$message .= sprintf(__('Al ingresar al sitio, también puede descargar informes de investigación y añadir contactos adicionales si desea que alguien más reciba las invitaciones.')) . "\r\n\r\n";
+
+			$message .= sprintf(__('Sus credenciales para ingresar al sitio:')) . "\r\n";
+			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
+			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
+
+			$message .= sprintf(__('Si aún no ha escogido contraseña: %s'), $rp_link) . "\r\n\r\n";
+
+
+			$to = array(
+				$user->user_email,
+				$user->mro_cit_user_secondary_email
+			);
+
+
+		//Email to Junta
+		} elseif ( in_array( 'junta_directiva', $user_roles) ) {
+			/* translators: %s: user login */
+			$message = '¡Bienvenido al sitio del Club de Investigación Tecnológica, ' . $user->first_name . '!' . "\r\n\r\n";
+
+			$message .= 'A continuación, encontrará información importante sobre su cuenta.' . "\r\n\r\n";
+
+			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
+			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
+
+			$message .= sprintf(__('Si aún no ha escogido contraseña, visite la siguiente dirección: %s'), $rp_link) . "\r\n\r\n";
+
+			$message .= 'Puede usar estas credenciales para ingresar al sitio y descargar los informes de investigación o confirmar su asistencia a los eventos del Club.' . "\r\n\r\n";
+
+			$to = $user->user_email;
+
+
+		// TO personal
 		} else {
 			/* translators: %s: user login */
 			$message = '¡Bienvenido al Club de Investigación Tecnológica, ' . $user->first_name . '!' . "\r\n\r\n";
@@ -200,7 +317,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
 			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
 
-			$message .= sprintf(__('Si aún no ha escogido contraseña: %s'), $rp_link) . "\r\n\r\n";
+			$message .= sprintf(__('Si aún no ha escogido contraseña, visite la siguiente dirección: %s'), $rp_link) . "\r\n\r\n";
 
 			$message .= 'Puede usar estas credenciales para ingresar al sitio y descargar los informes de investigación o adquirir entradas a los eventos del Club.' . "\r\n\r\n";
 
@@ -321,7 +438,6 @@ function mro_cit_user_role_update( $user_id, $role, $old_roles ) {
         $subject = "Su afiliación al Club de Investigación Tecnológica ha sido procesada";
         $message = "Hola " .$user_info->display_name . ",\r\n\r\n";
         $message .= "¡Su afiliación al Club de Investigación Tecnológica ha sido procesada con éxito! A partir de ahora podrá reservar espacios en los eventos del Club sin costo alguno; simplemente debe accesar la página del evento, ingresar a su cuenta y llenar el formulario correspondiente.\r\n\r\n";
-        $message .= "Igualmente, puede descargar los informes de investigación del Club.\r\n\r\n";
         $message .= "Saludos cordiales,\r\n";
         $message .= "Club de Investigación Tecnológica";
         wp_mail($to, $subject, $message);
