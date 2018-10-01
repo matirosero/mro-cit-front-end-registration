@@ -202,6 +202,9 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     // Array with original contacts to check against
     $original_contacts = get_user_meta( $post_data['user_id'], 'mro_cit_user_additional_contacts', true );
 
+    $user = get_userdata( $post_data['user_id'] );
+    $user_login =$user->user_login;
+
     // Fetch sanitized values
     $sanitized_values = $cmb->get_sanitized_values( $_POST );
 
@@ -238,6 +241,8 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 $mc_merge_fields['SECTOR'] = $post_data['sector'];
                 $mc_merge_fields['EMPRESA'] = $post_data['company'];
                 $mc_merge_fields['PHONE'] = $post_data['phone'];
+                
+                $mc_merge_fields['USERNAME'] = $user_login;
 
                 if ( !empty( $contact['name'] ) ) {
                     $mc_merge_fields['FNAME'] = $contact['name'];
@@ -247,8 +252,12 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
                 }
 
 
+                // write_log('MERGE FIELDS: '.implode(",",$mc_merge_fields));
+
+
                 // Subscribe email to mailchimp
                 $result .= mro_cit_subscribe_email( $contact['email'], $mc_merge_fields, $status );
+
 
                 // Compare this email to the original contacts array and remove if it matches
                 foreach ($original_contacts as $old_key => $old_contact) {
@@ -267,7 +276,7 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     // If member is not pending, unsubscribe the leftovers from Mailchimp
     if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
 
-        foreach ($original_contacts as $key => $remove_contact) {
+        foreach ($original_contacts as $remove_contact) {
 
             $remove_email = $remove_contact['email'];
             $result .= mro_cit_unsubscribe_email( $remove_email );

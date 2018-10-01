@@ -269,6 +269,9 @@ function mro_edit_member() {
   		$updated_meta = array();
   		$mc_merge_fields  = array();
 
+  		$mc_merge_fields['USERNAME'] = $current_user->user_login;
+  		// write_log('USERNAME is '.$mc_merge_fields['USERNAME']);
+
 
 		if ( !empty( $_POST["pippin_user_email"] ) ) {
 			$user_email = sanitize_email( $_POST["pippin_user_email"] );
@@ -377,7 +380,7 @@ function mro_edit_member() {
 				$user_display_name 	= $user_first;
 				// write_log('Diplay name is '.$user_display_name).' (Should be name)';
 			} else {
-				$user_display_name 	= $user_login;
+				$user_display_name 	= $current_user->user_login;
 				// write_log('Diplay name is '.$user_display_name).' (Should be username)';
 			}
 
@@ -487,15 +490,15 @@ function mro_edit_member() {
 
 
 				//Update CC in Mailchimp
-				if ( isset( $mc_merge_fields_cc ) ) {
-					mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc, $status);
+				// if ( isset( $mc_merge_fields_cc ) ) {
+				// 	mro_cit_subscribe_email($mro_cit_user_secondary_email, $mc_merge_fields_cc, $status);
 
-					if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
-						// write_log('New CC: email is '.$user_email);
-						// write_log('CC: Email is different, so trigger unsubscribe function for CC:');
-						mro_cit_unsubscribe_email( $old_secondary_email );
-					}
-				}
+				// 	if ( $mro_cit_user_secondary_email != $old_secondary_email ) {
+				// 		// write_log('New CC: email is '.$user_email);
+				// 		// write_log('CC: Email is different, so trigger unsubscribe function for CC:');
+				// 		mro_cit_unsubscribe_email( $old_secondary_email );
+				// 	}
+				// }
 
 			endif;
 

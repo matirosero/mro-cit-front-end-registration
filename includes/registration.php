@@ -354,7 +354,12 @@ function pippin_add_new_member() {
 		    	} elseif ( $mro_cit_user_membership == 'junta_directiva' ) {
 		    		$mc_merge_fields['AFILIADO'] = 'CIT';
 		    	}
+
+
 		    	// write_log('MERGE FIELD: afiliado: '.$mc_merge_fields['AFILIADO']);
+
+		    	$mc_merge_fields['USERNAME'] = $user_login;
+		    	// write_log('mergefield USERNAME: '.$user_login);
 	    	}
 	    }
 

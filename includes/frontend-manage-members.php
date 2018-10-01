@@ -187,6 +187,7 @@ function cit_approve_member() {
 
 			$additional_contacts = get_user_meta( $user->ID, 'mro_cit_user_additional_contacts', true );
 
+
 			if ( $approve === true ) {
 				// write_log('Approve it!');
 
@@ -200,6 +201,7 @@ function cit_approve_member() {
 				$mc_merge_fields['FNAME'] = $user->user_firstname;
 				$mc_merge_fields['LNAME'] = $user->user_lastname;
 				$mc_merge_fields['EMPRESA'] = $user->nickname;
+				$mc_merge_fields['USERNAME'] = $username;
 
 				//Check which role
 				if ( members_user_has_role( $user->ID, 'afiliado_institucional_pendiente' ) ) {
@@ -222,7 +224,7 @@ function cit_approve_member() {
 
 				}
 
-				// write_log('Ready to approve '.implode($mc_merge_fields));
+				// write_log('Ready to approve new member: '.implode($mc_merge_fields));
 
 				//Change role
 				$user->remove_role( $old_role );
@@ -235,7 +237,7 @@ function cit_approve_member() {
 				$subscribe = mro_cit_subscribe_email($user->user_email, $mc_merge_fields, $status);
 				$result['message'] = $subscribe;
 
-				// write_log('Result '.$subscribe);
+				// write_log('Result for main contact: '.$subscribe);
 
 				//Get additionals and send to mailchimp
 				if (is_array($additional_contacts)) {
@@ -245,12 +247,19 @@ function cit_approve_member() {
 					// write_log(implode($additional_contacts));
 
 					foreach ($additional_contacts as $contact) {
-						// write_log('Subscribing additional '.$contact['name'].' '.$contact['lastname'].' '.$contact['email']);
-						$mc_merge_fields['FNAME'] = $contact['name'];
-						$mc_merge_fields['LNAME'] = $contact['lastname'];
+
+						if ( isset( $contact['name'] ) ) {
+							$mc_merge_fields['FNAME'] = $contact['name'];
+							// write_log('contact name exists: '.$contact['name']);
+						}
+						if ( isset( $contact['lastname'] ) ) {
+							$mc_merge_fields['LNAME'] = $contact['lastname'];
+							// write_log('contact lastname exists: '.$contact['lastname']);
+						}
+						
 
 						// write_log('About to subscribe '.$mc_merge_fields['FNAME'].' '.$mc_merge_fields['LNAME'].' '.$contact['email']);
-						// write_log(implode($mc_merge_fields));
+						// write_log('will also subscribe: '.implode($mc_merge_fields));
 
 						$subscribe = mro_cit_subscribe_email($contact['email'], $mc_merge_fields, $status);
 						$result['message'] .= $subscribe;
@@ -378,6 +387,7 @@ function cit_edit_main_contact() {
 			$phone = $user->mro_cit_user_phone;
 			$country = $user->mro_cit_user_country;
 			$sector = $user->mro_cit_user_sector;
+			// $user_login =$user->display_name;
 
 			$updated_info = array(
 	  			'ID' => $user->ID,
@@ -432,6 +442,7 @@ function cit_edit_main_contact() {
 						'PAIS' => $country,
 						'SECTOR' => $sector,
 						'AFILIADO' => $type,
+						'USERNAME' => $username,
 					);
 
 					// Send to mailchimp function
@@ -490,7 +501,6 @@ function cit_edit_main_contact() {
 
 add_action("wp_ajax_cit_mc_delete_member", "cit_mc_delete_member");
 // add_action("wp_ajax_nopriv_cit_mc_unsubscribe", "cit_mc_unsubscribe");
-
 function cit_mc_delete_member() {
 
 	// $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
