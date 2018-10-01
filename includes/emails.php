@@ -75,12 +75,7 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 				//Fix
 				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->first_name, $user->last_name ) . "\r\n\r\n";
 
-				$message .= sprintf( __( 'CC' ) ) . "\r\n";
-
-				$message .= sprintf( __( 'Email: %s' ), $user->mro_cit_user_secondary_email ) . "\r\n";
-
-				//Fix
-				$message .= sprintf( __( 'Nombre: %1$s %2$s' ), $user->mro_cit_user_secondary_first, $user->mro_cit_user_secondary_last ) . "\r\n";
+				
 
 
 				$recipient = array(
@@ -109,8 +104,10 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 				$message .= sprintf( __( 'Empresa: %s' ), $user->mro_cit_user_company ) . "\r\n";
 
-				$recipient = get_option( 'admin_email' );
-				$recipient = get_option( 'gekidasa+admincit@gmail.com' );
+				$recipient = array(
+					get_option( 'admin_email' ),
+					'gekidasa+admincit@gmail.com',
+				);
 			}
 
 
