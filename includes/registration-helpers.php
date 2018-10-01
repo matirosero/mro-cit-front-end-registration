@@ -20,6 +20,7 @@ function mro_cit_validate_membership( $value ) {
     'afiliado_empresarial_pendiente',
     'afiliado_institucional',
     'afiliado_institucional_pendiente',
+    'junta_directiva',
  	);
  	if ( mro_cit_validate_from_array($value, $valid_values) ) {
  		return true;
@@ -43,6 +44,7 @@ function sanitize_membership( $value ) {
     'afiliado_empresarial_pendiente',
     'afiliado_institucional',
     'afiliado_institucional_pendiente',
+    'junta_directiva'
   );
 
   if( ! in_array( $value, $valid_values ) ) {

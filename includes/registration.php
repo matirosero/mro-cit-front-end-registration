@@ -152,7 +152,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 				</p>
 				<?php
 				if ( $membership != 'personal' ) { ?>
-					<p class="help-text">Este email será el utilizado para administrar la cuenta en el sitio (al que se enviarán notificaciones o enlaces para re-establecer la contraseña).</p>
+					<p class="help-text">Este correo será utilizado para administrar la cuenta: notificaciones, cambios de contraseña, etc. Además será suscrito a nuestra lista de correos para recibir las invitaciones a nuestros eventos.</p>
 				<?php } ?>
 
 				<p>
@@ -171,7 +171,7 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 				<?php
 				if ( $membership != 'personal' ) { ?>
-					
+
 					<?php if ( $membership == 'choose' ) { ?>
 						<p data-showfor="enterprise" aria-hidden="true">
 					<?php } else { ?>
@@ -339,7 +339,7 @@ function pippin_add_new_member() {
 	    	if ( $mro_cit_user_membership == 'afiliado_personal' || $mro_cit_user_membership == 'afiliado_empresarial' || $mro_cit_user_membership == 'afiliado_institucional' || $mro_cit_user_membership == 'junta_directiva' ) {
 
 	    		$subscribe_mailchimp = true;
-	    		write_log('Change subscribe variable to TRUE');
+	    		// write_log('Change subscribe variable to TRUE');
 	    	}
 
 	    	// Add appropriate merge fields for membership type
@@ -455,8 +455,9 @@ function pippin_add_new_member() {
 		}
 
 
-		if ( $mro_cit_user_membership != 'afiliado_personal' ) {
-			// write_log('11.5 EMPRESARIAL/INSTITUCIONAL IS CHOSEN');
+		if ( $mro_cit_user_membership != 'afiliado_personal' && $mro_cit_user_membership != 'junta_directiva' ) {
+
+			// write_log('11.5 EMPRESARIAL/INSTITUCIONAL IS CHOSEN: '.$mro_cit_user_membership);
 
 			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
 				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
@@ -472,9 +473,9 @@ function pippin_add_new_member() {
 				// write_log('Sanitized company nick is'.$user_display_name);
 
 			}
-		} elseif ( $mro_cit_user_membership == 'afiliado_personal' ) {
+		} elseif ( $mro_cit_user_membership == 'afiliado_personal' || $mro_cit_user_membership == 'junta_directiva' ) {
 
-			// write_log('11.5 PERSONAL IS CHOSEN');
+			// write_log('11.5 PERSONAL OR JUNTA IS CHOSEN: '.$mro_cit_user_membership);
 
 			$user_nickname 	= '';
 			// write_log('Personal nick is '.$user_nickname. ' (should be blank');
@@ -536,17 +537,25 @@ function pippin_add_new_member() {
 
 				//If new user (not logged in), log in and redirect
 				if( !is_user_logged_in() ) {
+
+					// write_log('User is not logged in, so log in');
+
 					// https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
 					wp_set_auth_cookie( $new_user_id, true);
 
 					wp_set_current_user($new_user_id, $user_login);
 					do_action('wp_login', $user_login);
 
+					// send the newly created user to the home page after logging them in
+					// write_log('Redirect to '.get_edit_user_link() . "?registration=complete");
+
+					wp_redirect( get_edit_user_link() . "?registration=complete" ); exit;
+
+				} else {
+					// write_log( 'Redirect to ' . get_permalink( get_page_by_path( 'administrar-afiliados' ) ) );
+
+					wp_redirect( get_permalink( get_page_by_path( 'administrar-afiliados' ) ) ); exit;
 				}
-
-				// send the newly created user to the home page after logging them in
-				wp_redirect( get_edit_user_link() . "?registration=complete" ); exit;
-
 			}
 		}
 	}

@@ -20,6 +20,14 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 		global $wpdb, $wp_hasher, $wp_roles;
 		$user = get_userdata( $user_id );
 
+		$adt_rp_key = get_password_reset_key( $user );
+		$user_login = $user->user_login;
+
+		// $login_url =
+
+	    $rp_link = wp_login_url()."?action=rp&key=$adt_rp_key&login=" . rawurlencode($user_login);
+
+
 		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 		// we want to reverse this for the plain text arena of emails.
 		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
@@ -178,6 +186,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
 			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
 
+			$message .= sprintf(__('Si aún no ha escogido contraseña: %s'), $rp_link) . "\r\n\r\n";
+
 
 			$to = array(
 				$user->user_email,
@@ -192,6 +202,8 @@ if ( !function_exists( 'wp_new_user_notification' ) ) {
 
 			$message .= sprintf(__('Usuario: %s'), $user->user_login) . "\r\n";
 			$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n\r\n";
+
+			$message .= sprintf(__('Si aún no ha escogido contraseña: %s'), $rp_link) . "\r\n\r\n";
 
 			$message .= 'Puede usar estas credenciales para ingresar al sitio y descargar los informes de investigación o adquirir entradas a los eventos del Club.' . "\r\n\r\n";
 
