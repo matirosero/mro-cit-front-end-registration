@@ -141,7 +141,7 @@ function mro_cit_build_members_list($role) {
 
 		foreach ($users as $key => $user) {
 
-			if ( !is_enterprise_role($role) ) {
+			if ( is_enterprise_role($role) ) {
 				// $edit_nonce = wp_create_nonce('cit-edit-member-nonce');
 				$edit_link = get_permalink( get_page_by_title( 'Añadir contactos adicionales' ) ).'?username='. $user->user_login;
 
