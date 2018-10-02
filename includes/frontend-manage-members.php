@@ -1,5 +1,11 @@
 <?php
 
+function is_enterprise_role($role) {
+	if ( $role == 'enterprise' || $role == 'afiliado_empresarial' || $role == 'afiliado_empresarial_pendiente' || $role == 'afiliado_institucional' || $role == 'afiliado_institucional_pendiente' ) {
+		return true;
+	}
+}
+
 /*
  * Manage premium members from frontend
  * For club admins
@@ -10,7 +16,7 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 	global $current_user, $wp_roles;
 
 	extract( shortcode_atts( array(
-		'afiliado' => ''
+		'role' => 'enterprise'
 	), $atts ) );
 
 	$output = '';
@@ -23,9 +29,11 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 			// write_log('frontend messages: '.mro_cit_frontend_messages());
 		}
 
-		if ( mro_cit_build_premium_members_list() ) {
+		if ( mro_cit_build_members_list($role) ) {
+			
+
 			$output .= '<div class="members-table" id="premium-members-table">';
-			$output .= mro_cit_build_premium_members_list();
+			$output .= mro_cit_build_members_list($role);
 			$output .= '</div>';
 
 			$output .= '<div class="reveal" id="edit-contact" data-reveal>
@@ -53,13 +61,17 @@ function mro_cit_manage_members_shortcode($atts, $content = null ) {
 				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-delete-member" data-action="cit_remove_member" href="#">Sí, eliminarlo</a></p>
 				</div>';
 
-			$output .= '<div class="reveal text-center" id="confirm-approve-member" data-reveal>
-				<button class="close-button" data-close aria-label="Close modal" type="button">
-					<i class="icon-cancel"></i>
-				</button>
-				<p class="confirm-ask"></p>
-				<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#"></a></p>
-				</div>';
+			// If enterprise
+			if ( is_enterprise_role($role) ) {
+
+				$output .= '<div class="reveal text-center" id="confirm-approve-member" data-reveal>
+					<button class="close-button" data-close aria-label="Close modal" type="button">
+						<i class="icon-cancel"></i>
+					</button>
+					<p class="confirm-ask"></p>
+					<p><a href="#" class="button secondary" data-close>Cancelar</a> <a class="button confirm-approve-member" data-action="cit_approve_member" href="#"></a></p>
+					</div>';
+			} 
 
 		}
 
@@ -75,37 +87,67 @@ add_shortcode('cit-manage-members', 'mro_cit_manage_members_shortcode');
 
 
 // Build the actual list (table format)
-function mro_cit_build_premium_members_list() {
+function mro_cit_build_members_list($role) {
 	$output = '';
 
-	$users = get_users( array(
-		'role__in' => array(
-			'afiliado_empresarial',
-			'afiliado_empresarial_pendiente',
-			'afiliado_institucional',
-			'afiliado_institucional_pendiente',
-		),
-	) );
+	// $output .= $role;
+
+	$valid_values = array(
+	    'afiliado_personal',
+	    'afiliado_empresarial',
+	    'afiliado_empresarial_pendiente',
+	    'afiliado_institucional',
+	    'afiliado_institucional_pendiente',
+	    'junta_directiva',
+ 	);
+
+	if ( $role == 'enterprise' ) {
+		$args = array(
+			'role__in' => array(
+				'afiliado_empresarial',
+				'afiliado_empresarial_pendiente',
+				'afiliado_institucional',
+				'afiliado_institucional_pendiente',
+			),
+		);
+	} elseif ( in_array( $role, $valid_values ) ) {
+		$args = array(
+			'role' => $role,
+		);
+	}
+
+	$users = get_users( $args );
 
 	if ( count( $users ) > 0 ) {
-		$output .= '<h3>Empresariales/Institucionales</h3>
-				<table>
-					<tr>
-						<th>Tipo</th>
-						<th>Nombre</th>
-						<th>Contacto</th>
-						<th>Emails adicionales</th>
-						<th>Estado</th>
-						<th>Borrar</th>
-					</tr>';
+		$output .= '<table>
+			<tr>';
+				// Enterprise only: member type column
+				if ( $role == 'enterprise' ) {
+					$output .= '<th>Tipo</th>';
+				}
+
+				// If enterprise
+				if ( !is_enterprise_role($role) ) {
+					$output .= '<th>Nombre y correo</th>';
+				} else {
+					$output .= '<th>Nombre</th>
+					<th>Contacto</th>
+					<th>Emails adicionales</th>
+					<th>Estado</th>';
+				}
+
+				$output .= '<th>Borrar</th>
+			</tr>';
 
 		foreach ($users as $key => $user) {
 
-			// $edit_nonce = wp_create_nonce('cit-edit-member-nonce');
-			$edit_link = get_permalink( get_page_by_title( 'Añadir contactos adicionales' ) ).'?username='. $user->user_login;
+			if ( !is_enterprise_role($role) ) {
+				// $edit_nonce = wp_create_nonce('cit-edit-member-nonce');
+				$edit_link = get_permalink( get_page_by_title( 'Añadir contactos adicionales' ) ).'?username='. $user->user_login;
 
-			$approve_nonce = wp_create_nonce('cit-approve-member-nonce');
-			$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&username='. $user->user_login .'&nonce='.$approve_nonce);
+				$approve_nonce = wp_create_nonce('cit-approve-member-nonce');
+				$approve_link = admin_url('admin-ajax.php?action=cit_approve_member&username='. $user->user_login .'&nonce='.$approve_nonce);
+			}
 
 			$edit_contact_nonce = wp_create_nonce('cit-edit-contact-nonce');
 
@@ -118,9 +160,14 @@ function mro_cit_build_premium_members_list() {
 
 			$output .= '<tr id="member-information-'.$user->user_login.'">';
 
-			$output .= '<td>'.substr(mro_cit_premium_member_type( $user->ID ), 0, 1).'</td>';
+			// Enterprise only: member type column
+			if ( $role == 'enterprise' ) {
+				$output .= '<td>'.substr(mro_cit_premium_member_type( $user->ID ), 0, 1).'</td>';
+			}
 
-			$output .= '<td>'.esc_html( $user->nickname ).'</td>';
+			if ( is_enterprise_role($role) ) {
+				$output .= '<td>'.esc_html( $user->nickname ).'</td>';
+			}
 
 			$output .= '<td class="member-main-contact">';
 
@@ -130,18 +177,20 @@ function mro_cit_build_premium_members_list() {
 
 			$output .= '</td>';
 
-			$output .= '<td align="center"><a class="edit-member button" href="'.$edit_link.'" data-open="edit-member">Editar</a></td><td nowrap align="center">';
+			if ( is_enterprise_role($role) ) {
 
-			if ( mro_cit_member_is_pending( $user->ID ) ) {
-				$checked_status = '';
-			} else {
-				$checked_status = ' checked';
+				$output .= '<td align="center"><a class="edit-member button" href="'.$edit_link.'" data-open="edit-member">Editar</a></td><td nowrap align="center">';
+
+				if ( mro_cit_member_is_pending( $user->ID ) ) {
+					$checked_status = '';
+				} else {
+					$checked_status = ' checked';
+				}
+				$output .= '<input type="checkbox" name="user-is-approved" value="1" data-nonce="' . $approve_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" data-open="confirm-approve-member"' . $checked_status . '> Activo</td>';
 			}
-			$output .= '<input type="checkbox" name="user-is-approved" value="1" data-nonce="' . $approve_nonce . '" data-nickname="' . esc_html( $user->nickname ) . '" data-username="' . esc_html( $user->user_login ) . '" data-open="confirm-approve-member"' . $checked_status . '> Activo';
 
 
-			$output .= '</td>
-				<td align="center"><a class="delete-member" data-nonce="' . $delete_nonce . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
+			$output .= '<td align="center"><a class="delete-member" data-nonce="' . $delete_nonce . '" data-username="' . $user->user_login . '" data-nickname="' . esc_html( $user->nickname ) . '" href="#" data-open="confirm-delete-member"><i class="icon-cancel"></i></a></td>
 			</tr>';
 		}
 
