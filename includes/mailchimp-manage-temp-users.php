@@ -238,7 +238,7 @@ function mro_cit_mc_add_temp_member() {
 		$mc_merge_fields['AFILIADO'] = $type;
 		// write_log('MERGE FIELD: AFILIADO: '.$mc_merge_fields['AFILIADO']);
 
-		$mc_merge_fields['USERNAME'] = 'cortesia';
+		$mc_merge_fields['USERNAME'] = md5('cortesia');
 
 		$errors = pippin_errors()->get_error_messages();
 
