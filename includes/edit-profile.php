@@ -152,12 +152,12 @@ function mro_cit_edit_profile_form_fields() {
 					<?php } ?>
 
 					<p>
-						<label for="pippin_user_first"><?php echo $first_label; ?></label>
-						<input name="pippin_user_first" id="pippin_user_first" type="text" value="<?php echo $current_user->user_firstname; ?>" />
+						<label for="pippin_user_first"><?php echo $first_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+						<input name="pippin_user_first" class="required" id="pippin_user_first" type="text" value="<?php echo $current_user->user_firstname; ?>" />
 					</p>
 					<p>
-						<label for="pippin_user_last"><?php echo $last_label; ?></label>
-						<input name="pippin_user_last" id="pippin_user_last" type="text" value="<?php echo $current_user->user_lastname; ?>" />
+						<label for="pippin_user_last"><?php echo $last_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+						<input name="pippin_user_last" class="required" id="pippin_user_last" type="text" value="<?php echo $current_user->user_lastname; ?>" />
 					</p>
 
 
@@ -169,12 +169,12 @@ function mro_cit_edit_profile_form_fields() {
 
 						<fieldset class="edit-business-information">
 
-						<?php } ?>
+					<?php } ?>
 
 
 					<p>
-			            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
-		                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="<?php echo $current_user->mro_cit_user_phone; ?>" size="25" />
+			            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+		                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="required input" value="<?php echo $current_user->mro_cit_user_phone; ?>" size="25" />
 			        </p>
 
 					<?php
@@ -191,20 +191,20 @@ function mro_cit_edit_profile_form_fields() {
 					if ( members_current_user_has_role( 'afiliado_personal' ) || members_current_user_has_role( 'afiliado_especial' ) ) { ?>
 
 						<p>
-				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
-			                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
+				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+			                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="required input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
 				        </p>
 				    	<p>
-				            <label for="mro_cit_user_company"><?php _e( 'Lugar de trabajo o estudio', 'mro-cit-frontend' ) ?></label>
-				                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
+				            <label for="mro_cit_user_company"><?php _e( 'Lugar de trabajo o estudio', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="required input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
 				        </p>
 
 					<?php } ?>
 
 			        <p>
-			            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?><br />
+			            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span><br />
 
-		                <select class="cmb2_select" name="mro_cit_user_country" id="mro_cit_user_country">
+		                <select class="cmb2_select" class="required" name="mro_cit_user_country" id="mro_cit_user_country">
 
 		                    <option value="<?php echo $current_user->mro_cit_user_country; ?>" selected="selected" ><?php echo $current_user->mro_cit_user_country; ?></option>
 
@@ -241,12 +241,14 @@ function mro_cit_edit_profile_form_fields() {
 
 					<span id="password-strength"></span>
 
-					<p>
-						<input type="hidden" name="mro_edit_profile_nonce" value="<?php echo wp_create_nonce('mro-edit-profile-nonce'); ?>"/>
-						<input type="submit" class="button button-primary" value="<?php _e('Edit profile', 'mro-cit-frontend'); ?>"/>
-
-					</p>
+					
 				</fieldset>
+
+				<p>
+					<input type="hidden" name="mro_edit_profile_nonce" value="<?php echo wp_create_nonce('mro-edit-profile-nonce'); ?>"/>
+					<input type="submit" class="button button-primary" value="<?php _e('Edit profile', 'mro-cit-frontend'); ?>"/>
+				</p>
+				
 			</form>
 		<?php
 		return ob_get_clean();
@@ -289,14 +291,23 @@ function mro_edit_member() {
 
 
 		//Phone
-		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
+		if ( isset( $_POST["mro_cit_user_phone"] ) && sanitize_text_field( $_POST["mro_cit_user_phone"] ) != '' ) {
 			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+
+
 			$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+
+			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+			// $mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+
+			write_log('Phone ok');
 		} else {
-			$mro_cit_user_phone = '';
+
+			// empty phone
+			pippin_errors()->add('phone_empty', __('Please enter a phone number', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty phone');
 		}
-		$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
-		$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+		
 
 
 		// Country
@@ -322,35 +333,66 @@ function mro_edit_member() {
 		$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
 
 
-		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
-			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
-		} else {
-			$mro_cit_user_occupation = '';
+		
+		//Personal: occupation and workplace required
+		if ( members_current_user_has_role( 'afiliado_personal' ) || members_current_user_has_role( 'afiliado_especial' ) ) {
+
+
+
+			if ( isset( $_POST["mro_cit_user_occupation"] ) && sanitize_text_field( $_POST["mro_cit_user_occupation"] ) != '' ) {
+				$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+
+				$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
+				$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+
+				write_log('Occupation ok');
+			} else {
+				// $mro_cit_user_occupation = '';
+
+				pippin_errors()->add('occupation_empty', __('Please enter an occupation', 'mro-cit-frontend'));
+				write_log('LOGIN ERROR: Empty occupation');
+			}
+			
+
+
+			if ( isset( $_POST["mro_cit_user_company"] ) && sanitize_text_field( $_POST["mro_cit_user_company"] ) != NULL ) {
+				$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+
+				$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+				$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
+
+				write_log('Company ok');
+			} else {
+				// $mro_cit_user_company = '';
+
+				pippin_errors()->add('company_empty', __('Please enter a company or school', 'mro-cit-frontend'));
+				write_log('LOGIN ERROR: Empty company');
+			}
+			
+
 		}
-		$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
-		$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
-
-
-		if ( isset( $_POST["mro_cit_user_company"] ) ) {
-			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
-		} else {
-			$mro_cit_user_company = '';
-		}
-		$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
-		$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
 
 
 
-		if ( !empty( $_POST["pippin_user_first"] ) ) {
+
+
+
+		if ( !empty( $_POST["pippin_user_first"] ) && sanitize_text_field( $_POST["pippin_user_first"] ) != NULL ) {
 			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
 			$updated_info['first_name'] = $user_first;
 			$mc_merge_fields['FNAME'] = $user_first;
+		} else {
+			pippin_errors()->add('firstname_empty', __('Please enter a first name', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty first name');
 		}
 
-		if ( !empty( $_POST["pippin_user_last"] ) ) {
+		if ( !empty( $_POST["pippin_user_last"] ) && sanitize_text_field( $_POST["pippin_user_last"] ) != NULL ) {
 			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
 			$updated_info['last_name'] = $user_last;
 			$mc_merge_fields['LNAME'] = $user_last;
+		} else {
+			pippin_errors()->add('lastname_empty', __('Please enter a last name', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty last name');
 		}
 
 
