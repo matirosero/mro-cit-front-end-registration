@@ -195,7 +195,7 @@ function mro_cit_edit_profile_form_fields() {
 			                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
 				        </p>
 				    	<p>
-				            <label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
+				            <label for="mro_cit_user_company"><?php _e( 'Lugar de trabajo o estudio', 'mro-cit-frontend' ) ?></label>
 				                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
 				        </p>
 
