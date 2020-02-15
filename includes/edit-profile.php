@@ -326,13 +326,21 @@ function mro_edit_member() {
 		    }
 		}
 
-		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
-			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
-		} else {
-			$mro_cit_user_sector = '';
+
+		// Business sector
+		if ( $mro_cit_user_membership != 'afiliado_personal' && $mro_cit_user_membership != 'junta_directiva' && isset( $_POST["mro_cit_user_sector"] ) ) {
+
+			if ( !current_user_can( 'manage_temp_subscribers' ) && sanitize_text_field( $_POST["mro_cit_user_sector"] ) == null ) {
+
+				pippin_errors()->add( 'membership_error_sector', __( 'Please enter a business sector', 'mro-cit-frontend' ) );
+
+			} else {
+				$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
+				$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+			}
 		}
-		$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
-		$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+		
 
 
 		

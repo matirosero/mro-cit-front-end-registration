@@ -249,7 +249,7 @@ function pippin_add_new_member() {
 
 		if ( !empty( $_POST["pippin_user_first"] ) && sanitize_text_field( $_POST["pippin_user_first"] ) != NULL ) {
 
-			$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
+			$user_first = sanitize_text_field( $_POST["pippin_user_first"] );
 			// write_log('10. First name is '.$user_first);
 
 			if ( $subscribe_mailchimp == true ) {
@@ -267,7 +267,7 @@ function pippin_add_new_member() {
 
 		
 		if ( !empty( $_POST["pippin_user_last"] ) && sanitize_text_field( $_POST["pippin_user_last"] ) != NULL ) {
-			$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
+			$user_last = sanitize_text_field( $_POST["pippin_user_last"] );
 			// write_log('11. Last name is '.$user_last);
 
 			if ( $subscribe_mailchimp == true ) {
@@ -304,15 +304,24 @@ function pippin_add_new_member() {
 		}
 
 		
-		// Process sector
-		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
-			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
-			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+		// Process sector if enterprise
+		if ( $mro_cit_user_membership != 'afiliado_personal' && $mro_cit_user_membership != 'junta_directiva' && isset( $_POST["mro_cit_user_sector"] ) ) {
 
-			if ( $subscribe_mailchimp == true ) {
-				$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+			// No phone is error unless logged in
+			if ( !current_user_can( 'manage_temp_subscribers' ) && sanitize_text_field( $_POST["mro_cit_user_sector"] ) == null ) {
+
+				pippin_errors()->add( 'membership_error_sector', __( 'Please enter a business sector', 'mro-cit-frontend' ) );
+
+			} else {
+
+				$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
+				$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
+
+				if ( $subscribe_mailchimp == true ) {
+					$mc_merge_fields['SECTOR'] = $mro_cit_user_sector;
+				}
+				// write_log('5. Sector is '.$mro_cit_user_sector);				
 			}
-			// write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
 
