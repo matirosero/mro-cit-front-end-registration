@@ -3,7 +3,7 @@
 /*
  * registration form fields
  */
-function mro_cit_print_field( $field = null, $membership = 'personal' ) {
+function cit_print_field( $field = null, $membership = 'personal' ) {
 
 	if ( $field == null) {
 		return false;
@@ -74,7 +74,7 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 			<?php } ?>
 
 				<label for="mro_cit_user_nickname"><?php echo ucfirst ( $entity ); ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
-				<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text"/>
+				<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" class="required" type="text"/>
 			</p>
 			
 
@@ -99,8 +99,8 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 		case 'name_first': ?>
 
 			<p>
-				<label for="pippin_user_first"><?php echo $first_label; ?></label>
-				<input name="pippin_user_first" id="pippin_user_first" type="text"/>
+				<label for="pippin_user_first"><?php echo $first_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				<input name="pippin_user_first" id="pippin_user_first" class="required" type="text"/>
 			</p>
 
 			<?php
@@ -110,8 +110,8 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 		case 'name_last': ?>
 
 			<p>
-				<label for="pippin_user_last"><?php echo $last_label; ?></label>
-				<input name="pippin_user_last" id="pippin_user_last" type="text"/>
+				<label for="pippin_user_last"><?php echo $last_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				<input name="pippin_user_last" id="pippin_user_last" class="required" type="text"/>
 			</p>
 
 			<?php
@@ -121,8 +121,8 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 		case 'phone': ?>
 
 			<p>
-	            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
-                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input" value="" size="25" />
+	            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="input required" value="" size="25" />
 	        </p>
 
 	        <?php
@@ -154,8 +154,8 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 				<p>
 			<?php } ?>
 
-				<label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
-		                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="input" value="" size="25" />
+				<label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="required input" value="" size="25" />
 	        </p>
 
 	        <?php
@@ -170,8 +170,8 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 				<p>
 			<?php } ?>
 
-				<label for="mro_cit_user_company"><?php _e( 'Company', 'mro-cit-frontend' ) ?></label>
-			                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="input" value="" size="25" />
+				<label for="mro_cit_user_company"><?php _e( 'Company or educational institution', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="required input" value="" size="25" />
 			</p>
 
 			<?php
@@ -225,13 +225,15 @@ function mro_cit_print_field( $field = null, $membership = 'personal' ) {
 				<input type="hidden" name="pippin_register_nonce" value="<?php echo wp_create_nonce('pippin-register-nonce'); ?>"/>
 
 				<?php
-				if ( $membership == 'empresarial' ) { ?>
-					<input type="hidden" name="mro_cit_user_membership" value="afiliado_empresarial_pendiente"/>
-				<?php } elseif ( $membership == 'institucional' ) { ?>
-					<input type="hidden" name="mro_cit_user_membership" value="afiliado_institucional_pendiente"/>
-				<?php } elseif ( $membership == 'personal' )  { ?>
-					<input type="hidden" name="mro_cit_user_membership" value="afiliado_personal"/>
-				<?php } ?>
+				if ( $membership == 'empresarial' ) { 
+					$membership_type = 'afiliado_empresarial_pendiente';
+				} elseif ( $membership == 'institucional' ) { 
+					$membership_type = 'afiliado_institucional_pendiente';
+				} elseif ( $membership == 'personal' )  {  
+					$membership_type = 'afiliado_personal';
+				} ?>
+
+				<input type="hidden" name="mro_cit_user_membership" value="<?php echo $membership_type; ?>"/>
 
 				<?php
 				if ( current_user_can( 'manage_temp_subscribers' ) ) { ?>
