@@ -56,6 +56,10 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 
 	ob_start();
+
+	// echo '<pre>';
+	// var_dump($_POST);
+	// echo '</pre>';
 	?>
 
 		<?php
@@ -202,14 +206,14 @@ function pippin_add_new_member() {
 
 		// Process membership type
 		$mro_cit_user_membership = $_POST["mro_cit_user_membership"];
-		// write_log('3. Membership type: '.$mro_cit_user_membership);
+		write_log('3. Membership type: '.$mro_cit_user_membership);
 	    // Valid membership type
 	    if ( ! mro_cit_validate_membership( $mro_cit_user_membership ) ) {
             pippin_errors()->add( 'membership_error', __( 'Please enter a valid membership type.', 'mro-cit-frontend' ) );
             // write_log('Membership error: INVALID ACCORDING TO mro_cit_validate_membership()');
 	    } else {
 	    	$mro_cit_user_membership = sanitize_meta( 'mro_cit_user_membership', $mro_cit_user_membership, 'user' );
-	    	// write_log('Sanitized membership type: '.$mro_cit_user_membership );
+	    	write_log('Sanitized membership type: '.$mro_cit_user_membership );
 
 
 	    	// Set subscribe variable true according to membership (if not pending)
@@ -241,18 +245,64 @@ function pippin_add_new_member() {
 	    }
 
 
+		if ( !empty( $_POST["pippin_user_first"] ) && sanitize_text_field( $_POST["pippin_user_first"] ) != NULL ) {
 
-		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
-			$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
-			$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+			$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
+			// write_log('10. First name is '.$user_first);
 
 			if ( $subscribe_mailchimp == true ) {
-				$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+				$mc_merge_fields['FNAME'] = $user_first;
+				// write_log('MERGE FIELD: FNAME: '.$mc_merge_fields['FNAME']);
+
+				$mc_merge_fields['LNAME'] = $user_last;
+				// write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
 			}
-			// write_log('4. Phone is '.$mro_cit_user_phone);
-			// write_log('MERGE FIELD: phone: '.$mc_merge_fields['PHONE']);
+
+		} else {
+			pippin_errors()->add('firstname_empty', __('Please enter a first name', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty first name');
 		}
 
+		
+		if ( !empty( $_POST["pippin_user_last"] ) && sanitize_text_field( $_POST["pippin_user_last"] ) != NULL ) {
+			$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
+			// write_log('11. Last name is '.$user_last);
+
+			if ( $subscribe_mailchimp == true ) {
+
+				$mc_merge_fields['LNAME'] = $user_last;
+				// write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
+			}			
+		} else {
+			pippin_errors()->add('lastname_empty', __('Please enter a last name', 'mro-cit-frontend'));
+			write_log('LOGIN ERROR: Empty last name');
+		}
+
+
+
+	    // Process phone
+		if ( isset( $_POST["mro_cit_user_phone"] ) ) {
+
+			// No phone is error unless logged in
+			if ( !current_user_can( 'manage_temp_subscribers' ) && sanitize_text_field( $_POST["mro_cit_user_phone"] ) == null ) {
+
+				pippin_errors()->add( 'membership_error_phone', __( 'Please enter a phone number', 'mro-cit-frontend' ) );
+	            // write_log('Membership error: NO PHONE and is not being done by admin');
+			} else {
+
+				$mro_cit_user_phone = sanitize_text_field( $_POST["mro_cit_user_phone"] );
+				$updated_meta['mro_cit_user_phone'] = $mro_cit_user_phone;
+
+				if ( $subscribe_mailchimp == true ) {
+					$mc_merge_fields['PHONE'] = $mro_cit_user_phone;
+				}
+				write_log('4. Phone is '.$mro_cit_user_phone);
+				// write_log('MERGE FIELD: phone: '.$mc_merge_fields['PHONE']);				
+			}
+		}
+
+		
+		// Process sector
 		if ( isset( $_POST["mro_cit_user_sector"] ) ) {
 			$mro_cit_user_sector = sanitize_text_field( $_POST["mro_cit_user_sector"] );
 			$updated_meta['mro_cit_user_sector'] = $mro_cit_user_sector;
@@ -263,26 +313,43 @@ function pippin_add_new_member() {
 			// write_log('5. Sector is '.$mro_cit_user_sector);
 		}
 
-		if ( isset( $_POST["mro_cit_user_occupation"] ) ) {
-			$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
-			$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
 
-			if ( $subscribe_mailchimp == true ) {
-				$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+		// If personal, process occupation and company
+		if ( $mro_cit_user_membership == 'afiliado_personal' ) {
+
+			// Process occupation
+			if ( isset( $_POST["mro_cit_user_occupation"] ) && sanitize_text_field( $_POST["mro_cit_user_occupation"] ) != null ) {
+				$mro_cit_user_occupation = sanitize_text_field( $_POST["mro_cit_user_occupation"] );
+				$updated_meta['mro_cit_user_occupation'] = $mro_cit_user_occupation;
+
+				if ( $subscribe_mailchimp == true ) {
+					$mc_merge_fields['OCUPACION'] = $mro_cit_user_occupation;
+				}
+				// write_log('5. Occupation is '.$mro_cit_user_occupation);
+			} else {
+				pippin_errors()->add('occupation_empty', __('Please enter an occupation', 'mro-cit-frontend'));
+				write_log('ERROR: Empty occupation');				
 			}
-			// write_log('5. Occupation is '.$mro_cit_user_occupation);
+
+			
+			// Process company
+			if ( isset( $_POST["mro_cit_user_company"] ) && sanitize_text_field( $_POST["mro_cit_user_company"] ) != null ) {
+				$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
+				$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
+
+				if ( $subscribe_mailchimp == true ) {
+					$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
+				}
+				// write_log('6. COmpany is '.$mro_cit_user_company);
+				// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from custom field)');
+			} else {
+				pippin_errors()->add('company_empty', __('Please enter a company or school', 'mro-cit-frontend'));
+				write_log('LOGIN ERROR: Empty company');
+			}
+
 		}
 
-		if ( isset( $_POST["mro_cit_user_company"] ) ) {
-			$mro_cit_user_company = sanitize_text_field( $_POST["mro_cit_user_company"] );
-			$updated_meta['mro_cit_user_company'] = $mro_cit_user_company;
 
-			if ( $subscribe_mailchimp == true ) {
-				$mc_merge_fields['EMPRESA'] = $mro_cit_user_company;
-			}
-			// write_log('6. COmpany is '.$mro_cit_user_company);
-			// write_log('MERGE FIELD: EMPRESA: '.$mc_merge_fields['EMPRESA']. '(from custom field)');
-		}
 
 
 		//Process country
@@ -322,26 +389,14 @@ function pippin_add_new_member() {
 		}
 
 
-		$user_first 	= sanitize_text_field( $_POST["pippin_user_first"] );
-		// write_log('10. First name is '.$user_first);
 
-		$user_last	 	= sanitize_text_field( $_POST["pippin_user_last"] );
-		// write_log('11. Last name is '.$user_last);
-
-		if ( $subscribe_mailchimp == true ) {
-			$mc_merge_fields['FNAME'] = $user_first;
-			// write_log('MERGE FIELD: FNAME: '.$mc_merge_fields['FNAME']);
-
-			$mc_merge_fields['LNAME'] = $user_last;
-			// write_log('MERGE FIELD: LNAME: '.$mc_merge_fields['LNAME']);
-		}
 
 
 		if ( $mro_cit_user_membership != 'afiliado_personal' && $mro_cit_user_membership != 'junta_directiva' ) {
 
 			// write_log('11.5 EMPRESARIAL/INSTITUCIONAL IS CHOSEN: '.$mro_cit_user_membership);
 
-			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) ) {
+			if ( !isset( $_POST["mro_cit_user_nickname"] ) || empty( $_POST["mro_cit_user_nickname"] ) || sanitize_text_field( $_POST["mro_cit_user_nickname"] ) === NULL ) {
 				pippin_errors()->add( 'nickname_error', __( 'Please fill in your company\'s name.', 'mro-cit-frontend' ) );
 				// write_log('Nickname error: nickname not set');
 			} else {
@@ -365,12 +420,6 @@ function pippin_add_new_member() {
 			if ( $user_first != '' && $user_last != '' ) {
 				$user_display_name 	= $user_first.' '.$user_last;
 				// write_log('Diplay name is '.$user_display_name).' (Should be name lastname)';
-			} elseif ( $user_first != '' ) {
-				$user_display_name 	= $user_first;
-				// write_log('Diplay name is '.$user_display_name).' (Should be name)';
-			} else {
-				$user_display_name 	= $user_login;
-				// write_log('Diplay name is '.$user_display_name).' (Should be username)';
 			}
 		}
 

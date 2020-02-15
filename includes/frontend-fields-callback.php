@@ -231,9 +231,13 @@ function cit_print_field( $field = null, $membership = 'personal' ) {
 					$membership_type = 'afiliado_institucional_pendiente';
 				} elseif ( $membership == 'personal' )  {  
 					$membership_type = 'afiliado_personal';
-				} ?>
+				} 
 
-				<input type="hidden" name="mro_cit_user_membership" value="<?php echo $membership_type; ?>"/>
+				if ( $membership != 'choose' ) { ?>
+					<input type="hidden" name="mro_cit_user_membership" value="<?php echo $membership_type; ?>"/>
+				<?php } ?>
+
+				
 
 				<?php
 				if ( current_user_can( 'manage_temp_subscribers' ) ) { ?>
