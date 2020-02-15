@@ -208,15 +208,21 @@ function mro_cit_edit_profile_form_fields() {
 
 		                <select class="cmb2_select" class="required" name="mro_cit_user_country" id="mro_cit_user_country">
 
-		                    <option value="<?php echo $current_user->mro_cit_user_country; ?>" selected="selected" ><?php echo $current_user->mro_cit_user_country; ?></option>
+		                    <!-- <option value="<?php echo $current_user->mro_cit_user_country; ?>" selected="selected" ><?php echo $current_user->mro_cit_user_country; ?></option> -->
 
 		                    <?php
 		                    $countries = country_list();
 
 		                    foreach ($countries as $key => $country) {
-		                        echo '<option value="' . $key . '">' . $country . '</option>';
-		                    }
-		                    ?>
+		                        
+								if ( $country == $current_user->mro_cit_user_country ) {
+		                    		echo '<option value="' . $key . '"  selected="selected" >' . $country . '</option>';
+		                    	} else {
+		                    		echo '<option value="' . $key . '">' . $country . '</option>';
+		                    	}
+
+
+		                    } ?>
 
 		                </select>
 			             </label>
