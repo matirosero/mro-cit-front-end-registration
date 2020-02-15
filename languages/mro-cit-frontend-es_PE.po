@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CIT Front End Registration and Login\n"
-"POT-Creation-Date: 2020-02-15 01:01-0600\n"
-"PO-Revision-Date: 2020-02-15 01:06-0600\n"
+"POT-Creation-Date: 2020-02-15 16:24-0600\n"
+"PO-Revision-Date: 2020-02-15 16:25-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_PE\n"
@@ -38,123 +38,127 @@ msgstr "Afiliado desde"
 msgid "Edit your account"
 msgstr "Edite su cuenta"
 
-#: includes/edit-profile.php:118 includes/frontend-fields-callback.php:56
+#: includes/edit-profile.php:120 includes/frontend-fields-callback.php:56
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: includes/edit-profile.php:122
+#: includes/edit-profile.php:124
 msgid "Usernames can't be changed."
 msgstr "Los nombres de usuario no se pueden cambiar."
 
-#: includes/edit-profile.php:136 includes/frontend-fields-callback.php:24
+#: includes/edit-profile.php:138 includes/frontend-fields-callback.php:24
 msgid "Representative's First Name"
 msgstr "Nombre del representante"
 
-#: includes/edit-profile.php:137
+#: includes/edit-profile.php:139
 msgid "Representative's Last Name"
 msgstr "Apellidos del representante"
 
-#: includes/edit-profile.php:138
+#: includes/edit-profile.php:140
 msgid "Representative's Email"
 msgstr "Correo electrónico del representante"
 
-#: includes/edit-profile.php:140 includes/frontend-fields-callback.php:28
+#: includes/edit-profile.php:142 includes/frontend-fields-callback.php:28
 msgid "First Name"
 msgstr "Nombre"
 
-#: includes/edit-profile.php:141 includes/frontend-fields-callback.php:29
+#: includes/edit-profile.php:143 includes/frontend-fields-callback.php:29
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: includes/edit-profile.php:142 includes/frontend-fields-callback.php:30
+#: includes/edit-profile.php:144 includes/frontend-fields-callback.php:30
 #: includes/mailchimp-manage-temp-users.php:182
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: includes/edit-profile.php:176 includes/frontend-fields-callback.php:124
+#: includes/edit-profile.php:178 includes/frontend-fields-callback.php:124
 msgid "Phone"
 msgstr "Teléfono"
 
-#: includes/edit-profile.php:184 includes/frontend-fields-callback.php:140
+#: includes/edit-profile.php:186 includes/frontend-fields-callback.php:140
 msgid "Business sector"
 msgstr "Sector empresarial"
 
-#: includes/edit-profile.php:194 includes/frontend-fields-callback.php:157
+#: includes/edit-profile.php:196 includes/frontend-fields-callback.php:157
 msgid "Occupation"
 msgstr "Ocupación"
 
-#: includes/edit-profile.php:198
+#: includes/edit-profile.php:200
 msgid "Lugar de trabajo o estudio"
 msgstr ""
 
-#: includes/edit-profile.php:205 includes/frontend-fields-callback.php:184
+#: includes/edit-profile.php:207 includes/frontend-fields-callback.php:184
 msgid "Country"
 msgstr "País"
 
-#: includes/edit-profile.php:231 includes/edit-profile.php:234
+#: includes/edit-profile.php:233 includes/edit-profile.php:236
 msgid "New Password"
 msgstr "Nueva contraseña"
 
-#: includes/edit-profile.php:232
+#: includes/edit-profile.php:234
 msgid "Leave blank to keep password unchanged."
 msgstr "Deje en blanco para mantener la misma contraseña."
 
-#: includes/edit-profile.php:238
+#: includes/edit-profile.php:240
 msgid "New Password Again"
 msgstr "Repetir nueva contraseña"
 
-#: includes/edit-profile.php:249
+#: includes/edit-profile.php:251
 msgid "Edit profile"
 msgstr "Editar perfil"
 
-#: includes/edit-profile.php:283 includes/frontend-manage-members.php:421
+#: includes/edit-profile.php:285 includes/frontend-manage-members.php:421
 #: includes/mailchimp-manage-temp-users.php:129
-#: includes/mailchimp-manage-temp-users.php:225 includes/registration.php:197
+#: includes/mailchimp-manage-temp-users.php:225 includes/registration.php:199
 msgid "Invalid email"
 msgstr "Correo inválido"
 
-#: includes/edit-profile.php:286 includes/frontend-manage-members.php:424
-#: includes/registration.php:202
+#: includes/edit-profile.php:288 includes/frontend-manage-members.php:424
+#: includes/registration.php:204
 msgid "Email already registered"
 msgstr "Correo previamente registrado"
 
-#: includes/edit-profile.php:307 includes/registration.php:289
+#: includes/edit-profile.php:309 includes/registration.php:291
 msgid "Please enter a phone number"
 msgstr "Por favor, introduzca un número de teléfono"
 
-#: includes/edit-profile.php:319 includes/registration.php:360
+#: includes/edit-profile.php:321 includes/registration.php:371
 msgid "Please choose a valid country."
 msgstr "Por favor elija un país válido."
 
-#: includes/edit-profile.php:352 includes/registration.php:330
+#: includes/edit-profile.php:335 includes/registration.php:313
+msgid "Please enter a business sector"
+msgstr "Por favor, introduzca un sector empresarial"
+
+#: includes/edit-profile.php:362 includes/registration.php:341
 msgid "Please enter an occupation"
 msgstr "Por favor, introduzca una ocupación"
 
-#: includes/edit-profile.php:368 includes/registration.php:346
+#: includes/edit-profile.php:378 includes/registration.php:357
 msgid "Please enter a company or school"
 msgstr "Por favor, ingrese un lugar de trabajo o estudios"
 
-#: includes/edit-profile.php:385 includes/registration.php:262
+#: includes/edit-profile.php:395 includes/registration.php:264
 msgid "Please enter a first name"
 msgstr "Por favor, introduzca un nombre"
 
-#: includes/edit-profile.php:394 includes/registration.php:277
+#: includes/edit-profile.php:404 includes/registration.php:279
 msgid "Please enter a last name"
-msgstr "Por favor, introduzca un apellido"
+msgstr "Por favor, introduzca apellidos"
 
-#: includes/edit-profile.php:411 includes/registration.php:400
+#: includes/edit-profile.php:421 includes/registration.php:411
 msgid "Please fill in your company's name."
 msgstr "Por favor indique el nombre de su empresa."
 
-#: includes/edit-profile.php:453
+#: includes/edit-profile.php:463
 msgid "Invalid secondary email"
 msgstr "Correo electrónico secundario inválido"
 
-#: includes/edit-profile.php:491 includes/registration.php:387
+#: includes/edit-profile.php:501 includes/registration.php:398
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
 
-#: includes/edit-profile.php:559
+#: includes/edit-profile.php:569
 msgid "Your profile has been succesfully edited!"
 msgstr "¡Su perfil ha sido editado correctamente!"
 
@@ -362,7 +366,7 @@ msgstr "Su cuenta no tiene permiso para ver esta página."
 
 #: includes/frontend-manage-members.php:217
 #: includes/frontend-manage-members.php:414
-#: includes/frontend-manage-members.php:565 includes/registration.php:181
+#: includes/frontend-manage-members.php:565 includes/registration.php:183
 msgid "Invalid username"
 msgstr "Nombre de usuario inválido"
 
@@ -564,19 +568,19 @@ msgstr "El registro de usuarios no está habilitado"
 msgid "Use this form if you wish to sign up for a Personal membership."
 msgstr "Utilice este formulario si desea inscribirse como Afiliado Personal."
 
-#: includes/registration.php:176
+#: includes/registration.php:178
 msgid "Username already taken"
 msgstr "El nombre de usuario ya está en uso"
 
-#: includes/registration.php:186
+#: includes/registration.php:188
 msgid "Please enter a username"
 msgstr "Por favor, introducir un nombre de usuario"
 
-#: includes/registration.php:212
+#: includes/registration.php:214
 msgid "Please enter a valid membership type."
 msgstr "Por favor introduzca un tipo de afiliación válida."
 
-#: includes/registration.php:382
+#: includes/registration.php:393
 msgid "Please enter a password"
 msgstr "Por favor, introducir una contraseña"
 
