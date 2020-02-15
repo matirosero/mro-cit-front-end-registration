@@ -383,9 +383,9 @@ function pippin_add_new_member() {
 
 
 		//Process password
-		$user_pass		= $_POST["pippin_user_pass"];
+		$user_pass = $_POST["pippin_user_pass"];
 		// write_log('8. Password is '.$user_pass);
-		$pass_confirm 	= $_POST["pippin_user_pass_confirm"];
+		$pass_confirm = $_POST["pippin_user_pass_confirm"];
 		// write_log('9. Confirmed password is '.$user_pass);
 
 		if($user_pass == '') {
