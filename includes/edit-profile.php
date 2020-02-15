@@ -100,6 +100,8 @@ function mro_cit_edit_profile_form_fields() {
 		ob_start(); ?>
 			<h4><?php _e('Edit your account', 'mro-cit-frontend'); ?></h4>
 
+			<p><strong>Es necesario llenar el formulario completo</strong>, excepto contraseña si desea mantener la misma.</p>
+
 			<?php
 			// show any error messages after form submission
 			pippin_show_error_messages();
@@ -125,7 +127,7 @@ function mro_cit_edit_profile_form_fields() {
 					//Empresarial: company name/nickname
 					if ( members_current_user_has_role( 'afiliado_empresarial_pendiente' ) || members_current_user_has_role( 'afiliado_empresarial') ||members_current_user_has_role( 'afiliado_institucional_pendiente' ) || members_current_user_has_role( 'afiliado_institucional' ) ) { ?>
 						<p>
-							<label for="mro_cit_user_nickname"><?php echo $entity; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+							<label for="mro_cit_user_nickname"><?php echo $entity; ?></label>
 							<input name="mro_cit_user_nickname" id="mro_cit_user_nickname" type="text" value="<?php echo $user->nickname; ?>" />
 						</p>
 					<?php } ?>
@@ -143,7 +145,7 @@ function mro_cit_edit_profile_form_fields() {
 					} ?>
 
 					<p>
-						<label for="pippin_user_email"><?php echo $email_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+						<label for="pippin_user_email"><?php echo $email_label; ?></label>
 						<input name="pippin_user_email" id="pippin_user_email" class="required" type="email" value="<?php echo $user->user_email; ?>" />
 					</p>
 					<?php
@@ -152,11 +154,11 @@ function mro_cit_edit_profile_form_fields() {
 					<?php } ?>
 
 					<p>
-						<label for="pippin_user_first"><?php echo $first_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+						<label for="pippin_user_first"><?php echo $first_label; ?></label>
 						<input name="pippin_user_first" class="required" id="pippin_user_first" type="text" value="<?php echo $current_user->user_firstname; ?>" />
 					</p>
 					<p>
-						<label for="pippin_user_last"><?php echo $last_label; ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+						<label for="pippin_user_last"><?php echo $last_label; ?></label>
 						<input name="pippin_user_last" class="required" id="pippin_user_last" type="text" value="<?php echo $current_user->user_lastname; ?>" />
 					</p>
 
@@ -173,7 +175,7 @@ function mro_cit_edit_profile_form_fields() {
 
 
 					<p>
-			            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+			            <label for="mro_cit_user_phone"><?php _e( 'Phone', 'mro-cit-frontend' ) ?></label>
 		                <input type="text" name="mro_cit_user_phone" id="mro_cit_user_phone" class="required input" value="<?php echo $current_user->mro_cit_user_phone; ?>" size="25" />
 			        </p>
 
@@ -191,18 +193,18 @@ function mro_cit_edit_profile_form_fields() {
 					if ( members_current_user_has_role( 'afiliado_personal' ) || members_current_user_has_role( 'afiliado_especial' ) ) { ?>
 
 						<p>
-				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				            <label for="mro_cit_user_occupation"><?php _e( 'Occupation', 'mro-cit-frontend' ) ?></label>
 			                <input type="text" name="mro_cit_user_occupation" id="mro_cit_user_occupation" class="required input" value="<?php echo $current_user->mro_cit_user_occupation; ?>" size="25" />
 				        </p>
 				    	<p>
-				            <label for="mro_cit_user_company"><?php _e( 'Lugar de trabajo o estudio', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span></label>
+				            <label for="mro_cit_user_company"><?php _e( 'Lugar de trabajo o estudio', 'mro-cit-frontend' ) ?></label>
 				                <input type="text" name="mro_cit_user_company" id="mro_cit_user_company" class="required input" value="<?php echo $current_user->mro_cit_user_company; ?>" size="25" />
 				        </p>
 
 					<?php } ?>
 
 			        <p>
-			            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?> <span aria-hidden="true" role="presentation" class="field_required" style="color:#ee0000;">*</span><br />
+			            <label for="mro_cit_user_country"><?php _e( 'Country', 'mro-cit-frontend' ) ?><br />
 
 		                <select class="cmb2_select" class="required" name="mro_cit_user_country" id="mro_cit_user_country">
 
@@ -248,7 +250,7 @@ function mro_cit_edit_profile_form_fields() {
 					<input type="hidden" name="mro_edit_profile_nonce" value="<?php echo wp_create_nonce('mro-edit-profile-nonce'); ?>"/>
 					<input type="submit" class="button button-primary" value="<?php _e('Edit profile', 'mro-cit-frontend'); ?>"/>
 				</p>
-				
+
 			</form>
 		<?php
 		return ob_get_clean();

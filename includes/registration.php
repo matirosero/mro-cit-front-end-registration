@@ -76,6 +76,8 @@ function mro_cit_registration_form_fields($membership = 'personal' ) {
 
 		<?php } ?>
 
+		<p><strong>Es necesario llenar el formulario completo.</strong></p>
+
 		<?php
 		// show any error messages after form submission
 		pippin_show_error_messages();
