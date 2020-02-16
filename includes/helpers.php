@@ -10,11 +10,11 @@ function pippin_errors(){
 // displays error messages from form submissions
 function pippin_show_error_messages() {
 	if($codes = pippin_errors()->get_error_codes()) {
-		echo '<div class="pippin_errors">';
+		echo '<div class="callout alert pippin_errors">';
 		    // Loop error codes and display errors
 		   foreach($codes as $code){
 		        $message = pippin_errors()->get_error_message($code);
-		        echo '<p class="callout alert error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' . $message . '</p>';
+		        echo '<p class="error"><strong>' . __('Error', 'mro-cit-frontend') . '</strong>: ' . $message . '</p>';
 		    }
 		echo '</div>';
 	}
