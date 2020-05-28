@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CIT Front End Registration and Login\n"
 "POT-Creation-Date: 2020-02-15 16:24-0600\n"
-"PO-Revision-Date: 2020-02-15 16:25-0600\n"
+"PO-Revision-Date: 2020-02-15 23:36-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_PE\n"
@@ -384,7 +384,7 @@ msgstr "Error"
 
 #: includes/login.php:66
 msgid "<strong>ERROR:</strong> Invalid username and/or password."
-msgstr "<strong>ERROR</strong>: nombre de usuario o contraseña inválidos."
+msgstr "<strong>ERROR</strong>: usuario o contraseña inválidos."
 
 #: includes/login.php:67 includes/lost-password.php:42
 msgid "Lost password?"

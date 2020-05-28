@@ -260,12 +260,15 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
 
 
                 // Compare this email to the original contacts array and remove if it matches
-                foreach ($original_contacts as $old_key => $old_contact) {
+                if ($original_contacts) {
+                    foreach ($original_contacts as $old_key => $old_contact) {
 
-                    if ( $old_contact['email'] == $email ) {
-                        unset( $original_contacts[$old_key] );
-                    }
+                        if ( $old_contact['email'] == $email ) {
+                            unset( $original_contacts[$old_key] );
+                        }
+                    }                    
                 }
+
             }
 
         } else {
@@ -276,10 +279,12 @@ function wds_handle_frontend_new_post_form_submission( $cmb, $post_data = array(
     // If member is not pending, unsubscribe the leftovers from Mailchimp
     if( ! mro_cit_member_is_pending( $post_data['user_id'] ) ) {
 
-        foreach ($original_contacts as $remove_contact) {
+        if ($original_contacts) {
+            foreach ($original_contacts as $remove_contact) {
 
-            $remove_email = $remove_contact['email'];
-            $result .= mro_cit_unsubscribe_email( $remove_email );
+                $remove_email = $remove_contact['email'];
+                $result .= mro_cit_unsubscribe_email( $remove_email );
+            }
         }
     }
 

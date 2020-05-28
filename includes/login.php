@@ -9,22 +9,22 @@
  * @param object $user Logged user's data.
  * @return string
  */
-function my_login_redirect( $redirect_to, $request, $user ) {
-    //is there a user to check?
-    if ( isset( $user->roles ) && is_array( $user->roles ) ) {
-        //check for admins
-        if ( in_array( 'administrator', $user->roles ) ) {
-            // redirect them to the default place
-            return $redirect_to;
-        } else {
-            return home_url();
-        }
-    } else {
-        return $redirect_to;
-    }
-}
+// function my_login_redirect( $redirect_to, $request, $user ) {
+//     //is there a user to check?
+//     if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+//         //check for admins
+//         if ( in_array( 'administrator', $user->roles ) ) {
+//             // redirect them to the default place
+//             return $redirect_to;
+//         } else {
+//             return home_url();
+//         }
+//     } else {
+//         return $redirect_to;
+//     }
+// }
  
-add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
+// add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
 
 
 
@@ -62,21 +62,25 @@ function pippin_login_form() {
 
 			$lostpasword_url = wp_lostpassword_url();
 
-			$alert = '<p class="callout alert login-msg">'
-				. __( '<strong>ERROR:</strong> Invalid username and/or password.', 'mro-cit-frontend')
-				. '<br /><a href="' . $lostpasword_url . '">' . __( 'Lost password?', 'mro-cit-frontend') . '</a>'
-				. '</p>';
+			$alert = __( '<strong>ERROR:</strong> Invalid username and/or password.', 'mro-cit-frontend')
+				. '<br /><a href="' . $lostpasword_url . '">' . __( 'Lost password?', 'mro-cit-frontend') . '</a>';
 
-			echo $alert;
+			// echo $alert;
 
 		} elseif ( $login === "empty" ) {
-		  	echo '<p class="callout alert login-msg">' . __( '<strong>ERROR:</strong> Username and/or Password is empty.', 'mro-cit-frontend') . '</p>';
+		  	$alert = __( '<strong>ERROR:</strong> Username and/or Password is empty.', 'mro-cit-frontend');
 		} elseif ( $login === "false" ) {
-		  	echo '<p class="callout warning login-msg">' . __( '<strong>ERROR:</strong> You are logged out.', 'mro-cit-frontend') . '</p>';
+		  	$alert = __( '<strong>ERROR:</strong> You are logged out.', 'mro-cit-frontend');
+		}
+
+		if ( $alert != '' ) {
+			$alert = '<p class="callout alert login-msg"  data-closable>'
+				. $alert
+				. '</p>';
 		}
 
 
-		$output = pippin_login_form_fields();
+		$output = $alert.pippin_login_form_fields();
 	} else {
 		// could show some logged in user info here
 		// $output = 'user info here';
